@@ -1,7 +1,11 @@
 ---
 title: "Introduction to ggplot"
-output: learnr::tutorial
+output: learnr::tutorial:
+  progressive: true
+  allow_slip:true
 runtime: shiny_prerendered
+description: >
+ Practice data visualization with ggplot.
 ---
 
 
