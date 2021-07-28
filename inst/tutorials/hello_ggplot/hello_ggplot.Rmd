@@ -1,8 +1,9 @@
 ---
 title: "Introduction to ggplot"
-output: learnr::tutorial:
-  progressive: true
-  allow_slip:true
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
 runtime: shiny_prerendered
 description: >
  Practice data visualization with ggplot.
@@ -14,11 +15,12 @@ description: >
 <script language="JavaScript" src="js/exercise-font-size.js"></script>
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
 
 #devtools::install_github("ropenscilabs/icon",force=T)
 #devtools::install_github("rundel/learnrhash")
+remotes::install_github("rstudio/gradethis")
 
+#load packages ---------------------------------
 
 packages=c("tidyverse","learnr")
 sapply(X=packages,FUN=function(x) if(!require(x,character.only=TRUE))  install.packages(x,dependencies=TRUE) )
@@ -26,8 +28,13 @@ sapply(X=packages,FUN=function(x) if(!require(x,character.only=TRUE))  install.p
 library(learnr)
 library(tidyverse)
 
-mpg<-as.data.frame(mpg)
-tutorial_options(exercise.timelimit = 10)
+
+
+#hide non exercise code chunks---------------
+
+knitr::opts_chunk$set(echo = FALSE)
+
+
 
 ```
 
@@ -38,21 +45,36 @@ tutorial_options(exercise.timelimit = 10)
 
 **ggplot2** is tidyverse's data visualization package - The `gg` in "ggplot2" stands for Grammar of Graphics. It is inspired by the book **Grammar of Graphics** by Leland Wilkinson.
 
-```{r fig, out.width="30%"}
+:::: {style="display:flex;"}
+
+:::{}
+```{r fig-ggplot-logo,fig.align="left"}
 
 knitr::include_graphics("images/ggplot2-part-of-tidyverse.png")
 
 ```
+:::
+
+:::{}
+
+
+```{r fig-book,fig.align="right"}
+
+knitr::include_graphics("images/grammar-of-graphics.png")
+
+```
+:::
+
+::::
 
 
 
-To use ggplot2 functions, we need to begin by loading **tidyverse** by running the following code.
+To use ggplot2 functions, begin by loading the **tidyverse** package by running the following code.
 
 
-```{r load-library, eval=F}
+```{r load-packages, exercise=TRUE}
 library(tidyverse)
 ```
-
 
 
 ## First steps 
@@ -115,19 +137,27 @@ Among the variables in `mpg` are
  ```
  
 
- The plot shows a negative relationship between engine size (`displ`) and highway fuel efficiency (`hwy`) as one might expect. Does this match up with your intuition from earlier?
+ The plot shows a negative relationship between engine size (`displ`) and highway fuel efficiency (`hwy`) as one might expect. 
  
- Modify the code in the previous chunk to produce a scatter plot of the relationship between gas mileage for city driving (`cty`) and engine size. 
+ Modify the code in the previous chunk to produce a scatter plot of the relationship between gas mileage for city driving (`cty`) and engine size (`displ`). Customize the plot to produce labels and a title.
  
- ```{r ex3, exercise=TRUE}
+```{r ex3, exercise=TRUE}
  
- ```
+```
+
+```{r ex3-solution}
+ggplot(data=mpg, mapping=aes(x=displ,y=cty)) + 
+      geom_point() + 
+      labs(x="Engine size (liters)", 
+           y="Miles driven per gallon",
+           title="Fuel efficiency for city driving")
+```
 `r fontawesome::fa("question-circle")` How does the relationship between fuel efficiency and engine size change depending on city or highway driving? Look at the y-axis on both graphs. Also pay attention to the scatter of the points.
  
  
 ### Recap 
  
- With ggplot2, you begin a plot with the function `ggplot()`. This creates a blank coordinate system. To this you add a layer of points using `geom_point()`. `ggplot()` comes with many geom functions that each add a different layer to a plot. You can actually use multiple geoms in a single ggplot.
+ With ggplot, you begin a plot with the function `ggplot()`. This creates a blank coordinate system. To this you add a layer of points using `geom`. `ggplot()` comes with many geom functions that each add a different layer to a plot. You can actually use multiple geoms in a single ggplot.
  
  The structure of the code for plots can be summarized as
  
@@ -174,15 +204,16 @@ Let's give this a try. Delete the underline in the code below and write `color =
 
 The colors reveal that many of the unusual points in `mpg` are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage. 
 
+If we place any mappings in a geom layer, ggplot will treat them as local mappings for that layer only. For example, the following code will allow the color of just the points to vary by the type of car, but will not affect the color of the trend line.
 
-`r fontawesome::fa("question-circle")` What happens if you map an aesthetic (say color) to `color=(displ < 5)`? Take a guess and then see if you are right. 
-
-```{r ex-4, exercise=TRUE}
-
-
+```{r, echo=T,message=F}
+ggplot(data=mpg, mapping=aes(x=displ,y=hwy)) + 
+   geom_point(mapping=aes(color=class)) +
+   geom_smooth()  
 ```
 
-In the above example we mapped the color aesthetic to the `class` variable from the dataframe. This only makes sense to do since `class` takes a handful of distinct values.
+
+In the above example we mapped the color aesthetic of the points to the `class` variable from the data frame. This only makes sense to do since `class` takes a handful of distinct values.
 
 It is important to keep in mind that we have barely scratched the surface of the customization offered by `ggplot()`. The best strategy is to add to your toolkit gradually as trying to learn it all is impossible.
 
@@ -205,7 +236,7 @@ To facet a scatter plot by one variable, we use facet_wrap(). The only required 
 ```{r ex5, echo=T}
 ggplot(data=mpg, mapping=aes(x=displ,hwy)) + 
    geom_point() +
-    facet_wrap(facets=vars(class), nrow=2)
+    facet_wrap(~class, nrow=2)
 ```
 
 
@@ -213,25 +244,48 @@ ggplot(data=mpg, mapping=aes(x=displ,hwy)) +
 
 ## Geometric Objects
 
+A `geom` is a geometric object which represents the data. To put it simply, `geom` tells ggplot what type of graph we want. Some examples we have seen in class are: `geom_histogram`, `geom_density` and `geom_boxplot`. 
 
-A `geom` is a geometric object which represents the data. To put it simply, `geom` tells ggplot what type of graph we want. In fact, we can overlay a smooth trend line to our scatterplot by adding a `geom_smooth` layer to `ggplot()`.
+For example, the following code produces a density plot of highway fuel efficiency categorized by the drive train 
 
-```{r ex6, echo=T,message=F}
+```{r histo-hwy}
+ggplot(data=mpg,mapping=aes(x=hwy,fill=drv))+
+  geom_density(adjust=2,alpha=0.5)+
+  labs(x="miles per gallon",
+       y="Density",
+       title="Fuel efficiency on the highway",
+       fill="Drive train")
 
-ggplot(data=mpg,mapping=aes(x=displ,y=hwy)) + 
-   geom_point() +
-   geom_smooth()
+```
+
+The picture shows that cars with front wheel drive have a much higher fuel efficiency than rear wheel or 4 wheel. Does this pattern hold up for city driving as well? 
+
+Type in the code to produce a density plot for `cty` with `drv` as the fill variable.
+
+```{r ex6, exercise=TRUE}
+
+
+```
+
+```{r ex6-solution}
+ggplot(data=mpg,mapping=aes(x=cty,fill=drv))+
+  geom_density(adjust=2,alpha=0.5)+
+  labs(x="miles per gallon",
+       y="Density",
+       title="Fuel efficiency for city driving",
+       fill="Drive train")
+
 ```
 
 
+Another useful `geom` is the boxplot. The following code creates a boxplot to compare the engine size `displ` across the `class` of car. 
 
-If we place any mappings in a geom layer, ggplot2 will treat them as local mappings for that layer only. For example, the following code will allow the color of the trend line to vary by the type of drive train. 
+```{r engine-trans}
 
-```{r ex7, echo=T,message=F}
-ggplot(data=mpg,mapping=aes(x=displ,y=hwy)) + 
-   geom_point() +
-   geom_smooth(mapping=aes(color=drv)) 
+ggplot(data=mpg,mapping=aes(x=displ,y=class) )+
+  geom_boxplot()
 ```
+
 
 ## Setting versus Mapping Aesthetics
 
@@ -253,7 +307,7 @@ ggplot(data=mpg,mapping=aes(x=displ,y=hwy)) +
 
 ## Application Exercise
 
-Now that you have a few tricks under your belt, let’s use them on a different dataframe. The `iris` data is a preloaded dataset that comes with R. It gives measurements taken on 50 flowers from each of 3 species of iris.
+Now that you have a few tricks under your belt, let’s use them on a different dataframe. The `` data is a preloaded dataset that comes with R. It gives measurements taken on 50 flowers from each of 3 species of iris.
 
 1.How can you learn more about the data set and its contents?
 
@@ -262,7 +316,7 @@ Now that you have a few tricks under your belt, let’s use them on a different 
 ##
 ```
 
-2.Make a scatterplot showing the sepal length against width. Allow the color of the points to vary by Species. Also draw a smooth trend line. Vary the color of the trend line by `Species`.
+2.Make a scatterplot showing the sepal length against sepal width. Allow the color of the points to vary by Species. Also draw a smooth trend line. Vary the color of the points (but not the trend line) by `Species`.
 
 ```{r ex9, exercise=TRUE, exercise.lines=5}
 ##
@@ -274,7 +328,7 @@ Now that you have a few tricks under your belt, let’s use them on a different 
 ```{r ex9-solution}
 ggplot(data=iris,mapping=aes(x=Sepal.Width,y=Sepal.Length))+ 
  geom_point(mapping=aes(color=Species))+
-  geom_smooth(mapping=aes(color=Species))
+  geom_smooth()
 ```
 
 
@@ -293,7 +347,7 @@ ggplot(data=iris,mapping=aes(x=Sepal.Width,y=Sepal.Length))+
 
 ggplot(data=iris,mapping=aes(x=Sepal.Width,y=Sepal.Length)) +
    geom_point()+
-  facet_wrap(facets=vars(Species),nrow=1) 
+  facet_wrap(~Species),nrow=1) 
 ```
 ## Wrap Up
 
