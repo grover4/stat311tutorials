@@ -282,7 +282,7 @@ Another useful `geom` is the boxplot. The following code creates a boxplot to co
 
 ```{r engine-trans}
 
-ggplot(data=mpg,mapping=aes(x=displ,y=class) )+
+ggplot(data=mpg,mapping=aes(x=displ,fill=class) )+
   geom_boxplot()
 ```
 
@@ -307,7 +307,7 @@ ggplot(data=mpg,mapping=aes(x=displ,y=hwy)) +
 
 ## Application Exercise
 
-Now that you have a few tricks under your belt, let’s use them on a different dataframe. The `` data is a preloaded dataset that comes with R. It gives measurements taken on 50 flowers from each of 3 species of iris.
+Now that you have a few tricks under your belt, let’s use them on a different dataframe. The `iris` data is a preloaded dataset that comes with R. It gives measurements taken on 50 flowers from each of 3 species of iris. 
 
 1.How can you learn more about the data set and its contents?
 
@@ -316,16 +316,67 @@ Now that you have a few tricks under your belt, let’s use them on a different 
 ##
 ```
 
-2.Make a scatterplot showing the sepal length against sepal width. Allow the color of the points to vary by Species. Also draw a smooth trend line. Vary the color of the points (but not the trend line) by `Species`.
+2. Make a histogram of the `Sepal.Width`. Try binwidths of 0.1, and 0.3. Don't forget to label the axes and come up with a title. (Don't forget, R is case sensitive)
 
-```{r ex9, exercise=TRUE, exercise.lines=5}
+```{r sepal-width-histo, exercise=TRUE}
+
+
+```
+
+```{r sepal-width-histo-solution}
+
+ggplot(data=iris, mapping=aes(x=Sepal.Width) )+
+  geom_histogram(binwidth=0.3)+
+  labs(x="Sepal Width (cm)", 
+       y=Frequency,
+       title="Sepal widths of iris",
+       caption="Source: iris data frame")
+```
+
+
+```{r sepal-width-dist-bin-quiz}
+question("Which binwidth is more suitable?", 
+  answer("0.1",
+         message = "That seems a bit narrow. The histogram is a little too jagged."),
+  answer("0.3",
+         correct = TRUE,
+         message = "That's a good width - certainly better than 0.1."),
+  answer("Neither are at all suitable."),
+  allow_retry = TRUE
+)
+```
+
+3.Make a boxplot showing the `Petal.Width` by `Species`. 
+
+```{r petal-width-species-box, exercise=TRUE}
+
+
+```
+```{r petal-width-species-quiz}
+question("Which species has the largest flowers?", 
+  answer("Setosa"),
+  answer("Versicolor"),
+  answer("Virginica", correct=TRUE),
+  allow_retry = TRUE
+)
+```
+
+```{r petal-width-species-box-solution}
+ggplot(data=iris, mapping=aes(x=Petal.Width,fill=Species))+
+  geom_boxplot()
+```
+
+
+3.Make a scatterplot of the `Sepal.Length` against `Sepal.Width`. Allow the color of the points to vary by Species. Also draw a smooth trend line. Vary the color of the points (but not the trend line) by `Species`.
+
+```{r sepal-length-width, exercise=TRUE, exercise.lines=5}
 ##
 ##
 ```
 
 
 
-```{r ex9-solution}
+```{r sepal-length-width-solution}
 ggplot(data=iris,mapping=aes(x=Sepal.Width,y=Sepal.Length))+ 
  geom_point(mapping=aes(color=Species))+
   geom_smooth()
@@ -333,22 +384,6 @@ ggplot(data=iris,mapping=aes(x=Sepal.Width,y=Sepal.Length))+
 
 
 
-
-`r fontawesome::fa("question-circle")` How might you describe the relationship between sepal length and width?
-
-3. Facet the scatter plot in part 2 by Species. 
-
-```{r ex11, exercise=TRUE, exercise.lines=5}
-##
-
-```
-
-```{r ex11-solution}
-
-ggplot(data=iris,mapping=aes(x=Sepal.Width,y=Sepal.Length)) +
-   geom_point()+
-  facet_wrap(~Species),nrow=1) 
-```
 ## Wrap Up
 
 Congratulations on making it through this very brisk introduction to ggplot! There is tons more you could do with ggplot; the key is to keep trying and learning.
