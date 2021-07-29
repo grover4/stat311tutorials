@@ -124,7 +124,7 @@ To see the *codebook* (description of variables) for `mpg`, type `?mpg` which sh
 )
   
 ```
-## The grammer of graphics 
+## The Grammer of Graphics 
  
 With ggplot, we begin a plot with the data frame. This creates a blank coordinate system. 
 
@@ -199,16 +199,16 @@ ggplot(data=mpg, mapping=aes(x=displ,y=cty)) +
  
 Next, we will consider adding some color to our plot which can greatly help with understanding patterns in the data.
 
-#### Color coding points
+### Color coding points
 
-In both the scatter plots of the previous section , one group of cars (circled below) have a higher mileage than you might expect for the size of their engine. 
+In both the scatter plots of the previous section , one group of cars (shown  below) have a higher mileage than you might expect for the size of their engine. 
 
 
 
 :::: {style="display:flex;"}
 
 :::{}
-```{r fig-hwy,fig.align="left"}
+```{r fig-hwy,fig.align="center", out.width="80%"}
 ggplot(data=mpg, 
        mapping=aes(x=displ,y=hwy)) + 
       geom_point()+
@@ -225,7 +225,7 @@ ggplot(data=mpg,
 :::{}
 
 
-```{r fig-cty,fig.align="right"}
+```{r fig-cty,fig.align="center",out.width="80%"}
 ggplot(data=mpg, 
        mapping=aes(x=displ,y=cty)) + 
       geom_point()+
@@ -352,7 +352,7 @@ ggplot(data=mpg,
 
 A `geom` is a geometric object which represents the data. To put it simply, `geom` tells ggplot what type of graph we want. So far, we have looked at `geom_point` where the geometric object being plotted is a point. Some other useful examples are: `geom_histogram`, `geom_density` and `geom_boxplot`. 
 
-For example, the following code produces a density plot of highway fuel efficiency categorized by the drive train. The bandwidth (similar to binwidth in histograms) is chosen to be twice the default value by setting `adjust=2` and `alpha`, the transparency parameter is set to 0.5.  
+For example, the following code produces a density plot of highway fuel efficiency categorized by the drive train. Each `geom` has a list of arguments, some of which are unique to it. For example, the `adjust` in `geom_density` determines the smoothing window in much the same way as `binwidth` for a histogram.  
 
 ```{r histo-hwy, echo=T}
 ggplot(data=mpg,
@@ -361,7 +361,9 @@ ggplot(data=mpg,
 
 ```
 
-The picture shows that cars with front wheel drive have a much higher fuel efficiency than rear wheel or 4 wheel. Does this pattern hold up for city driving as well? 
+When the `geom` is an object that has area, as with a density curve, the color aesthetic would simply apply to the outline of the shape. To fill in the shape with color, we need to use `fill` rather than `color`. 
+
+
 
 Type in the code to produce a density plot for `cty` with `fl` as the fill variable. Play around with the bandwidth parameter `adjust` to see how it affects the density plot. 
 
