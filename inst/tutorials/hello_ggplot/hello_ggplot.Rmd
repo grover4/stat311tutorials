@@ -41,7 +41,7 @@ gradethis_setup()
 ## Introduction 
 
 
-**ggplot2** is tidyverse's data visualization package - The `gg` in "ggplot2" stands for Grammar of Graphics because the package is inspired by a similarly titled book written by Leland Wilkinson. The book develops a grammar for graphics that enable us to concisely describe the components of a graphic. 
+**ggplot2** is tidyverse's data visualization package - The `gg` in "ggplot2" stands for Grammar of Graphics because the package is inspired by a similarly titled book written by Leland Wilkinson. The book develops a grammar for graphics that enable us to concisely describe the components of a graphic. Specifically, each component is thought of as a layer which gets added on.
 
 :::: {style="display:flex;"}
 
@@ -260,8 +260,6 @@ Give this a try. Delete the underline in the code below and write `color = class
 
 The colors reveal that many of the unusual points in the scatter plots are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage. 
 
-
-The use of an aesthetic like color helps bring a third variable in view when the `geom` is a point as with a scatter plot. If the `geom` were a boxplot or a histogram, the color aesthetic would simply apply to the outline of the shape. To fill in the shape with color, we would need to use `fill` rather than `color`. 
 
 Note that we have also added a `scale` layer to the ggplot code. Scales control the mapping from the data to your aesthetics. An important property of ggplot2 is that **every** aesthetic in your plot is associated with exactly one scale.
 
@@ -566,4 +564,4 @@ The tutorial is excerpted from _R for Data Science_ by Hadley Wickham and Garret
 
 The R code for creating this learnr tutorial was also greatly informed by the learnr tutorials in  RStudio Cloud's primers found [here](https://github.com/rstudio-education/primers).
 
-Finally, thanks are always due to Mine &Ccediletinkaya-Rundel for her wonderful Data Science in a Box course materials 
+Finally, thanks are always due to Mine &Ccedil;etinkaya-Rundel for inspiring a community of statistics teachers with her wonderful Data Science in a Box course materials 
