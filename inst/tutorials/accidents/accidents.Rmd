@@ -1,32 +1,39 @@
 ---
-title: "Data Wrangling"
-output: learnr::tutorial
+title: "Road Traffic Accidents"
+output: 
+     learnr::tutorial:
+     progressive: true
+     allow_skip: true
+    
 runtime: shiny_prerendered
+description: >
+  Get more practice with data visualization and wrangling in the tidyverse: 
+  practice visualization with ggplot, and data handling with the filter() and 
+  mutate() functions.
+
 ---
 
 
 <!-- Add JavaScript code for making the exercise code larger -->
 <script language="JavaScript" src="js/exercise-font-size.js"></script>
 
-```{r, setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+```{r setup, include=FALSE}
 
-
-packages=c("tidyverse","learnr")
-sapply(X=packages,FUN=function(x) if(!require(x,character.only=TRUE))  install.packages(x,dependencies=TRUE) )
-
+#load packages ------------------------------------------
 library(learnr)
 library(tidyverse)
+library(gradethis)
 
-tutorial_options(exercise.timelimit = 60)
+# set options for exercises and checking ---------------------------------------
+gradethis_setup()
 
-accidents<-read_csv("accidents.csv")
+# hide non-exercise code chunks ------------------------------------------------
+knitr::opts_chunk$set(echo = FALSE)
 
-accidents_with_injuries <- accidents %>% 
-  filter(INJURIES > 0, INJURIES < 78)
+# read in data ----------------------------------
+accidents<-read_csv("accidents_2020.csv",skip=1,
+                    col_names=c("id", "addr_type","location","severity_code","severity_desc","collision_type","person_count","ped_count","pedcyl_count","veh_count","injuries","serious_injuries","fatalities","inc_date","under_infl","weather","road","light","speeding","hit_parked_car"))
 
-accidents_with_injuries<- accidents_with_injuries %>% 
-         mutate(PERCENTSERIOUS=SERIOUSINJURIES/INJURIES)
 ```
 
 ---
@@ -35,7 +42,7 @@ accidents_with_injuries<- accidents_with_injuries %>%
 
 In this tutorial, we will look at traffic accident data in Seattle.
 The data are open and made available [online](https://data-seattlecitygis.opendata.arcgis.com/datasets/5b5c745e0f1f48e7a53acec63a0022ab_0) by Seattle GeoData. 
-It covers all recorded accidents in Seattle from 2004 to the present; some of the variables were deleted for the purposes of this exercise.
+It covers all recorded accidents in Seattle from Jan 1 2020 through Dec 16 2020; some of the variables were deleted for the purposes of this exercise.
 
 ```{r fig, out.width="100%"}
 
@@ -52,49 +59,57 @@ knitr::include_graphics("images/traffic.jpg")
 
 ### Packages
 
-We'll use the **tidyverse** package for the analysis.
-This package is already installed for you, so you load it as usual by running the following code:
+We will use the **tidyverse** package for the analysis.
+This package is already installed for you, so you load it as usual with the `library` function:
 
 ```{r load-packages, exercise = TRUE}
-library(tidyverse)
+
 
 ```
 
+```{r load-packages-solution}
+library(tidyverse)
+```
+
+```{r load-packages-check}
+grade_this_code("The packages are now loaded!")
+```
 
 ## Data
+
+The data has been uploaded with this tutorial and is called `accidents` .
 
 Below is an excerpt of the data dictionary also known as the code book.  Note that it is long (there are lots of variables in the data), but we will be using a limited set of the variables in this tutorial.
 
 | Header                        |  Description
 |:----------------|:--------------------------------
-| `OBJECTID` | unique identifier
-| `INCKEY` | unique key for the incident
-| `COLDETKEY` | secondary key for the incident
-| `ADDRTYPE` | Collision address type: **alley**, **block**, **intersection** 
-| `LOCATION` | Description of the general location of the collision
-| `SEVERITYCODE` |3 - fatality, 2b - serious injury, 2 -injury, 1 - property damage, 0 - unknown
-| `SEVERITYDESC   ` | Detailed description of severity
-| `COLLISIONTYPE` | Collision type
-| `PERSONCOUNT` | Number of people involved in the collision
-|`PEDCOUNT` |Number of pedestrians involved in the collision
-| `PEDCYLCOUNT` | Number of bicycles involved in the collision 
-|`VEHCOUNT`| Number of vehicles involved in the collision (0,1,etc)
-|`INJURIES  `|Number of total injuries in the collision
-|`SERIOUSINJURIES`|Number of serious injuries in the collision
-|`FATALITIES`| Number of fatalities in the collision
-|`INCDATE`| Date of incident
-|`UNDERINFL`| Whether or not the driver was under the influence of drugs or alcohol
-|`WEATHER`|A description of the weather conditions during the collision
-|`ROADCOND`|The condition of the road during the collision
-|`LIGHTCOND`|Light conditions during the collision
-|`SPEEDING`|  Whether or not speeding was a factor in the collision (Y/N)
-|`HITPARKEDCAR`|Whether or not the collision involved hitting a parked car.
+| `id` | unique identifier
+| `addr_type` | Collision address type: **Alley**, **Block**, **Intersection** 
+| `location` | Text description of the general location of the collision
+| `severity_code` |3 - fatality, 2b - serious injury, 2 -injury, 1 - property damage, 0 - unknown
+| `severity_desc   ` | Description of severity: **Fatality Collision**, **Injury Collision**, **Property Damage Only Collision**, **Serious Injury Collision**, **Unknown**
+| `collision_type` | Collision type: **Angles**, **Cycles**, **Head On**, **Left Turn**, **Parked Car**, **Pedestrian**, **Rear Ended**, **Right Turn**, **Sideswipe**
+| `person_count` | Number of people involved in the collision
+|`ped_count` |Number of pedestrians involved in the collision
+| `pedcyl_count` | Number of bicycles involved in the collision 
+|`veh_count`| Number of vehicles involved in the collision (0, 1, 2, etc)
+|`injuries`|Number of total injuries in the collision
+|`serious_injuries`|Number of serious injuries in the collision
+|`fatalities`| Number of fatalities in the collision
+|`inc_date`| Date of incident
+|`under_infl`| Whether or not the driver was under the influence of drugs or alcohol: **Y**, **N**
+|`weather`|A text description of the weather conditions during the collision
+|`road`|The condition of the road during the collision: **Dry**, **Wet**, **Ice**, **Sand/Mud/Dirt**, **Snow/Slush**, **Standing Water**, **Unknown**
+|`light`|Light conditions during the collision: **Dark - No Street Lights**, **Dark - Street Lights Off**, **Dark - Street Lights On**, **Dark - Unknown Lighting**, **Dusk**, **Dawn**, **Daylight**, **Other**, **Unknown**
+|`speeding`|  Whether or not speeding was a factor in the collision: **Y**, **N**
+|`hit_parked_car`|Whether or not the collision involved hitting a parked car: **Y**, **N**
 
 ### First look at the data
 
 You can take a peek at the data using the `glimpse()` function in the box below. You can also take a look at the first few rows of the dataset using `head()`.Try both in the code chunk below. 
 
 ```{r glimpse-data, exercise = TRUE}
+
 
 ```
 
@@ -110,20 +125,60 @@ question("What does each row in the dataset represent?",
   )
 ```
 
-How many accidents were recorded in Seattle from 2004? The output from `glimpse` should give you the answer. But you can also use `nrow(accidents)` to verify the answer. Try it in the code chunk below. 
+How many accidents were recorded in Seattle in 2020? The output from `glimpse` should give you the answer. But you can also use `nrow()` to verify the answer. Run it in the code chunk below. 
 
 ```{r nrow,exercise=TRUE}
-nrow(accidents)
+
 ```
 
-How many variables are recorded on each crash? Use `ncol` in the code chunk below.
+```{r nrow-hint-1}
+Each row represents one recorded accident!
+```
+
+```{r nrow-hint-2}
+Try using nrow()!
+```
+
+```{r nrow-check}
+grade_this({
+  if(identical(.result, 6509) | identical(.result, 6509L)) {
+    pass("There are 6,509 rows, therefore, 6,509 accidents were recorded in Seattle in 2020.")
+    }
+  if(identical(.result, 23) | identical(.result, 23L)) {
+    fail("Each observation is represented in one row. Did you calculate the number of columns instead of rows?")
+    }
+  fail("Not quite. Each observation is represented in one row. Try looking at the hints for some help!")
+})
+```
+
+How many variables are recorded on each crash? Use the code chunk below.
 
 ```{r ncol, exercise=TRUE}
 
 ```
 
+```{r ncol-hint-1}
+Each variable is encoded is displayed as a column.
+```
+
+```{r ncol-hint-2}
+Try using ncol()!
+```
+
+```{r ncol-check}
+grade_this({
+  if(identical(.result, 23) | identical(.result, 23L)) {
+    pass("Since there are 23 columns in the dataset, we know that 23 variables are recorded.")
+  }
+  if(identical(.result, 6509) | identical(.result, 6509L)) {
+    fail("Each variable is recorded in a column. Did you maybe use the number of rows?")
+  }
+  fail("Not quite. Each variable is represented in a column. Try looking at the hints for some help!")
+})
+```
+
 ```{r quiz-vars}
-question("What type of variable is ADDRTYPE?",
+question("What type of variable is addr_type?",
     answer("Numerical"),
     answer("Categorical with ordered categories"),
     answer("Categorical with unordered categories ", correct=TRUE),
@@ -133,97 +188,334 @@ question("What type of variable is ADDRTYPE?",
 
 ## Multi-vehicle accidents
 
-Let's use `filter` to subset the data to those accidents that involved 2 or more vehicles. Use the hints in the code chunk below to perform the filtering. Don't forget to remove the comment `#` symbols.   
+Let's use `filter` to subset the data to those accidents with 2 or more vehicles. Use the hints in the code chunk below to perform the filtering. 
 
-``` {r vehicles, exercise = TRUE}
-#___ %>%
-#  ___(___) %>%
-#  nrow()
+``` {r filter-multi-car, exercise = TRUE}
+
 ```
 
-```{r vehicles-hint-1}
-#Use filter() to find the rows that match the criteria.
+```{r filter-multi-car-hint-1}
+Use filter() to find the rows that match the criteria.
 ```
 
-```{r vehicles-hint-2}
-#Review the data dictionary, specifically the variables VEHCOUNT.
+```{r filter-multi-car-hint-2}
+Review the data dictionary, specifically the variable veh_count.
 ```
 
-``` {r vehicles-hint-3}
-#accidents %>%
-#  filter(VEHCOUNT >= ___) %>% nrow()
-```
-
-``` {r vehicles-hint-4}
+``` {r filter-multi-car-hint-3}
 accidents %>%
-  filter(VEHCOUNT >= 2) %>% nrow()
+  filter(veh_count >= ___ ) %>% 
+  nrow()
 ```
 
+``` {r filter-multi-car-hint-4}
+accidents %>%
+  filter(veh_count >= 2) %>% 
+  nrow()
+```
+
+```{r filter-multi-car-check}
+grade_this({
+  if(identical(.result, 3673) | identical(.result, 3673L)) {
+    pass("There are 3,673 rows that correspond to accidents with 2 or more vehicles involved.")
+  }
+  fail("Take a peek at the hints!")
+})
+```
 
 For more practice with `filter`, try subsetting the data to include only those accidents that involved speeding. 
 
-``` {r filter-accidents-three, exercise = TRUE}
+``` {r filter-speeding, exercise = TRUE}
 
 
 ```
 
-```{r filter-accidents-three-solution}
+```{r filter-speeding-hint-1}
+Review the data dictionary, specifically the variable speeding
+```
+
+```{r filter-speeding-hint-2}
 accidents %>%
-    filter(SPEEDING=="Y") %>%
+    filter(speeding=="Y") %>%
     nrow()
 ```
 
+```{r filter-speeding-check}
+grade_this({
+  if(identical(.result, 292) | identical(.result, 292L)) {
+    pass("There are 292 rows that correspond to accidents with speeding involved.")
+  }
+  fail("Take a look at the solution!")
+})
+```
 
 For even more practice, how many accidents involved 2 or more vehicles and speeding?
 
-```{r filter-accidents-four, exercise=TRUE} 
+```{r filter-multi-car-speed, exercise=TRUE} 
 
 
 ```
 
 
-```{r filter-accidents-four-solution}
+```{r filter-multi-car-speed-hint-1}
 accidents %>%
-    filter(SPEEDING=="Y", VEHCOUNT > 0) %>%
+    filter(veh_count >= ___, speeding == ____ ) %>%
     nrow()
+```
+
+
+```{r filter-multi-car-speed-check}
+grade_this({
+  if(identical(.result, 164) | identical(.result, 164L)) {
+    pass("There are 164 rows that correspond to accidents with two or more vehicles and speeding involved.")
+  }
+  fail("Take a look at the solution!")
+})
 ```
 
 
 ## Injuries
 
-The variable `INJURIES` describes the total number of injuries.
-The dataframe `accidents_with_injuries` contains the subset of accidents with injuries. 
-
-How many such accidents are there?
-
-```{r accidents-injuries,exercise=TRUE}
+The variable `injuries` describes the total number of injuries.
+Create a frequency table of the injuries. See hints for help.
 
 
-```
-
-```{r accidents-injuries-solution}
-
-nrow(accidents_with_injuries)
-
-```
-
-The following code creates a new variable called `PERCENTSERIOUS` which stores the percentage of injuries at an accident that were serious.
-
-```{r injury, echo=TRUE}
-accidents_with_injuries<- accidents_with_injuries %>% 
-         mutate(PERCENTSERIOUS=SERIOUSINJURIES/INJURIES)
+```{r injuries-frequency,exercise=TRUE}
 
 ```
 
 
-Make a histogram of this variable using `ggplot`. What do you learn from this graph?
+```{r injuries-frequency-hint-1}
+See the help for the `count()` function, specifically the 
+`sort` argument for reporting the frequency table in descending order of counts, 
+i.e. highest on top.
+```
 
-```{r ggplot-injury,exercise=TRUE}
+```{r injuries-frequency-hint-2}
+accidents %>% 
+  ___ %>% (___, sort=TRUE)
+```
+
+```{r injuries-frequency-hint-3}
+accidents %>%
+  count(injuries, sort = TRUE)
+```
+
+```{r injuries-frequency-check}
+grade_this({
+  if(identical(.result$n[1], 4613L)) {
+    pass("You have created the correct frequency table!")}
+  fail("Not quite. See the hints for help!")
+ })
+```
+
+
+```{r quiz-injuries}
+question("What is the most common number of injuries in the
+dataset?",
+    answer("0", correct = TRUE),
+    answer("1"),
+    answer("2"),
+    answer("3"),
+    answer("4"),
+    answer("5"),
+    answer("6"),
+    allow_retry = TRUE
+  )
+```
+
+
+## Accident Severity
+
+Recreate the following plot. To match colors, you can use `scale_fill_viridis_d()`.
+
+```{r example-plot, fig.width=6,fig.height=4, echo=FALSE}
+
+ggplot(data=accidents %>% filter(severity_desc != "Unknown"), 
+  mapping=aes(x=addr_type, fill=severity_desc)) +
+      geom_bar(position = "fill")+
+      labs(x="Location of accident",
+           y="Proportion",
+           fill="Severity Description",
+           title="Location and severity of accident")+ 
+       scale_fill_viridis_d()
+
+```
+
+```{r plot-severity, exercise = TRUE, fig.width=6, echo=FALSE, fig.height=4}
+ggplot(data = ___, aes(x = ___, ___ = ___)) +
+  geom____(___) +
+  ___() +
+  ___(y = ___, x = ___,
+       ___ = ___, 
+       title = ___) +
+  scale_color_viridis_d()
+```
+
+
+```{r plot-severity-hint-1}
+ggplot(data = ___, 
+       mapping=aes(x = ___, ___ = ___)) +
+  geom____(___) +
+  ___(x = ___, y = ___,
+       ___ = ___, 
+       title = ___) +
+  scale_fill_viridis_d()
+```
+
+```{r plot-severity-hint-2}
+
+filter the data to only include rows where severity-desc != "Unknown"
+```
+
+```{r plot-severity-hint-3}
+ggplot(data = accidents %>% filter(severity_desc!= "Unknown"), 
+       mapping=aes(x = ___, fill = ___)) +
+  geom_bar(___) +
+  labs(x = ___, y = ___,
+       fill = ___, 
+       title = ___) +
+  scale_fill_viridis_d()
+```
+
+```{r plot-severity-hint-4}
+ggplot(data = accidents %>% filter(severity_desc != "Unknown"), 
+       mapping=aes(x = ___, fill = ___)) +
+  geom_bar(position = ___) +
+  labs(x = ___, y = ___,
+       fill = "Severity Description", 
+       title = ___) +
+  scale_fill_viridis_d()
+```
+
+``` {r plot-severity-hint-5}
+ggplot(data = accidents %>% filter(severity_desc != "Unknown"), 
+       mapping=aes(x = addr_type, fill = severity_desc)) +
+  geom_bar(position = "fill") +
+  labs(x = "Location of accident",
+       fill = "Severity Description", 
+       title = "Location and severity of accident") +
+  scale_fill_viridis_d()
+```
+
+```{r plot-severity-check}
+grade_this_code("Well done!")
+```
+
+```{r plot-interpretation}
+question("Which of the following are true? Check all that apply.", 
+         answer("Most accidents involve property damage only",
+                correct = TRUE),
+         answer("Blocks and intersection have about the same number of serious injury collisions",
+                message = "The percentages are about the same, but not the counts necessarily"),
+         answer("Collisions in intersections tend to be the most severe in terms of injury",
+                correct = TRUE),
+        allow_retry = TRUE
+         )
+```
+
+### Renaming values of categorical variables
+
+Many of the categorical variables in this data set have very descriptive (long) names for their values. An example is the severity description from the previous bar plot. This can result in messy labels in certain types of plots. There are many ways to change the labels of a categorical variable. In this tutorial, we will focus on using `mutate` and `case_when` to make the change. 
+
+The `case_when` function from `dplyr` is essentially multiple `if_else` statements combined together. 
+
+Consider the variable `light` for instance. The values it takes can be observed by creating a frequency table as we did with `injuries`.
+
+```{r light-values, echo=TRUE}
+accidents %>% count(light)
+```
+
+Let's shorten the names, but at the same time combine a few categories together. 
+
+Run the following code:
+
+```{r change-light, exercise=TRUE}
+accidents <- accidents %>% 
+  mutate( light_short = case_when( 
+                        light == "Dark - No Street Lights" | light == "Dark - Street Lights Off" ~ "Dark", 
+                        light == "Dark - Street Lights On" ~ "Dark, lit", 
+                        light == "Dawn"                    ~ "Dawn",
+                        light == "Daylight"                ~ "Daylight",
+                        light == "Dusk"                    ~ "Dusk", 
+                        TRUE                               ~ "NA")
+          )
+
+accidents %>% count(light_short)
 
 
 ```
 
-Congratulations! You made it! You will be doing a lot more with the data wrangling tools in tidyverse, but this is a good start!
+What does the above code do? It creates a new variable called `light_short` which takes certain values depending on the value of the original `light` variable. The new variable is added to the `accidents` data set with the left assignment opertor.
+
+Each argument within the `case_when` function is a two sided formula. The left hand side of the formula determines which values match this case. The right hand side provides the replacement value. The last line of the `case_when` holds true for all the categories not mentioned in the previous statements and these are all set to "NA".
+
+
+Let's use this new definition of the light variable to examine the relationship between light conditions and hitting parked cars.
+
+### Light conditions and hitting parked cars
+
+A mosaic plot is a visual tool for examining the relationship between two categorical variables. 
+
+Create a mosaic plot of the relationship between `light_short` and `hit_parked_car` using just the rows where `light_short != "NA"`. 
+
+```{r change-light-for-real}
+
+accidents <- accidents %>% 
+  mutate( light_short = case_when( 
+                        light == "Dark - No Street Lights" | light == "Dark - Street Lights Off" ~ "Dark", 
+                        light == "Dark - Street Lights On" ~ "Dark, lit", 
+                        light == "Dawn"                    ~ "Dawn",
+                        light == "Daylight"                ~ "Daylight",
+                        light == "Dusk"                    ~ "Dusk", 
+                        TRUE                               ~ "NA")
+          )
+
+
+```
+
+
+```{r light-severity-mosaic, exercise=TRUE, exercise.setup="change-light-for-real"}
+
+accidents %>% filter(________) %>%
+         select(_____, ____) %>% 
+         table() %>% 
+         mosaicplot(shade=TRUE)
+```
+
+
+```{r light-severity-mosaic-hint-1}
+
+accidents %>% filter( light_short != "NA") %>%
+         select(_____, ____) %>% 
+         table() %>% 
+         mosaicplot(shade=TRUE)
+```
+
+```{r light-severity-mosaic-hint-2}
+
+accidents %>% filter( light_short != "NA") %>%
+         select(light_short, hit_parked_car) %>% 
+         table() %>% 
+         mosaicplot(shade=TRUE)
+```
+
+```{r mosaic-plot-interpretation}
+question("Which of the following are true? Check all that apply.", 
+         answer("Most accidents do not involve parked cars getting hit",
+                correct = TRUE),
+         answer("The variables are independent ",
+                message = "Some of the cells are colored blue or red, which suggests an association"),
+         answer("There is a higher chance of a parked car being hit in the dark than during day light hours",
+                correct = TRUE),
+        allow_retry = TRUE
+         )
+```
+
+
+## Finish Up
+
+Congratulations! You made it through the tutorial on visualizing categorical data!  
 
 ## Acknowledgements
 
