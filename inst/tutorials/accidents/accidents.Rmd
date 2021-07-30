@@ -448,7 +448,7 @@ accidents %>% count(light_short)
 
 What does the above code do? It creates a new variable called `light_short` which takes certain values depending on the value of the original `light` variable. The new variable is added to the `accidents` data set with the left assignment opertor.
 
-Each argument within the `case_when` function is a two sided formula. The left hand side of the formula determines which values match this case. The right hand side provides the replacement value. The last line of the `case_when` holds true for all the categories not mentioned in the previous statements and these are all set to "NA".
+Each argument within the `case_when` function is a two sided  separated by a tilda symbol `~`. The left hand side of the formula determines which values match this case. The right hand side provides the replacement value. The last line of the `case_when` holds true for all the categories not mentioned in the previous statements and these are all set to "NA".
 
 
 Let's use this new definition of the light variable to examine the relationship between light conditions and hitting parked cars.
