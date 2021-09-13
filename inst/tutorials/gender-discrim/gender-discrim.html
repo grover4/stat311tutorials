@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<meta name="progressive" content="true" />
+<meta name="allow-skip" content="true" />
+
+<title>Foundations of inference: randomization test</title>
+
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+<!-- taken from https://github.com/rstudio/rmarkdown/blob/67b7f5fc779e4cfdfd0f021d3d7745b6b6e17149/inst/rmd/h/default.html#L296-L362 -->
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+<!-- end tabsets -->
+
+
+
+</head>
+
+<body>
+
+
+
+<div class="pageContent band">
+<div class="bandContent page">
+
+<div class="topics">
+
+<div id="section-completing-a-randomization-test-gender-discrimination" class="section level2">
+<h2>Completing a randomization test: gender discrimination</h2>
+<p>The example in this lesson is taken from a paper on the <em>“Influence of sex role stereotypes on personnel decisions”</em> by Rosen and Jerdee, 1974.</p>
+<p>Forty-eight male bank supervisors were given personnel files and asked to judge whether the person should be promoted to a branch manager position. The files were all identical except that <em>half of them</em> indicated that the candidate was <em>male</em> and <em>the other half</em> indicated that the candidate was <em>female</em>.</p>
+<p>The data were then collected showing that 14 out of the 24 female files were selected for promotion and 21 of the 24 male files were selected for promotion.</p>
+<div id="section-the-data" class="section level3">
+<h3>The data</h3>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+gender
+</th>
+<th style="text-align:right;">
+promoted
+</th>
+<th style="text-align:right;">
+not promoted
+</th>
+<th style="text-align:right;">
+Total
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+21
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+24
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+24
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+48
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="section-summarizing-gender-discrimination" class="section level3">
+<h3>Summarizing gender discrimination</h3>
+<p>As the first step of any analysis, you should look at and summarize the data. Categorical variables are often summarized using proportions, and it is always important to understand the denominator of the proportion.</p>
+<p>Do you want the proportion of women who were promoted or the proportion of promoted individuals who were women? Here, you want the first of these, so in your R code it’s necessary to group by <code>gender</code> <strong>before</strong> you calculate the proportions!</p>
+<p>The discrimination study data are available in your workspace as <code>gender_discrimination</code>.</p>
+<ul>
+<li>Using the <code>count()</code> function, tabulate the variables <code>gender</code> and <code>decision</code>.</li>
+<li>Group the data by <code>gender</code>.</li>
+<li>Calculate the proportion of those who were and were not promoted in each gender and call this variable <code>prop</code>.</li>
+</ul>
+<div class="tutorial-exercise" data-label="gender-promoted" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination %&gt;%
+  count(___, ___) %&gt;%
+  group_by(___) %&gt;%
+  mutate(___ = ___ / ___)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-promoted-hint-1" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination %&gt;%
+  count(gender, decision) %&gt;%
+  group_by(___) %&gt;%
+  mutate(___ = ___ / ___)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-promoted-hint-2" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination %&gt;%
+  count(gender, decision) %&gt;%
+  group_by(gender) %&gt;%
+  mutate(___ = ___ / ___)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-promoted-hint-3" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination %&gt;%
+  count(gender, decision) %&gt;%
+  group_by(gender) %&gt;%
+  mutate(prop = ___ / ___)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-promoted-hint-4" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination %&gt;%
+  count(gender, decision) %&gt;%
+  group_by(gender) %&gt;%
+  mutate(prop = ___ / sum(n))</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-promoted-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination %&gt;%
+  count(gender, decision) %&gt;%
+  group_by(gender) %&gt;%
+  mutate(prop = n / sum(n))</code></pre>
+</div>
+<p>After summarizing the data, the difference in promotions can be identified using rates. That is, 58.3% of the women were promoted whereas 87.5% of the men were promoted. The important statistical question to ask after looking at the data is as follows: <em>is it plausible to observe such a difference in proportions in a scenario where men and women are equally likely to be promoted?</em></p>
+</div>
+<div id="section-shuffling-the-data" class="section level3">
+<h3>Shuffling the data</h3>
+<p>If we shuffle the data so that gender and promotion are not linked in any way, what sort of chance differences are observed?</p>
+<p>In the first shuffle of the data, we see that 17 women were promoted and 18 men were promoted, a difference in proportions of -0.04. Notice that the shuffled difference is closer to zero than the observed difference of 0.29.</p>
+<p><em>First shuffle</em></p>
+<table class="table table-striped" style="width: auto !important; float: left; margin-right: 10px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+gender
+</th>
+<th style="text-align:right;">
+not
+</th>
+<th style="text-align:left;">
+promoted
+</th>
+<th style="text-align:left;">
+Total
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">17</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: #F05133 !important;">24</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">18</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: #F05133 !important;">24</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Total
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: #F05133 !important;">35</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">48</span>
+</td>
+</tr>
+</tbody>
+</table>
+<p><img src="gender-discrim_files/figure-html/unnamed-chunk-4-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p>Keep in mind that a fixed number of male and female resumes were given out, 24 of each. Additionally, assume that there were a fixed number of people allowed to be promoted, here 35. However, the shuffling process breaks the relationship between gender and promotion decision, which allows us to understand the variability of the differences in promotion rates assuming there is no connection between the two variables.</p>
+</div>
+<div id="section-random-chance" class="section level3">
+<h3>Random chance?</h3>
+<p>Even though here gender doesn’t play a role in determining promotion, we still typically don’t have a difference of zero. That’s because of the natural variability associated with which manager gets which file. But the point of the randomization process is to identify how different the proportions can be naturally and, on the other hand, how big a difference would have to be to make us think something unusual was going on.</p>
+<p>By shuffling the promotion variable repeatedly, not only do we see the variability in the null differences, but we also see that the observed statistic of 0.29 is on the extreme end of the plausible values generated by natural variability.</p>
+<p><img src="gender-discrim_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p><img src="gender-discrim_files/figure-html/unnamed-chunk-6-1.png" width="480" style="display: block; margin: auto;" /></p>
+</div>
+<div id="section-gender-discrimination-hypotheses" class="section level3">
+<h3>Gender discrimination hypotheses</h3>
+<div class="panel panel-default">
+<div data-label="hypotheses-mc" class="tutorial-question panel-body">
+<div id="hypotheses-mc-answer_container" class="shiny-html-output"></div>
+<div id="hypotheses-mc-message_container" class="shiny-html-output"></div>
+<div id="hypotheses-mc-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-step-by-step-through-the-permutation" class="section level3">
+<h3>Step-by-step through the permutation</h3>
+<p>To help you understand the code used to create the randomization distribution, this exercise will walk you through the steps of the infer framework. In particular, you’ll see how differences in the generated replicates affect the calculated statistics.</p>
+<p>For simplicity, we’ll keep our permutation to just 5 replicates – in reality we would want this value to be much larger.</p>
+<p>In the code chunk below,</p>
+<ul>
+<li>we start with our data frame: <code>gender_discrimination</code>,</li>
+<li>then we specify our model where <code>decision</code> is the response variable and <code>gender</code> is the explanatory (grouping) variable, and we note that we’re calling <code>"promoted"</code> a <em>success</em>,</li>
+<li>then we set our null hypothesis as <code>"independence"</code> (no gender discrimination), and</li>
+<li>finally we permute 5 times under the specification we outlined so far.</li>
+</ul>
+<pre class="r"><code>gender_discrimination %&gt;%
+  specify(decision ~ gender, success = &quot;promoted&quot;) %&gt;%
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  generate(reps = 5, type = &quot;permute&quot;)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["decision"],"name":[1],"type":["fct"],"align":["left"]},{"label":["gender"],"name":[2],"type":["fct"],"align":["left"]},{"label":["replicate"],"name":[3],"type":["int"],"align":["right"]}],"data":[{"1":"not promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"not promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"not promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"not promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"not promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"not promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"not promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"male","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"not promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"not promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"not promoted","2":"female","3":"1"},{"1":"not promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"not promoted","2":"female","3":"1"},{"1":"not promoted","2":"female","3":"1"},{"1":"promoted","2":"female","3":"1"},{"1":"not promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"not promoted","2":"male","3":"2"},{"1":"not promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"not promoted","2":"male","3":"2"},{"1":"not promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"not promoted","2":"male","3":"2"},{"1":"promoted","2":"male","3":"2"},{"1":"not promoted","2":"male","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"not promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"not promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"not promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"not promoted","2":"female","3":"2"},{"1":"not promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"promoted","2":"female","3":"2"},{"1":"not promoted","2":"female","3":"2"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"not promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"not promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"not promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"not promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"not promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"not promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"promoted","2":"male","3":"3"},{"1":"not promoted","2":"male","3":"3"},{"1":"not promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"not promoted","2":"female","3":"3"},{"1":"not promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"not promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"not promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"promoted","2":"female","3":"3"},{"1":"not promoted","2":"female","3":"3"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"not promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"not promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"not promoted","2":"male","3":"4"},{"1":"not promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"not promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"not promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"promoted","2":"male","3":"4"},{"1":"not promoted","2":"male","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"not promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"not promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"not promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"not promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"not promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"not promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"female","3":"4"},{"1":"promoted","2":"male","3":"5"},{"1":"not promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"not promoted","2":"male","3":"5"},{"1":"not promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"not promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"not promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"not promoted","2":"male","3":"5"},{"1":"promoted","2":"male","3":"5"},{"1":"not promoted","2":"male","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"not promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"not promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"not promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"not promoted","2":"female","3":"5"},{"1":"not promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"},{"1":"not promoted","2":"female","3":"5"},{"1":"promoted","2":"female","3":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>The resulting data frame has 240 rows: 48 observations per replicate (just like in the original <code>gender_discrimination</code> data) * 5 replicates.</p>
+<p>In the next exercise,</p>
+<ul>
+<li>Re-generate a permutation just like above and save the result as <code>gender_discrimination_perm5</code>.</li>
+<li>Add a layer to <code>calculate()</code> the statistic of interest. Set <code>stat</code> to <code>"diff in props"</code> and <code>order</code> to <code>c("male", "female")</code> to subtract proportion of promoted females from proportion of males.</li>
+</ul>
+<div class="tutorial-exercise" data-label="perm5" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Permute 5 times</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="perm5-hint-1" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm5 %&gt;%
+  specify( decision ~ gender, success=&quot;promoted&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="perm5-hint-2" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm5 %&gt;%
+  specify( decision ~ gender, success=&quot;promoted&quot;) %&gt;%
+  hypothesize(null=&quot;independence&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="perm5-hint-3" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm5 %&gt;%
+  specify( decision ~ gender, success=&quot;promoted&quot;) %&gt;%
+  hypothesize(null=&quot;independence&quot;) %&gt;% 
+  generate(reps=5, type=&quot;permute&quot;) </code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="perm5-hint-4" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm5 %&gt;%
+  specify( decision ~ gender, success=&quot;promoted&quot;) %&gt;%
+  hypothesize(null=&quot;independence&quot;) %&gt;% 
+  generate(reps=5, type=&quot;permute&quot;) %&gt;%
+  calculate(stat=&quot;diff in props&quot;, order=___)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="perm5-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm5 &lt;- gender_discrimination %&gt;%
+  specify(decision ~ gender, success = &quot;promoted&quot;) %&gt;%
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  generate(reps = 5, type = &quot;permute&quot;)
+   calculate(stat = &quot;diff in props&quot;, order = c(&quot;male&quot;, &quot;female&quot;))</code></pre>
+</div>
+<p>Well done! Each replicate had slightly different counts of promotion and gender, which led to slightly different statistics being calculated for each replicate.</p>
+</div>
+<div id="section-bumping-up-the-reps" class="section level3">
+<h3>Bumping up the reps</h3>
+<p>In this exercise, you’ll create a randomization distribution of the null statistic with 1000 replicates as opposed to just 5 in the previous exercise and then make a picture of the distribution. As a reminder, the statistic of interest is the difference in proportions promoted between genders (i.e. proportion for males minus proportion for females).</p>
+<ol style="list-style-type: decimal">
+<li>Create a data frame of permuted differences in promotion rates</li>
+</ol>
+<div class="tutorial-exercise" data-label="gender-discrimination-perm-1000" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Create data frame of 1,000 permuted differences in promotion rates</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-1000-hint-1" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm &lt;- gender_discrimination %&gt;%
+  specify(___, success = &quot;promoted&quot;) %&gt;%
+  hypothesize(null = &quot;___&quot;) %&gt;%
+  generate(reps = ___, type = &quot;___&quot;) %&gt;%
+  calculate(stat = &quot;___&quot;, order = c(&quot;male&quot;, &quot;female&quot;))</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-1000-hint-2" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm &lt;- gender_discrimination %&gt;%
+  specify(decision ~ gender, success = &quot;promoted&quot;) %&gt;%
+  hypothesize(null = &quot;___&quot;) %&gt;%
+  generate(reps = ___, type = &quot;___&quot;) %&gt;%
+  calculate(stat = &quot;___&quot;, order = c(&quot;male&quot;, &quot;female&quot;))</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-1000-hint-3" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm &lt;- gender_discrimination %&gt;%
+  specify(decision ~ gender, success = &quot;promoted&quot;) %&gt;%
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  generate(reps = ___, type = &quot;___&quot;) %&gt;%
+  calculate(stat = &quot;___&quot;, order = c(&quot;male&quot;, &quot;female&quot;))</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-1000-hint-4" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm &lt;- gender_discrimination %&gt;%
+  specify(decision ~ gender, success = &quot;promoted&quot;) %&gt;%
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
+  calculate(stat = &quot;___&quot;, order = c(&quot;male&quot;, &quot;female&quot;))</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-1000-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Create data frame of permuted differences in promotion rates
+gender_discrimination_perm &lt;- gender_discrimination %&gt;%
+  # Specify decision vs. gender
+  specify(decision ~ gender, success = &quot;promoted&quot;) %&gt;%
+  # Set null hypothesis as independence
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  # Generate 1000 permutations
+  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
+  # Calculate difference in proportions
+  calculate(stat = &quot;diff in props&quot;, order = c(&quot;male&quot;, &quot;female&quot;))</code></pre>
+</div>
+</div>
+<div id="section-section" class="section level3">
+<h3></h3>
+<ol start="2" style="list-style-type: decimal">
+<li>Draw a histogram of permuted differences.</li>
+</ol>
+<ul>
+<li>Using the permutation dataset, <code>gender_discrimination_perm</code> (which we already calculated), plot the distribution of test statistics (<code>stat</code>).</li>
+<li>Specify a histogram layer with <code>geom_histogram()</code>, where the <code>binwidth</code> is set to <code>0.01</code>.</li>
+<li>Add a vertical line with <code>geom_vline()</code>, and specify the <code>xintercept</code> as 29.2, the difference in promotion rates between males and females in the original data set.</li>
+</ul>
+<div class="tutorial-exercise" data-label="gender-discrimination-perm-plot" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Using permutation data, plot stat
+ggplot(gender_discrimination_perm, aes(x = ___)) + 
+  # Add a histogram layer
+  ___(binwidth = 0.01) +
+  # Add a vertical line at diff_orig
+  ___(aes(xintercept = ___), color = &quot;red&quot;)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-plot-hint-1" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>ggplot(gender_discrimination_perm, aes(x = stat)) + 
+  ___(binwidth = 0.01) +
+  ___(aes(xintercept = ___), color = &quot;red&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-plot-hint-2" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>ggplot(gender_discrimination_perm, aes(x = stat)) + 
+  ___(binwidth = 0.01) +
+  ___(aes(xintercept = ___), color = &quot;red&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-plot-hint-3" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>ggplot(gender_discrimination_perm, aes(x = stat)) + 
+  geom_histogram(binwidth = 0.01) +
+  ___(aes(xintercept = ___), color = &quot;red&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="gender-discrimination-perm-plot-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Using permutation data, plot stat
+ggplot(gender_discrimination_perm, aes(x = stat)) + 
+  # Add a histogram layer
+  geom_histogram(binwidth = 0.01) +
+  # Add a vertical line at diff_orig
+  geom_vline(aes(xintercept = diff_orig), color = &quot;red&quot;)</code></pre>
+</div>
+<div class="panel panel-default">
+<div data-label="reflect-mc" class="tutorial-question panel-body">
+<div id="reflect-mc-answer_container" class="shiny-html-output"></div>
+<div id="reflect-mc-message_container" class="shiny-html-output"></div>
+<div id="reflect-mc-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-null-distribution" class="section level3">
+<h3>Null distribution</h3>
+<p>It seems as though the statistic— difference in promotion rates of 0.2917—is on the extreme end of the permutation distribution. That is, there are very few permuted differences which are as extreme as the observed difference.</p>
+<p>To quantify the extreme permuted (null) differences, we calculate a p-value.</p>
+</div>
+</div>
+<div id="section-definition-of-p-value" class="section level2">
+<h2>Definition of p-value</h2>
+<p>A p-value is the <em>probability of observing data as or more extreme than what we actually got, assuming the null hypothesis is true</em>.</p>
+<p>In this example, the p-value (0.03) is the <em>probability of observing a difference of 0.2917 or greater assuming that promotion rates do not vary across gender</em>.</p>
+<div id="section-calculating-the-p-values" class="section level3">
+<h3>Calculating the p-values</h3>
+<p>p-value measures the degree of disagreement between the data and the null hypothesis. Here, you will calculate the p-value for the original discrimination dataset.</p>
+<p>Recall that you’re only interested in the question, “Are men <strong>more likely</strong> to be promoted than women?” Thus, the p-value (which represents how often a null value is more <em>extreme</em>) would be calculated by counting the number of null values which are <code>greater</code> than the original difference.</p>
+<p>To retrieve the p-value, we can use the <code>get_p_value()</code> function, which comes in the infer package. This function has three arguments (inputs):</p>
+<ol style="list-style-type: decimal">
+<li>a dataset with permuted statistics (output from <code>generate()</code>)</li>
+<li>the observed statistic (<code>obs_stat</code>)</li>
+<li>the direction of the alternative hypothesis (“greater”, “less”, or “two-sided”)</li>
+</ol>
+<p>We can also use the <code>visualize()</code> function to visualize where the observed statistic falls in the distribution of permuted statsitics, and shade the direction that the p-value was calculated from. The <code>visualize()</code> function has many inputs (find out more by typing <code>?visualize</code> in your console), but the most important ones are the <strong>same</strong> as the <code>get_p_value()</code> function!</p>
+<p>Now, use the <code>visualize()</code> and <code>get_p_value()</code> functions for the original dataset. First <code>visualize()</code> where the p-value lies on the distribution, and then calculate the p-value.</p>
+<ul>
+<li>You can test out the different methods for calculating the p-value by trying out: <code>direction = "greater"</code>, <code>direction = "two_sided"</code>, and <code>direction = "less"</code>.</li>
+</ul>
+<div class="tutorial-exercise" data-label="pvalue" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Visualize and calculate the p-value for the original dataset
+gender_discrimination_perm %&gt;%
+  ___(obs_stat = ___, direction = &quot;___&quot;) %&gt;%
+  ___(___, ___)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="pvalue-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Visualize and calculate the p-value for the original dataset
+gender_discrimination_perm %&gt;%
+  visualize(obs_stat = diff_orig, direction = &quot;greater&quot;) %&gt;%
+  get_p_value(obs_stat = diff_orig, direction = &quot;greater&quot;)</code></pre>
+</div>
+<p>Well done! You may have noticed that the observed statistic is borderline “significant” (p-value = 0.03) for the original data.</p>
+</div>
+<div id="section-practice-calculating-p-values" class="section level3">
+<h3>Practice calculating p-values</h3>
+<p>In the original dataset, 87.5% of the men were promoted and 58.3% of the women were promoted.</p>
+<p>Consider a situation where there are 24 men, 24 women, and 35 people are still promoted. But in this new scenario, 75% of the men are promoted and 70.8% of the women are promoted. Does the difference in promotion rates still appear to be “statistically significant”? That is, could this difference in promotion rates have come from random chance?</p>
+<p>You’ll analyze these new data, contained in <code>gender_discrimination_new</code>, using the same permutation algorithm from before.</p>
+<ol style="list-style-type: decimal">
+<li>Calculate the proportion of those who were and were not promoted in each gender and call this variable <code>prop</code>.</li>
+</ol>
+<div class="tutorial-exercise" data-label="pvalue_2" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>#Code from before
+#gender_discrimination %&gt;%
+#  count(gender, decision) %&gt;%
+#  group_by(gender) %&gt;%
+#  mutate(prop = n / sum(n))</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="pvalue_2-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Count the promotions for each gender in the new data
+gender_discrimination_new %&gt;% 
+  count(gender, decision) %&gt;%
+  group_by(gender) %&gt;% 
+  mutate(prop=n()/sum(n))</code></pre>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Create a new permutation dataset, <code>gender_discrimination_new_perm</code> using the specify, hypothesize, generate and calculate workflow.</li>
+</ol>
+<div class="tutorial-exercise" data-label="pvalue_3" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_new_perm &lt;- gender_discrimination_new %&gt;%
+  specify() %&gt;%
+  hypothesize( ) %&gt;%
+  generate( ) %&gt;% 
+  calculate( stat=___)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>Calculate the p-value of the new permutation dataset, <code>gender_discrimination_new_perm</code>, and the new observed difference.</li>
+</ol>
+<div class="tutorial-exercise" data-label="pvalue_4" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_new_perm %&gt;%
+  visualize() %&gt;%
+   get_p_value(________)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="pvalue_4-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Recall the p-value from the original data
+gender_discrimination_perm %&gt;%
+  summarize(p_value = mean(diff_orig &lt;= stat))
+# Find the p-value from the new data
+gender_discrimination_new_perm %&gt;%
+  summarize(p_value = mean(diff_orig_new &lt;= stat))</code></pre>
+</div>
+<p>Great work! Notice that the permutation differences (the two histograms) are essentially the same regardless of whether the original or the new dataset is used. Why do you think that is?</p>
+<p><strong>Hint:</strong> Does the null hypothesis depend on the dataset, or is it the same for both?</p>
+</div>
+<div id="section-calculating-two-sided-p-values" class="section level3">
+<h3>Calculating two-sided p-values</h3>
+<p>What if the original research hypothesis had focused on <em>any</em> difference in promotion rates between men and women instead of focusing on whether men are <em>more likely</em> to be promoted than women? In this case, a difference like the one observed would occur twice as often (by chance) because sometimes the difference would be positive and sometimes it would be negative.</p>
+<p>When there is no directionality to the alternative hypothesis, the hypothesis and p-value are considered to be <em>two-sided</em>. In a two-sided setting, the p-value is double the one-sided p-value.</p>
+<p>In this exercise, you’ll calculate a two-sided p-value given the original randomization distribution and dataset.</p>
+<p>The observed difference is stored in <code>diff_orig</code> and the difference in each permutation is the <code>stat</code> column of <code>gender_discrimination_perm</code>.</p>
+<p>Use the <code>summarize()</code> function to calculate the two-sided p-value. You will use the p-value calculation from the previous exercise, and make the modification that the p-value is equal to twice the value of the original.</p>
+<div class="tutorial-exercise" data-label="pvalue_5" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Calculate the two-sided p-value
+gender_discrimination_perm %&gt;%
+  summarize(p_value = ___)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="pvalue_5-hint" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>gender_discrimination_perm %&gt;%
+  summarize(p_value = 2 * mean(___ &lt;= stat))</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="pvalue_5-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># Calculate the two-sided p-value
+gender_discrimination_perm %&gt;%
+  summarize(p_value = 2 * mean(diff_orig &lt;= stat))</code></pre>
+</div>
+<p>Good job! Notice, from the calculation, that the two-sided p-value is twice as big as the one-sided p-value. Two-sided p-values are often advocated for, as a way of avoiding making false “significance” claims.</p>
+</div>
+</div>
+<div id="section-summary-of-gender-discrimination" class="section level2">
+<h2>Summary of gender discrimination</h2>
+<p>The observed gender discrimination data is not really consistent with the permuted null differences. Only 30 of the 1000 permuted differences were larger than or equal to the observed statistic. That is, we would have observed data like ours only 3% of the time if men and women were equally likely to be promoted.</p>
+<pre class="r"><code>gender_discrimination_perm %&gt;%
+  summarize(pvalue = mean(diff_orig &lt;= stat)) </code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["pvalue"],"name":[1],"type":["dbl"],"align":["right"]}],"data":[{"1":"0.996"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p><img src="gender-discrim_files/figure-html/unnamed-chunk-9-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p>Pay special attention to how the p-value is computed here. First we identify permuted differences that are larger than or equal to the observed statistic and label those situations TRUE (or a value of 1), all other permutations FALSE (or a value of 0). By averaging the 0s and 1s, we can use the <code>mean()</code> to find the proportion of times the permuted difference is larger than or equal to the observed difference.</p>
+<p>Because 0.03 is less than 0.05, we decide to reject the null hypothesis in favor of the alternative, claiming that men are promoted at a higher rate than women. That is, we conclude that it was not simply random variability which led to a higher proportion of men being promoted. A p-value of 0.03 is reasonably close to 0.05 which means we should be somewhat careful in making strong claims. We should take the results as a indication that more work should be done on the claims. Indeed, in 40 years since this research was published, many social scientists have been able to replicate research on gender discrimination in the workforce.</p>
+<p>Because the study was randomized, that is, they randomly assigned the resumes to the managers, there is nothing systematically different about the two groups except the name on the resume. As an example, it wouldn’t make sense to have given the female resumes to the first 24 managers who arrived at the training. Those early arriving individuals might be less inclined to promote anyone given their strict adherence to being on time.</p>
+<p>The only difference in the two groups, both the participants as well as the resumes, was the name on the top of the resume.</p>
+<p>Therefore, we can conclude that <em>any difference in promotion rates is due to the gender of the applicant</em>. That is, we can infer a <strong>causal</strong> connection between the gender of the applicant being male and a higher promotion rate.</p>
+<p>The 35 individuals in the sample were not randomly sampled from all possible American bank managers; they were at a management training session. In order to generalize the results of the study to a larger population, we would need more information about the study and careful thinking about who the study participants might represent.</p>
+</div>
+<div id="section-congratulations" class="section level2">
+<h2>Congratulations!</h2>
+You have successfully completed Lesson 2 in Tutorial 5: Introduction to Statistical Inference. 
+<script type="application/shiny-prerendered" data-context="server-start">
+# load packages ------------------------------------------------
+
+library(learnr)
+library(kableExtra)
+library(tidyverse)
+library(infer)
+library(grid)
+library(gridExtra)
+library(emo)
+library(openintro)
+library(janitor)
+# knitr options ----------------------------------------------------------------
+knitr::opts_chunk$set(fig.align = "center", 
+                      fig.height = 3, 
+                      fig.width = 5,
+                      echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE)
+# data prep --------------------------------------------------------------------
+# Read pre-permuted data
+
+gender_discrimination_new_perm <- read_rds("data/gender_discrimination_new_perm.rds")
+gender_discrimination_new <- read_rds("data/gender_discrimination_new.rds")
+gender_discrimination_perm <- read_rds("data/gender_discrimination_perm.rds")
+
+
+diff_orig <- gender_discrimination %>%
+  group_by(gender) %>%
+  summarize(prop_promoted = mean(decision == "promoted")) %>%
+  summarize(stat = diff(prop_promoted)) %>% 
+  pull()
+  
+
+diff_orig_new <- gender_discrimination_new %>%
+  group_by(gender) %>%
+  summarize(prop_promoted = mean(decision == "promoted")) %>%
+  summarize(diff(prop_promoted)) %>% 
+  pull()
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = NULL)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::clear_exercise_cache_env()
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::i18n_observe_tutorial_language(input, session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+session$onSessionEnded(function() {
+        learnr:::event_trigger(session, "session_stop")
+      })
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_setup_chunk("__setup__", c("# load packages ------------------------------------------------", 
+"", "library(learnr)", "library(kableExtra)", "library(tidyverse)", 
+"library(infer)", "library(grid)", "library(gridExtra)", "library(emo)", 
+"library(openintro)", "library(janitor)", "# knitr options ----------------------------------------------------------------", 
+"knitr::opts_chunk$set(fig.align = \"center\", ", "                      fig.height = 3, ", 
+"                      fig.width = 5,", "                      echo = FALSE, ", 
+"                      message = FALSE, ", "                      warning = FALSE)", 
+"# data prep --------------------------------------------------------------------", 
+"# Read pre-permuted data", "", "gender_discrimination_new_perm <- read_rds(\"data/gender_discrimination_new_perm.rds\")", 
+"gender_discrimination_new <- read_rds(\"data/gender_discrimination_new.rds\")", 
+"gender_discrimination_perm <- read_rds(\"data/gender_discrimination_perm.rds\")", 
+"", "", "diff_orig <- gender_discrimination %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(stat = diff(prop_promoted)) %>% ", "  pull()", "  ", 
+"", "diff_orig_new <- gender_discrimination_new %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(diff(prop_promoted)) %>% ", "  pull()"), overwrite = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_setup_chunk("__setup__", c("# load packages ------------------------------------------------", 
+"", "library(learnr)", "library(kableExtra)", "library(tidyverse)", 
+"library(infer)", "library(grid)", "library(gridExtra)", "library(emo)", 
+"library(openintro)", "library(janitor)", "# knitr options ----------------------------------------------------------------", 
+"knitr::opts_chunk$set(fig.align = \"center\", ", "                      fig.height = 3, ", 
+"                      fig.width = 5,", "                      echo = FALSE, ", 
+"                      message = FALSE, ", "                      warning = FALSE)", 
+"# data prep --------------------------------------------------------------------", 
+"# Read pre-permuted data", "", "gender_discrimination_new_perm <- read_rds(\"data/gender_discrimination_new_perm.rds\")", 
+"gender_discrimination_new <- read_rds(\"data/gender_discrimination_new.rds\")", 
+"gender_discrimination_perm <- read_rds(\"data/gender_discrimination_perm.rds\")", 
+"", "", "diff_orig <- gender_discrimination %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(stat = diff(prop_promoted)) %>% ", "  pull()", "  ", 
+"", "diff_orig_new <- gender_discrimination_new %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(diff(prop_promoted)) %>% ", "  pull()"), overwrite = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_setup_chunk("__setup__", c("# load packages ------------------------------------------------", 
+"", "library(learnr)", "library(kableExtra)", "library(tidyverse)", 
+"library(infer)", "library(grid)", "library(gridExtra)", "library(emo)", 
+"library(openintro)", "library(janitor)", "# knitr options ----------------------------------------------------------------", 
+"knitr::opts_chunk$set(fig.align = \"center\", ", "                      fig.height = 3, ", 
+"                      fig.width = 5,", "                      echo = FALSE, ", 
+"                      message = FALSE, ", "                      warning = FALSE)", 
+"# data prep --------------------------------------------------------------------", 
+"# Read pre-permuted data", "", "gender_discrimination_new_perm <- read_rds(\"data/gender_discrimination_new_perm.rds\")", 
+"gender_discrimination_new <- read_rds(\"data/gender_discrimination_new.rds\")", 
+"gender_discrimination_perm <- read_rds(\"data/gender_discrimination_perm.rds\")", 
+"", "", "diff_orig <- gender_discrimination %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(stat = diff(prop_promoted)) %>% ", "  pull()", "  ", 
+"", "diff_orig_new <- gender_discrimination_new %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(diff(prop_promoted)) %>% ", "  pull()"), overwrite = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_setup_chunk("__setup__", c("# load packages ------------------------------------------------", 
+"", "library(learnr)", "library(kableExtra)", "library(tidyverse)", 
+"library(infer)", "library(grid)", "library(gridExtra)", "library(emo)", 
+"library(openintro)", "library(janitor)", "# knitr options ----------------------------------------------------------------", 
+"knitr::opts_chunk$set(fig.align = \"center\", ", "                      fig.height = 3, ", 
+"                      fig.width = 5,", "                      echo = FALSE, ", 
+"                      message = FALSE, ", "                      warning = FALSE)", 
+"# data prep --------------------------------------------------------------------", 
+"# Read pre-permuted data", "", "gender_discrimination_new_perm <- read_rds(\"data/gender_discrimination_new_perm.rds\")", 
+"gender_discrimination_new <- read_rds(\"data/gender_discrimination_new.rds\")", 
+"gender_discrimination_perm <- read_rds(\"data/gender_discrimination_perm.rds\")", 
+"", "", "diff_orig <- gender_discrimination %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(stat = diff(prop_promoted)) %>% ", "  pull()", "  ", 
+"", "diff_orig_new <- gender_discrimination_new %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(diff(prop_promoted)) %>% ", "  pull()"), overwrite = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_setup_chunk("__setup__", c("# load packages ------------------------------------------------", 
+"", "library(learnr)", "library(kableExtra)", "library(tidyverse)", 
+"library(infer)", "library(grid)", "library(gridExtra)", "library(emo)", 
+"library(openintro)", "library(janitor)", "# knitr options ----------------------------------------------------------------", 
+"knitr::opts_chunk$set(fig.align = \"center\", ", "                      fig.height = 3, ", 
+"                      fig.width = 5,", "                      echo = FALSE, ", 
+"                      message = FALSE, ", "                      warning = FALSE)", 
+"# data prep --------------------------------------------------------------------", 
+"# Read pre-permuted data", "", "gender_discrimination_new_perm <- read_rds(\"data/gender_discrimination_new_perm.rds\")", 
+"gender_discrimination_new <- read_rds(\"data/gender_discrimination_new.rds\")", 
+"gender_discrimination_perm <- read_rds(\"data/gender_discrimination_perm.rds\")", 
+"", "", "diff_orig <- gender_discrimination %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(stat = diff(prop_promoted)) %>% ", "  pull()", "  ", 
+"", "diff_orig_new <- gender_discrimination_new %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(diff(prop_promoted)) %>% ", "  pull()"), overwrite = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_setup_chunk("__setup__", c("# load packages ------------------------------------------------", 
+"", "library(learnr)", "library(kableExtra)", "library(tidyverse)", 
+"library(infer)", "library(grid)", "library(gridExtra)", "library(emo)", 
+"library(openintro)", "library(janitor)", "# knitr options ----------------------------------------------------------------", 
+"knitr::opts_chunk$set(fig.align = \"center\", ", "                      fig.height = 3, ", 
+"                      fig.width = 5,", "                      echo = FALSE, ", 
+"                      message = FALSE, ", "                      warning = FALSE)", 
+"# data prep --------------------------------------------------------------------", 
+"# Read pre-permuted data", "", "gender_discrimination_new_perm <- read_rds(\"data/gender_discrimination_new_perm.rds\")", 
+"gender_discrimination_new <- read_rds(\"data/gender_discrimination_new.rds\")", 
+"gender_discrimination_perm <- read_rds(\"data/gender_discrimination_perm.rds\")", 
+"", "", "diff_orig <- gender_discrimination %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(stat = diff(prop_promoted)) %>% ", "  pull()", "  ", 
+"", "diff_orig_new <- gender_discrimination_new %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(diff(prop_promoted)) %>% ", "  pull()"), overwrite = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_setup_chunk("__setup__", c("# load packages ------------------------------------------------", 
+"", "library(learnr)", "library(kableExtra)", "library(tidyverse)", 
+"library(infer)", "library(grid)", "library(gridExtra)", "library(emo)", 
+"library(openintro)", "library(janitor)", "# knitr options ----------------------------------------------------------------", 
+"knitr::opts_chunk$set(fig.align = \"center\", ", "                      fig.height = 3, ", 
+"                      fig.width = 5,", "                      echo = FALSE, ", 
+"                      message = FALSE, ", "                      warning = FALSE)", 
+"# data prep --------------------------------------------------------------------", 
+"# Read pre-permuted data", "", "gender_discrimination_new_perm <- read_rds(\"data/gender_discrimination_new_perm.rds\")", 
+"gender_discrimination_new <- read_rds(\"data/gender_discrimination_new.rds\")", 
+"gender_discrimination_perm <- read_rds(\"data/gender_discrimination_perm.rds\")", 
+"", "", "diff_orig <- gender_discrimination %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(stat = diff(prop_promoted)) %>% ", "  pull()", "  ", 
+"", "diff_orig_new <- gender_discrimination_new %>%", "  group_by(gender) %>%", 
+"  summarize(prop_promoted = mean(decision == \"promoted\")) %>%", 
+"  summarize(diff(prop_promoted)) %>% ", "  pull()"), overwrite = FALSE)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-gender-promoted-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-gender-promoted-code-editor`)), session)
+output$`tutorial-exercise-gender-promoted-output` <- renderUI({
+  `tutorial-exercise-gender-promoted-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("gender-promoted", list(setup = NULL, chunks = list(list(label = "gender-promoted", 
+    code = "gender_discrimination %>%\n  count(___, ___) %>%\n  group_by(___) %>%\n  mutate(___ = ___ / ___)", 
+    opts = list(label = "\"gender-promoted\"", exercise = "TRUE"), 
+    engine = "r")), code_check = NULL, error_check = NULL, check = NULL, 
+    solution = structure(c("gender_discrimination %>%", "  count(gender, decision) %>%", 
+    "  group_by(gender) %>%", "  mutate(prop = n / sum(n))"), chunk_opts = list(
+        label = "gender-promoted-solution")), options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, strip.white = TRUE, size = "normalsize", 
+        background = "#F7F7F7", cache = 0, cache.path = "gender-discrim_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "gender-promoted", 
+        exercise = TRUE, code = c("gender_discrimination %>%", 
+        "  count(___, ___) %>%", "  group_by(___) %>%", "  mutate(___ = ___ / ___)"
+        ), out.width.px = 480, out.height.px = 288, params.src = "gender-promoted, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "hypotheses-mc", 
+    question = structure("Which of the following null and alternative hypotheses are appropriate for the gender discrimination example described in the previous lesson?", html = TRUE, class = c("html", 
+    "character")), answers = list(structure(list(id = "lnr_ans_547582c", 
+        option = "H0: gender and promotion are unrelated variables. HA: men are more likely to be promoted.", 
+        value = "H0: gender and promotion are unrelated variables. HA: men are more likely to be promoted.", 
+        label = structure("H0: gender and promotion are unrelated variables. HA: men are more likely to be promoted.", html = TRUE, class = c("html", 
+        "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_dbd1d4", 
+        option = "H0: gender and promotion are unrelated variables. HA: women are more likely to be promoted.", 
+        value = "H0: gender and promotion are unrelated variables. HA: women are more likely to be promoted.", 
+        label = structure("H0: gender and promotion are unrelated variables. HA: women are more likely to be promoted.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Not quite, the researchers are expecting to see promotion bias in a particular direction (the alternative hypothesis).", html = TRUE, class = c("html", 
+        "character"))), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d965219", 
+        option = "H0: men are more likely to be promoted. HA: gender and promotion are unrelated variables.", 
+        value = "H0: men are more likely to be promoted. HA: gender and promotion are unrelated variables.", 
+        label = structure("H0: men are more likely to be promoted. HA: gender and promotion are unrelated variables.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Remember, the null hypothesis always contains the claim that there is no effect of the variables.", html = TRUE, class = c("html", 
+        "character"))), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a395046", 
+        option = "H0: women are more likely to be promoted. HA: gender and promotion are unrelated variables.", 
+        value = "H0: women are more likely to be promoted. HA: gender and promotion are unrelated variables.", 
+        label = structure("H0: women are more likely to be promoted. HA: gender and promotion are unrelated variables.", html = TRUE, class = c("html", 
+        "character")), correct = FALSE, message = structure("Remember, the null hypothesis always contains the claim that there is no effect of the variables.", html = TRUE, class = c("html", 
+        "character"))), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
+    "character")), message = NULL, post_message = NULL), ids = list(
+        answer = "hypotheses-mc-answer", question = "hypotheses-mc"), 
+    loading = structure("<strong>Loading:<\u002fstrong> \nWhich of the following null and alternative hypotheses are appropriate for the gender discrimination example described in the previous lesson?\n<br/><br/><br/>", html = TRUE, class = c("html", 
+    "character")), random_answer_order = FALSE, allow_retry = TRUE, 
+    seed = 150929928.929718, options = list()), class = c("learnr_radio", 
+"tutorial_question")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-perm5-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-perm5-code-editor`)), session)
+output$`tutorial-exercise-perm5-output` <- renderUI({
+  `tutorial-exercise-perm5-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("perm5", list(setup = NULL, chunks = list(list(label = "perm5", code = "# Permute 5 times\n", 
+    opts = list(label = "\"perm5\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("gender_discrimination_perm5 <- gender_discrimination %>%", 
+    "  specify(decision ~ gender, success = \"promoted\") %>%", 
+    "  hypothesize(null = \"independence\") %>%", "  generate(reps = 5, type = \"permute\")", 
+    "   calculate(stat = \"diff in props\", order = c(\"male\", \"female\"))"
+    ), chunk_opts = list(label = "perm5-solution")), options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, strip.white = TRUE, size = "normalsize", 
+        background = "#F7F7F7", cache = 0, cache.path = "gender-discrim_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "perm5", exercise = TRUE, 
+        code = c("# Permute 5 times", ""), out.width.px = 480, 
+        out.height.px = 288, params.src = "perm5, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-gender-discrimination-perm-1000-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-gender-discrimination-perm-1000-code-editor`)), session)
+output$`tutorial-exercise-gender-discrimination-perm-1000-output` <- renderUI({
+  `tutorial-exercise-gender-discrimination-perm-1000-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("gender-discrimination-perm-1000", list(setup = NULL, chunks = list(list(label = "gender-discrimination-perm-1000", 
+    code = "# Create data frame of 1,000 permuted differences in promotion rates\n", 
+    opts = list(label = "\"gender-discrimination-perm-1000\"", 
+        exercise = "TRUE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("# Create data frame of permuted differences in promotion rates", 
+    "gender_discrimination_perm <- gender_discrimination %>%", 
+    "  # Specify decision vs. gender", "  specify(decision ~ gender, success = \"promoted\") %>%", 
+    "  # Set null hypothesis as independence", "  hypothesize(null = \"independence\") %>%", 
+    "  # Generate 1000 permutations", "  generate(reps = 1000, type = \"permute\") %>%", 
+    "  # Calculate difference in proportions", "  calculate(stat = \"diff in props\", order = c(\"male\", \"female\"))"
+    ), chunk_opts = list(label = "gender-discrimination-perm-1000-solution")), 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, strip.white = TRUE, 
+        size = "normalsize", background = "#F7F7F7", cache = 0, 
+        cache.path = "gender-discrim_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "gender-discrimination-perm-1000", 
+        exercise = TRUE, code = c("# Create data frame of 1,000 permuted differences in promotion rates", 
+        ""), out.width.px = 480, out.height.px = 288, params.src = "gender-discrimination-perm-1000, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-gender-discrimination-perm-plot-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-gender-discrimination-perm-plot-code-editor`)), session)
+output$`tutorial-exercise-gender-discrimination-perm-plot-output` <- renderUI({
+  `tutorial-exercise-gender-discrimination-perm-plot-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("gender-discrimination-perm-plot", list(setup = NULL, chunks = list(list(label = "gender-discrimination-perm-plot", 
+    code = "# Using permutation data, plot stat\nggplot(gender_discrimination_perm, aes(x = ___)) + \n  # Add a histogram layer\n  ___(binwidth = 0.01) +\n  # Add a vertical line at diff_orig\n  ___(aes(xintercept = ___), color = \"red\")", 
+    opts = list(label = "\"gender-discrimination-perm-plot\"", 
+        exercise = "TRUE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("# Using permutation data, plot stat", 
+    "ggplot(gender_discrimination_perm, aes(x = stat)) + ", "  # Add a histogram layer", 
+    "  geom_histogram(binwidth = 0.01) +", "  # Add a vertical line at diff_orig", 
+    "  geom_vline(aes(xintercept = diff_orig), color = \"red\")"
+    ), chunk_opts = list(label = "gender-discrimination-perm-plot-solution")), 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, strip.white = TRUE, 
+        size = "normalsize", background = "#F7F7F7", cache = 0, 
+        cache.path = "gender-discrim_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "gender-discrimination-perm-plot", 
+        exercise = TRUE, code = c("# Using permutation data, plot stat", 
+        "ggplot(gender_discrimination_perm, aes(x = ___)) + ", 
+        "  # Add a histogram layer", "  ___(binwidth = 0.01) +", 
+        "  # Add a vertical line at diff_orig", "  ___(aes(xintercept = ___), color = \"red\")"
+        ), out.width.px = 480, out.height.px = 288, params.src = "gender-discrimination-perm-plot, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "reflect-mc", question = structure("Based on the plot you created in the last exercise, which of the following seems like a reasonable conclusion about promotions?", html = TRUE, class = c("html", 
+"character")), answers = list(structure(list(id = "lnr_ans_9feac8d", 
+    option = "In the population there is no evidence that women are discriminated against.", 
+    value = "In the population there is no evidence that women are discriminated against.", 
+    label = structure("In the population there is no evidence that women are discriminated against.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("No, try again. Look at the curves to see if the observed data is consistent with the null hypothesis.", html = TRUE, class = c("html", 
+    "character"))), class = c("tutorial_question_answer", "tutorial_quiz_answer"
+)), structure(list(id = "lnr_ans_d22b798", option = "In the population there is no evidence that women are promoted at a different rate from men.", 
+    value = "In the population there is no evidence that women are promoted at a different rate from men.", 
+    label = structure("In the population there is no evidence that women are promoted at a different rate from men.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("No, try again. Look at the curves to see if the observed data is consistent with the null hypothesis.", html = TRUE, class = c("html", 
+    "character"))), class = c("tutorial_question_answer", "tutorial_quiz_answer"
+)), structure(list(id = "lnr_ans_9fc8896", option = "In the population there is evidence that women are discriminated against.", 
+    value = "In the population there is evidence that women are discriminated against.", 
+    label = structure("In the population there is evidence that women are discriminated against.", html = TRUE, class = c("html", 
+    "character")), correct = FALSE, message = structure("Incorrect. Although there is evidence of differential rates of promotion, the study was not set up to understand why the rates of promotion are different.", html = TRUE, class = c("html", 
+    "character"))), class = c("tutorial_question_answer", "tutorial_quiz_answer"
+)), structure(list(id = "lnr_ans_8e0dd88", option = "In the population there is evidence that women are promoted at a different rate, but we cannot tell whether the difference is due to discrimination or something else.", 
+    value = "In the population there is evidence that women are promoted at a different rate, but we cannot tell whether the difference is due to discrimination or something else.", 
+    label = structure("In the population there is evidence that women are promoted at a different rate, but we cannot tell whether the difference is due to discrimination or something else.", html = TRUE, class = c("html", 
+    "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
+"tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+"character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+"character"))), messages = list(correct = structure("Good job! There are very few permuted differences which are as extreme as the observed difference, but there cannot be a causative conclusion because the study was observational.", html = TRUE, class = c("html", 
+"character")), try_again = structure("Incorrect", html = TRUE, class = c("html", 
+"character")), incorrect = structure("Incorrect", html = TRUE, class = c("html", 
+"character")), message = NULL, post_message = NULL), ids = list(
+    answer = "reflect-mc-answer", question = "reflect-mc"), loading = structure("<strong>Loading:<\u002fstrong> \nBased on the plot you created in the last exercise, which of the following seems like a reasonable conclusion about promotions?\n<br/><br/><br/>", html = TRUE, class = c("html", 
+"character")), random_answer_order = FALSE, allow_retry = TRUE, 
+    seed = 1344959079.3737, options = list()), class = c("learnr_radio", 
+"tutorial_question")))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-pvalue-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-pvalue-code-editor`)), session)
+output$`tutorial-exercise-pvalue-output` <- renderUI({
+  `tutorial-exercise-pvalue-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("pvalue", list(setup = NULL, chunks = list(list(label = "pvalue", code = "# Visualize and calculate the p-value for the original dataset\ngender_discrimination_perm %>%\n  ___(obs_stat = ___, direction = \"___\") %>%\n  ___(___, ___)\n", 
+    opts = list(label = "\"pvalue\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# Visualize and calculate the p-value for the original dataset", 
+    "gender_discrimination_perm %>%", "  visualize(obs_stat = diff_orig, direction = \"greater\") %>%", 
+    "  get_p_value(obs_stat = diff_orig, direction = \"greater\")", 
+    ""), chunk_opts = list(label = "pvalue-solution")), options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, strip.white = TRUE, size = "normalsize", 
+        background = "#F7F7F7", cache = 0, cache.path = "gender-discrim_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "pvalue", 
+        exercise = TRUE, code = c("# Visualize and calculate the p-value for the original dataset", 
+        "gender_discrimination_perm %>%", "  ___(obs_stat = ___, direction = \"___\") %>%", 
+        "  ___(___, ___)", ""), out.width.px = 480, out.height.px = 288, 
+        params.src = "pvalue, exercise=TRUE", fig.num = 0, exercise.df_print = "paged", 
+        exercise.checker = "NULL"), engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-pvalue_2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-pvalue_2-code-editor`)), session)
+output$`tutorial-exercise-pvalue_2-output` <- renderUI({
+  `tutorial-exercise-pvalue_2-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("pvalue_2", list(setup = NULL, chunks = list(list(label = "pvalue_2", code = "#Code from before\n#gender_discrimination %>%\n#  count(gender, decision) %>%\n#  group_by(gender) %>%\n#  mutate(prop = n / sum(n))", 
+    opts = list(label = "\"pvalue_2\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("", 
+    "# Count the promotions for each gender in the new data", 
+    "gender_discrimination_new %>% ", "  count(gender, decision) %>%", 
+    "  group_by(gender) %>% ", "  mutate(prop=n()/sum(n))"), chunk_opts = list(
+        label = "pvalue_2-solution")), options = list(eval = FALSE, 
+        echo = TRUE, results = "markup", tidy = FALSE, tidy.opts = NULL, 
+        collapse = FALSE, prompt = FALSE, comment = NA, highlight = FALSE, 
+        strip.white = TRUE, size = "normalsize", background = "#F7F7F7", 
+        cache = 0, cache.path = "gender-discrim_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "pvalue_2", 
+        exercise = TRUE, code = c("#Code from before", "#gender_discrimination %>%", 
+        "#  count(gender, decision) %>%", "#  group_by(gender) %>%", 
+        "#  mutate(prop = n / sum(n))"), out.width.px = 480, 
+        out.height.px = 288, params.src = "pvalue_2, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-pvalue_3-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-pvalue_3-code-editor`)), session)
+output$`tutorial-exercise-pvalue_3-output` <- renderUI({
+  `tutorial-exercise-pvalue_3-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("pvalue_3", list(setup = NULL, chunks = list(list(label = "pvalue_3", code = "\n\ngender_discrimination_new_perm <- gender_discrimination_new %>%\n  specify() %>%\n  hypothesize( ) %>%\n  generate( ) %>% \n  calculate( stat=___)\n  ", 
+    opts = list(label = "\"pvalue_3\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, strip.white = TRUE, 
+        size = "normalsize", background = "#F7F7F7", cache = 0, 
+        cache.path = "gender-discrim_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "pvalue_3", 
+        exercise = TRUE, code = c("", "", "gender_discrimination_new_perm <- gender_discrimination_new %>%", 
+        "  specify() %>%", "  hypothesize( ) %>%", "  generate( ) %>% ", 
+        "  calculate( stat=___)", "  "), out.width.px = 480, 
+        out.height.px = 288, params.src = "pvalue_3, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-pvalue_4-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-pvalue_4-code-editor`)), session)
+output$`tutorial-exercise-pvalue_4-output` <- renderUI({
+  `tutorial-exercise-pvalue_4-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("pvalue_4", list(setup = NULL, chunks = list(list(label = "pvalue_4", code = "gender_discrimination_new_perm %>%\n  visualize() %>%\n   get_p_value(________)", 
+    opts = list(label = "\"pvalue_4\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# Recall the p-value from the original data", 
+    "gender_discrimination_perm %>%", "  summarize(p_value = mean(diff_orig <= stat))", 
+    "# Find the p-value from the new data", "gender_discrimination_new_perm %>%", 
+    "  summarize(p_value = mean(diff_orig_new <= stat))"), chunk_opts = list(
+        label = "pvalue_4-solution")), options = list(eval = FALSE, 
+        echo = TRUE, results = "markup", tidy = FALSE, tidy.opts = NULL, 
+        collapse = FALSE, prompt = FALSE, comment = NA, highlight = FALSE, 
+        strip.white = TRUE, size = "normalsize", background = "#F7F7F7", 
+        cache = 0, cache.path = "gender-discrim_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "pvalue_4", 
+        exercise = TRUE, code = c("gender_discrimination_new_perm %>%", 
+        "  visualize() %>%", "   get_p_value(________)"), out.width.px = 480, 
+        out.height.px = 288, params.src = "pvalue_4, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-pvalue_5-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-pvalue_5-code-editor`)), session)
+output$`tutorial-exercise-pvalue_5-output` <- renderUI({
+  `tutorial-exercise-pvalue_5-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("pvalue_5", list(setup = NULL, chunks = list(list(label = "pvalue_5", code = "# Calculate the two-sided p-value\ngender_discrimination_perm %>%\n  summarize(p_value = ___)", 
+    opts = list(label = "\"pvalue_5\"", exercise = "TRUE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("# Calculate the two-sided p-value", 
+    "gender_discrimination_perm %>%", "  summarize(p_value = 2 * mean(diff_orig <= stat))"
+    ), chunk_opts = list(label = "pvalue_5-solution")), options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, strip.white = TRUE, size = "normalsize", 
+        background = "#F7F7F7", cache = 0, cache.path = "gender-discrim_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "center", fig.path = "gender-discrim_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 5, fig.height = 3, fig.env = "figure", fig.cap = NULL, 
+        fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 480, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = FALSE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, label = "pvalue_5", 
+        exercise = TRUE, code = c("# Calculate the two-sided p-value", 
+        "gender_discrimination_perm %>%", "  summarize(p_value = ___)"
+        ), out.width.px = 480, out.height.px = 288, params.src = "pvalue_5, exercise=TRUE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r"))
+</script>
+ <!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["header-attrs"]},{"type":"character","attributes":{},"value":["2.9"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pandoc"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["header-attrs.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"character","attributes":{},"value":["<style>h1 {font-size: 34px;}\n       h1.title {font-size: 38px;}\n       h2 {font-size: 30px;}\n       h3 {font-size: 24px;}\n       h4 {font-size: 18px;}\n       h5 {font-size: 16px;}\n       h6 {font-size: 12px;}\n       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}\n       pre:not([class]) { background-color: white }<\/style>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.10.1.9009"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.10.1.9009"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.10.1.9009"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["i18n"]},{"type":"character","attributes":{},"value":["1.2.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/i18n"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["i18next.min.js","tutorial-i18n-init.js"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["<script id=\"i18n-cstm-trns\" type=\"application/json\">{\"language\":\"en\",\"resources\":{\"en\":{\"translation\":{\"button\":{\"runcode\":\"Run Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Hint\",\"hint_plural\":\"Hints\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Next Hint\",\"hintprev\":\"Previous Hint\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copy to Clipboard\",\"startover\":\"Start Over\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continue\",\"submitanswer\":\"Submit Answer\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Previous Topic\",\"nexttopic\":\"Next Topic\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Try Again\"},\"text\":{\"startover\":\"Start Over\",\"areyousure\":\"Are you sure you want to start over? (all exercise progress will be reset)\",\"youmustcomplete\":\"You must complete the\",\"exercise\":\"exercise\",\"exercise_plural\":\"exercises\",\"inthissection\":\"in this section before continuing.\",\"code\":\"Code\",\"enginecap\":\"{{engine}} $t(text.code)\",\"quiz\":\"Quiz\"}}},\"fr\":{\"translation\":{\"button\":{\"runcode\":\"Lancer le Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Indication\",\"hint_plural\":\"Indications\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Indication Suivante\",\"hintprev\":\"Indication Précédente\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copier dans le Presse-papier\",\"startover\":\"Recommencer\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuer\",\"submitanswer\":\"Soumettre\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Chapitre Précédent\",\"nexttopic\":\"Chapitre Suivant\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Réessayer\"},\"text\":{\"startover\":\"Recommencer\",\"areyousure\":\"Êtes-vous certains de vouloir recommencer? (La progression sera remise à zéro)\",\"youmustcomplete\":\"Vous devez d'abord compléter\",\"exercise\":\"l'exercice\",\"exercise_plural\":\"des exercices\",\"inthissection\":\"de cette section avec de continuer.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\"}}},\"es\":{\"translation\":{\"button\":{\"runcode\":\"Ejecutar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Pista\",\"hint_plural\":\"Pistas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Siguiente pista\",\"hintprev\":\"Pista anterior\",\"solution\":\"Solución\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar al portapapeles\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar respuesta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tema anterior\",\"nexttopic\":\"Tema siguiente\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Volver a intentar\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"¿De verdad quieres empezar de nuevo? (todo el progreso del ejercicio se perderá)\",\"youmustcomplete\":\"Debes completar\",\"exercise\":\"el ejercicio\",\"exercise_plural\":\"los ejercicios\",\"inthissection\":\"en esta sección antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Cuestionario\"}}},\"pt\":{\"translation\":{\"button\":{\"runcode\":\"Executar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Dica\",\"hint_plural\":\"Dicas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Próxima dica\",\"hintprev\":\"Dica anterior\",\"solution\":\"Solução\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar para a área de transferência\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar resposta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tópico anterior\",\"nexttopic\":\"Próximo tópico\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tentar novamente\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"Tem certeza que deseja começar novamente? (todo o progresso feito será perdido)\",\"youmustcomplete\":\"Você deve completar\",\"exercise\":\"o exercício\",\"exercise_plural\":\"os exercícios\",\"inthissection\":\"nesta seção antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\"}}},\"tr\":{\"translation\":{\"button\":{\"runcode\":\"Çalistirma Kodu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Ipucu\",\"hint_plural\":\"Ipuçlari\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Sonraki Ipucu\",\"hintprev\":\"Önceki Ipucu\",\"solution\":\"Çözüm\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Pano'ya Kopyala\",\"startover\":\"Bastan Baslamak\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Devam et\",\"submitanswer\":\"Cevabi onayla\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Önceki Konu\",\"nexttopic\":\"Sonraki Konu\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tekrar Deneyin\"},\"text\":{\"startover\":\"Bastan Baslamak\",\"areyousure\":\"Bastan baslamak istediginizden emin misiniz? (tüm egzersiz ilerlemesi kaybolacak)\",\"youmustcomplete\":\"Tamamlamalisin\",\"exercise\":\"egzersiz\",\"exercise_plural\":\"egzersizler\",\"inthissection\":\"devam etmeden önce bu bölümde\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Sinav\"}}},\"emo\":{\"translation\":{\"button\":{\"runcode\":\"<U+0001F3C3>\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"<U+0001F4A1>\",\"hint_plural\":\"$t(button.hint)\",\"hinttitle\":\"$t(button.hint)\",\"solution\":\"<U+0001F3AF>\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"<U+0001F4CB>\",\"startover\":\"<U+23EE>\",\"startovertitle\":\"Start Over\",\"continue\":\"<U+2705>\",\"submitanswer\":\"<U+0001F197>\",\"submitanswertitle\":\"Submit Answer\",\"previoustopic\":\"<U+2B05>\",\"nexttopic\":\"<U+27A1>\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"<U+0001F501>\"},\"text\":{\"startover\":\"<U+23EE>\",\"areyousure\":\"<U+0001F914>\",\"youmustcomplete\":\"<U+26A0><U+FE0F> <U+0001F449> <U+0001F9D1><U+200D><U+0001F4BB>\",\"exercise\":\"\",\"exercise_plural\":\"\",\"inthissection\":\"\",\"code\":\"<U+0001F4BB>\",\"enginecap\":\"$t(text.code) {{engine}}\"}}},\"eu\":{\"translation\":{\"button\":{\"runcode\":\"Kodea egikaritu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Laguntza\",\"hint_plural\":\"Laguntza\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Aurreko laguntza\",\"hintprev\":\"Hurrengo laguntza\",\"solution\":\"Ebazpena\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Arbelean kopiatu\",\"startover\":\"Berrabiarazi\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Jarraitu\",\"submitanswer\":\"Erantzuna bidali\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Aurreko atala\",\"nexttopic\":\"Hurrengo atala\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Berriro saiatu\"},\"text\":{\"startover\":\"Berrabiarazi\",\"areyousure\":\"Berriro hasi nahi duzu? (egindako lana galdu egingo da)\",\"youmustcomplete\":\"Aurrera egin baino lehen atal honetako\",\"exercise\":\"ariketa egin behar duzu.\",\"exercise_plural\":\"ariketak egin behar dituzu.\",\"inthissection\":\"\",\"code\":\"Kodea\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Galdetegia\"}}}}}<\/script>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.10.1.9009"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["navigation"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/navigation-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tabsets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["default.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["1.11.3"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/jquery"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["5.1.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.css","css/v4-shims.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.9"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["4.4.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["idb-keyvalue"]},{"type":"character","attributes":{},"value":["3.2.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/idb-keyval"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["idb-keyval-iife-compat.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.10.1.9009"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-autocompletion"]},{"type":"character","attributes":{},"value":["0.10.1.9009"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-autocompletion.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-diagnostics"]},{"type":"character","attributes":{},"value":["0.10.1.9009"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-diagnostics.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["kePrint"]},{"type":"character","attributes":{},"value":["0.0.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["kePrint-0.0.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["kePrint.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["kableExtra"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.3.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["lightable"]},{"type":"character","attributes":{},"value":["0.0.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lightable-0.0.1"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["lightable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["kableExtra"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.3.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["kePrint"]},{"type":"character","attributes":{},"value":["0.0.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["kePrint-0.0.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["kePrint.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["kableExtra"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.3.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["lightable"]},{"type":"character","attributes":{},"value":["0.0.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lightable-0.0.1"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["lightable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["kableExtra"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.3.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.2.6"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["1.5.15"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.10.1.9009"]}]}]}
+</script>
+<!--/html_preserve-->
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="execution_dependencies">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99]}},"value":[{"type":"character","attributes":{},"value":["airports","assertthat","backports","base","broom","bslib","cellranger","checkmate","cherryblossom","cli","colorspace","compiler","crayon","curl","datasets","DBI","dbplyr","digest","dplyr","ellipsis","emo","evaluate","fansi","farver","fastmap","forcats","fs","generics","ggplot2","glue","graphics","grDevices","grid","gridExtra","gtable","haven","highr","hms","htmltools","htmlwidgets","httpuv","httr","infer","janitor","jquerylib","jsonlite","kableExtra","knitr","labeling","later","learnr","lifecycle","lubridate","magrittr","markdown","methods","mime","modelr","munsell","openintro","pillar","pkgconfig","promises","purrr","R6","Rcpp","readr","readxl","reprex","rlang","rmarkdown","rprojroot","rstudioapi","rvest","sass","scales","shiny","snakecase","stats","stringi","stringr","svglite","systemfonts","tibble","tidyr","tidyselect","tidyverse","tools","usdata","utf8","utils","vctrs","viridisLite","webshot","withr","xfun","xml2","xtable","yaml"]},{"type":"character","attributes":{},"value":["0.1.0","0.2.1","1.2.1","4.0.2","0.7.8","0.2.5.1","1.1.0","2.0.0","0.1.0","3.0.1","2.0-1","4.0.2","1.4.1","4.3.1","4.0.2","1.1.1","2.1.1","0.6.27","1.0.7","0.3.2","0.0.0.9000","0.14","0.5.0","2.1.0","1.1.0","0.5.1","1.5.0","0.1.0","3.3.5","1.4.2","4.0.2","4.0.2","4.0.2","2.3","0.3.0","2.4.1","0.9","1.1.0","0.5.1.1","1.5.3","1.6.1","1.4.2","1.0.0","2.1.0","0.1.4","1.7.2","1.3.4","1.33","0.4.2","1.2.0","0.10.1.9009","1.0.0","1.7.10","2.0.1","1.1","4.0.2","0.11","0.1.8","0.5.0","2.2.0","1.6.2","2.0.3","1.2.0.1","0.3.4","2.5.0","1.0.6","1.4.0","1.3.1","2.0.0","0.4.11","2.9","2.0.2","0.13","1.0.1","0.4.0","1.1.1","1.6.0","0.11.0","4.0.2","1.6.2","1.4.0","2.0.0","1.0.2","3.1.2","1.1.3","1.1.1","1.3.1","4.0.2","0.2.0","1.2.1","4.0.2","0.3.8","0.4.0","0.5.2","2.4.2","0.24","1.3.2","1.8-4","2.2.1"]}]}]}
+</script>
+<!--/html_preserve-->
+</div>
+
+</div> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h2 class="title toc-ignore" style="display:none;">Foundations of inference: randomization test</h2>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</div> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+<!-- Build Tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("section-TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+
+</body>
+
+</html>

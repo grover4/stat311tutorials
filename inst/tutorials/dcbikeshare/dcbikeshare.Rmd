@@ -1059,6 +1059,6 @@ Congratulations!
 Hopefully, you have enjoyed this lesson on modelling and data wrangling.
 
 
-##Acknowledgment
+## Acknowledgment
 
 This tutorial is exercpted from Data Science in a Box.

@@ -1,0 +1,675 @@
+---
+title: 'Foundations of inference: randomization test'
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+# load packages ------------------------------------------------
+
+library(learnr)
+library(kableExtra)
+library(tidyverse)
+library(infer)
+library(grid)
+library(gridExtra)
+library(emo)
+library(openintro)
+library(janitor)
+# knitr options ----------------------------------------------------------------
+knitr::opts_chunk$set(fig.align = "center", 
+                      fig.height = 3, 
+                      fig.width = 5,
+                      echo = FALSE, 
+                      message = FALSE, 
+                      warning = FALSE)
+# data prep --------------------------------------------------------------------
+# Read pre-permuted data
+
+gender_discrimination_new_perm <- read_rds("data/gender_discrimination_new_perm.rds")
+gender_discrimination_new <- read_rds("data/gender_discrimination_new.rds")
+gender_discrimination_perm <- read_rds("data/gender_discrimination_perm.rds")
+
+```{r gender-discrimination-perm-plot-setup}
+# Create data frame of permuted differences in promotion rates
+set.seed(1724)
+
+gender_discrimination_perm <- gender_discrimination %>%
+  # Specify decision vs. gender
+  specify(decision ~ gender, success = "promoted") %>%
+  # Set null hypothesis as independence
+  hypothesize(null = "independence") %>%
+  # Generate 1000 permutations
+  generate(reps = 1000, type = "permute") %>%
+  # Calculate difference in proportions
+  calculate(stat = "diff in props", order = c("male", "female"))
+```
+
+```{r pvalue4-setup}
+set.seed(274)
+gender_discrimination_new_perm <- gender_discrimination_new %>%
+  specify(decision ~ gender, success="promoted") %>%
+  hypothesize( null="independence") %>%
+  generate( reps=1000) %>% 
+  calculate( stat= "diff in props", order=c("male", "female") )
+  
+```
+## Completing a randomization test: gender discrimination
+
+The example in this lesson is taken from a paper on the _“Influence of sex role stereotypes on personnel decisions”_ by Rosen and Jerdee, 1974. 
+
+Forty-eight male bank supervisors were given personnel files and asked to judge whether the person should be promoted to a branch manager position. The files were all identical except that *half of them* indicated that the candidate was *male* and *the other half* indicated that the candidate was *female*.
+
+The data were then collected showing that 14 out of the 24 female files were selected for promotion and 21 of the 24 male files were selected for promotion. 
+
+### The data
+
+```{r}
+gender_discrimination %>%
+  count(gender, decision) %>%
+  pivot_wider(names_from = decision, values_from = n) %>%
+  adorn_totals(where = c("row", "col")) %>%
+  kable(format = "html", escape = FALSE) %>%
+  kable_styling("striped", full_width = FALSE)
+```
+
+### Summarizing gender discrimination
+
+As the first step of any analysis, you should look at and summarize the data. 
+Categorical variables are often summarized using proportions, and it is always important to understand the denominator of the proportion.
+
+Do you want the proportion of women who were promoted or the proportion of promoted individuals who were women? Here, you want the first of these, so in your R code it's necessary to group by `gender` **before** you calculate the proportions! 
+
+The discrimination study data are available in your workspace as `gender_discrimination`.
+
+- Using the `count()` function, tabulate the variables `gender` and `decision`.
+- Group the data by `gender`.
+- Calculate the proportion of those who were and were not promoted in each gender and call this variable `prop`.
+
+
+```{r gender-promoted, exercise=TRUE}
+gender_discrimination %>%
+  count(___, ___) %>%
+  group_by(___) %>%
+  mutate(___ = ___ / ___)
+```
+
+```{r gender-promoted-hint-1}
+gender_discrimination %>%
+  count(gender, decision) %>%
+  group_by(___) %>%
+  mutate(___ = ___ / ___)
+```
+
+```{r gender-promoted-hint-2}
+gender_discrimination %>%
+  count(gender, decision) %>%
+  group_by(gender) %>%
+  mutate(___ = ___ / ___)
+```
+
+```{r gender-promoted-hint-3}
+gender_discrimination %>%
+  count(gender, decision) %>%
+  group_by(gender) %>%
+  mutate(prop = ___ / ___)
+```
+
+```{r gender-promoted-hint-4}
+gender_discrimination %>%
+  count(gender, decision) %>%
+  group_by(gender) %>%
+  mutate(prop = ___ / sum(n))
+```
+
+```{r gender-promoted-solution}
+gender_discrimination %>%
+  count(gender, decision) %>%
+  group_by(gender) %>%
+  mutate(prop = n / sum(n))
+```
+
+After summarizing the data, the difference in promotions can be identified using rates. That is, 58.3% of the women were promoted whereas 87.5% of the men were promoted. The important statistical question to ask after looking at the data is as follows: *is it plausible to observe such a difference in proportions in a scenario where men and women are equally likely to be promoted?*
+
+```{r echo = FALSE, eval=FALSE}
+gender_discrimination %>%
+  count(gender, decision) %>%
+  group_by(gender) %>%
+  mutate(prop = n / sum(n))
+```
+
+
+
+### Shuffling the data
+
+If we shuffle the data so that gender and promotion are not linked in any way, what sort of chance differences are observed? 
+
+In the first shuffle of the data, we see that 17 women were promoted and 18 men were promoted, a difference in proportions of -0.04. Notice that the shuffled difference is closer to zero than the observed difference of 0.29.
+
+*First shuffle*
+
+```{r}
+dt <- tibble(
+  gender = c("female", "male", "Total"),
+  not = c(7, 6, 13),
+  promoted = c(17, 18, 35), Total = c(24, 24, 48)
+) %>%
+  mutate(
+    Total = ifelse(Total < 30,
+      cell_spec(Total, color = openintro::COL[4, 1], bold = T),
+      cell_spec(Total, color = "black")
+    ),
+    promoted = ifelse(promoted > 30,
+      cell_spec(promoted, color = openintro::COL[4, 1], bold = T),
+      cell_spec(promoted, color = "black")
+    )
+  )
+kable(dt, format = "html", escape = F) %>%
+  kable_styling("striped", full_width = F, position = "float_left")
+```
+
+```{r}
+randdiff <- data.frame(diff = c(17 / 24 - 18 / 24))
+ggplot(randdiff) +
+  geom_dotplot(aes(x = diff), binwidth = .05) +
+  geom_vline(xintercept = 21 / 24 - 14 / 24, color = openintro::COL[4, 1], lwd = 1.3) +
+  xlab("Difference in Proportions") +
+  theme(
+    axis.title.y = element_blank(), axis.text.y.left = element_blank(),
+    axis.ticks.y = element_blank(), panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(), panel.grid.major.x = element_line()
+  ) +
+  scale_x_continuous(breaks = seq(-0.5, 0.5, 0.1), limits = c(-0.5, 0.5))
+```
+
+Keep in mind that a fixed number of male and female resumes were given out, 24 of each. Additionally, assume that there were a fixed number of people allowed to be promoted, here 35. However, the shuffling process breaks the relationship between gender and promotion decision, which allows us to understand the variability of the differences in promotion rates assuming there is no connection between the two variables.
+
+### Random chance?
+
+Even though here gender doesn't play a role in determining promotion, we still typically don't have a difference of zero. That's because of the natural variability associated with which manager gets which file. But the point of the randomization process is to identify how different the proportions can be naturally and, on the other hand, how big a difference would have to be to make us think something unusual was going on.
+
+By shuffling the promotion variable repeatedly, not only do we see the variability in the null differences, but we also see that the observed statistic of 0.29 is on the extreme end of the plausible values generated by natural variability.
+
+```{r}
+p1 <- gender_discrimination_perm %>%
+  head(5) %>%
+  ggplot() +
+  geom_dotplot(aes(x = stat), binwidth = 0.03) +
+  geom_vline(xintercept = 21 / 24 - 14 / 24, color = openintro::COL[4, 1], lwd = 1.3)  +
+  xlab("Difference in Proportions") +
+  theme(
+    axis.title.y = element_blank(), axis.text.y.left = element_blank(),
+    axis.ticks.y = element_blank(), panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(), panel.grid.major.x = element_line()
+  ) +
+  scale_x_continuous(breaks = seq(-0.5, 0.5, 0.1), limits = c(-0.5, 0.5))
+p2 <- gender_discrimination_perm %>%
+  head(10) %>%
+  ggplot() +
+  geom_dotplot(aes(x = stat), binwidth = 0.03) +
+  geom_vline(xintercept = 21 / 24 - 14 / 24, color = openintro::COL[4, 1], lwd = 1.3)  +
+  xlab("Difference in Proportions") +
+  theme(
+    axis.title.y = element_blank(), axis.text.y.left = element_blank(),
+    axis.ticks.y = element_blank(), panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(), panel.grid.major.x = element_line()
+  ) +
+  scale_x_continuous(breaks = seq(-0.5, 0.5, 0.1), limits = c(-0.5, 0.5))
+p3 <- gender_discrimination_perm %>%
+  head(20) %>%
+  ggplot() +
+  geom_dotplot(aes(x = stat), binwidth = 0.03) +
+  geom_vline(xintercept = 21 / 24 - 14 / 24, color = openintro::COL[4, 1], lwd = 1.3)+
+  xlab("Difference in Proportions") +
+  theme(
+    axis.title.y = element_blank(), axis.text.y.left = element_blank(),
+    axis.ticks.y = element_blank(), panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(), panel.grid.major.x = element_line()
+  ) +
+  scale_x_continuous(breaks = seq(-0.5, 0.5, 0.1), limits = c(-0.5, 0.5))
+p4 <- gender_discrimination_perm %>%
+  head(50) %>%
+  ggplot() +
+  geom_dotplot(aes(x = stat), binwidth = 0.03) +
+  geom_vline(xintercept = 21 / 24 - 14 / 24, color = openintro::COL[4, 1], lwd = 1.3)  +
+  xlab("Difference in Proportions") +
+  theme(
+    axis.title.y = element_blank(), axis.text.y.left = element_blank(),
+    axis.ticks.y = element_blank(), panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(), panel.grid.major.x = element_line()
+  ) +
+  scale_x_continuous(breaks = seq(-0.5, 0.5, 0.1), limits = c(-0.5, 0.5))
+grid.arrange(p1, p2, p3, p4,
+  ncol = 2, nrow = 2
+)
+```
+
+```{r}
+gender_discrimination_perm %>%
+  ggplot() +
+  geom_dotplot(aes(x = stat), binwidth = .02) +
+  geom_vline(xintercept = 21 / 24 - 14 / 24, color = openintro::COL[4, 1], lwd = 1.3) +
+  xlab("Difference in Proportions") +
+  theme(
+    axis.title.y = element_blank(), axis.text.y.left = element_blank(),
+    axis.ticks.y = element_blank(), panel.grid.major.y = element_blank(),
+    panel.grid.minor = element_blank(), panel.grid.major.x = element_line()
+  ) +
+  scale_x_continuous(breaks = seq(-0.5, 0.5, 0.1), limits = c(-0.5, 0.5)) +
+  geom_label(label = "observed difference", color = openintro::COL[1, 1], x = 0.17, y = .85, cex = 3)
+grid.lines(
+  x = unit(c(0.6, 0.74), "npc"),
+  y = unit(c(0.77, 0.7), "npc"),
+  gp = gpar(fill = openintro::COL[1, 1], col = openintro::COL[1, 1]),
+  arrow = arrow(
+    length = unit(0.15, "inches"),
+    ends = "last", type = "closed"
+  )
+)
+```
+
+### Gender discrimination hypotheses 
+
+```{r hypotheses-mc}
+question(
+  "Which of the following null and alternative hypotheses are appropriate for the gender discrimination example described in the previous lesson?",
+  correct = "Correct!",
+  allow_retry = TRUE,
+  answer("H0: gender and promotion are unrelated variables. HA: men are more likely to be promoted.",
+    correct = TRUE
+  ),
+  answer("H0: gender and promotion are unrelated variables. HA: women are more likely to be promoted.",
+    message = "Not quite, the researchers are expecting to see promotion bias in a particular direction (the alternative hypothesis)."
+  ),
+  answer("H0: men are more likely to be promoted. HA: gender and promotion are unrelated variables.",
+    message = "Remember, the null hypothesis always contains the claim that there is no effect of the variables."
+  ),
+  answer("H0: women are more likely to be promoted. HA: gender and promotion are unrelated variables.",
+    message = "Remember, the null hypothesis always contains the claim that there is no effect of the variables."
+  )
+)
+```
+
+
+
+### Step-by-step through the permutation
+
+To help you understand the code used to create the randomization distribution, this exercise will walk you through the steps of the infer framework. In particular, you'll see how differences in the generated replicates affect the calculated statistics. 
+
+For simplicity, we'll keep our permutation to just 5 replicates -- in reality we would want this value to be much larger. 
+
+In the code chunk below,  
+
+- we start with our data frame: `gender_discrimination`,
+- then we specify our model where `decision` is the response variable and `gender` is the explanatory (grouping) variable, and we note that we're calling `"promoted"` a *success*, 
+- then we set our null hypothesis as `"independence"` (no gender discrimination), and 
+- finally we permute 5 times under the specification we outlined so far.
+
+```{r, echo = TRUE}
+gender_discrimination %>%
+  specify(decision ~ gender, success = "promoted") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 5, type = "permute")
+```
+
+The resulting data frame has 240 rows: 48 observations per replicate (just like in the original `gender_discrimination` data) * 5 replicates.
+
+In the next exercise, 
+
+- Re-generate a permutation just like above and save the result as `gender_discrimination_perm5`. 
+- Add a layer to `calculate()` the statistic of interest. Set `stat` to `"diff in props"` and `order` to `c("male", "female")` to subtract proportion of promoted females from proportion of males.
+
+```{r perm5, exercise=TRUE}
+# Permute 5 times
+
+```
+
+```{r perm5-hint-1}
+gender_discrimination_perm5 %>%
+  specify( decision ~ gender, success="promoted")
+```
+
+```{r perm5-hint-2}
+gender_discrimination_perm5 %>%
+  specify( decision ~ gender, success="promoted") %>%
+  hypothesize(null="independence")
+```
+
+```{r perm5-hint-3}
+gender_discrimination_perm5 %>%
+  specify( decision ~ gender, success="promoted") %>%
+  hypothesize(null="independence") %>% 
+  generate(reps=5, type="permute") 
+```
+
+```{r perm5-hint-4}
+gender_discrimination_perm5 %>%
+  specify( decision ~ gender, success="promoted") %>%
+  hypothesize(null="independence") %>% 
+  generate(reps=5, type="permute") %>%
+  calculate(stat="diff in props", order=___)
+```
+
+
+```{r perm5-solution}
+gender_discrimination_perm5 <- gender_discrimination %>%
+  specify(decision ~ gender, success = "promoted") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 5, type = "permute")
+   calculate(stat = "diff in props", order = c("male", "female"))
+```
+
+Well done! Each replicate had slightly different counts of promotion and gender, which led to slightly different statistics being calculated for each replicate.
+
+### Bumping up the reps
+
+In this exercise, you'll create a randomization distribution of the null statistic with 1000 replicates as opposed to just 5 in the previous exercise and then make a picture of the distribution. As a reminder, the statistic of interest is the difference in proportions promoted between genders (i.e. proportion for males minus proportion for females).
+
+(1) Create a data frame `gender_discrimination_perm_1000` of 1,000 permuted differences in promotion rates
+
+```{r gender-discrimination-perm-1000, exercise=TRUE}
+# Create data frame of 1,000 permuted differences in promotion rates
+set.seed(1724)
+
+```
+
+```{r gender-discrimination-perm-1000-hint-1}
+set.seed(1724)
+gender_discrimination_perm_1000 <- gender_discrimination %>%
+  specify(___, success = "promoted") %>%
+  hypothesize(null = "___") %>%
+  generate(reps = ___, type = "___") %>%
+  calculate(stat = "___", order = c("male", "female"))
+```
+
+```{r gender-discrimination-perm-1000-hint-2}
+set.seed(1724)
+gender_discrimination_perm_1000 <- gender_discrimination %>%
+  specify(decision ~ gender, success = "promoted") %>%
+  hypothesize(null = "___") %>%
+  generate(reps = ___, type = "___") %>%
+  calculate(stat = "___", order = c("male", "female"))
+```
+
+```{r gender-discrimination-perm-1000-hint-3}
+set.seed(1724)
+gender_discrimination_perm_1000 <- gender_discrimination %>%
+  specify(decision ~ gender, success = "promoted") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = ___, type = "___") %>%
+  calculate(stat = "___", order = c("male", "female"))
+```
+
+```{r gender-discrimination-perm-1000-hint-4}
+set.seed(1724)
+
+gender_discrimination_perm_1000 <- gender_discrimination %>%
+  specify(decision ~ gender, success = "promoted") %>%
+  hypothesize(null = "independence") %>%
+  generate(reps = 1000, type = "permute") %>%
+  calculate(stat = "___", order = c("male", "female"))
+```
+
+```{r gender-discrimination-perm-1000-solution}
+# Create data frame of permuted differences in promotion rates
+set.seed(1724)
+
+gender_discrimination_perm_1000 <- gender_discrimination %>%
+  # Specify decision vs. gender
+  specify(decision ~ gender, success = "promoted") %>%
+  # Set null hypothesis as independence
+  hypothesize(null = "independence") %>%
+  # Generate 1000 permutations
+  generate(reps = 1000, type = "permute") %>%
+  # Calculate difference in proportions
+  calculate(stat = "diff in props", order = c("male", "female"))
+```
+
+### 
+
+(2) Draw a histogram of permuted differences.
+
+- Using the permutation dataset, `gender_discrimination_perm_1000` (which we already calculated), plot the distribution of test statistics (`stat`).
+- Specify a histogram layer with `geom_histogram()`, where the `binwidth` is set to `0.01`.
+- Add a vertical line with `geom_vline()`, and specify the `xintercept` as 29.2, the difference in promotion rates between males and females in the original data set.
+
+```{r gender-discrimination-perm-plot, exercise.setup="gender-discrimination-perm-plot-setup", exercise=TRUE}
+# Using permutation data, plot stat
+ggplot(gender_discrimination_perm_1000, aes(x = ___)) + 
+  # Add a histogram layer
+  ___(binwidth = 0.01) +
+  # Add a vertical line at diff_orig
+  ___(aes(xintercept = ___), color = "red")
+```
+
+```{r gender-discrimination-perm-plot-hint-1}
+ggplot(gender_discrimination_perm_1000, aes(x = stat)) + 
+  ___(binwidth = 0.01) +
+  ___(aes(xintercept = ___), color = "red")
+```
+
+```{r gender-discrimination-perm-plot-hint-2}
+ggplot(gender_discrimination_perm_1000, aes(x = stat)) + 
+  ___(binwidth = 0.01) +
+  ___(aes(xintercept = ___), color = "red")
+```
+
+```{r gender-discrimination-perm-plot-hint-3}
+ggplot(gender_discrimination_perm_1000, aes(x = stat)) + 
+  geom_histogram(binwidth = 0.01) +
+  ___(aes(xintercept = ___), color = "red")
+```
+
+```{r gender-discrimination-perm-plot-solution}
+# Using permutation data, plot stat
+ggplot(gender_discrimination_perm_1000, aes(x = stat)) + 
+  # Add a histogram layer
+  geom_histogram(binwidth = 0.01) +
+  # Add a vertical line at diff_orig
+  geom_vline(aes(xintercept = diff_orig), color = "red")
+```
+
+
+
+```{r reflect-mc}
+question(
+  "Based on the plot you created in the last exercise, which of the following seems like a reasonable conclusion about promotions?",
+  correct = "Good job! There are very few permuted differences which are as extreme as the observed difference, but there cannot be a causative conclusion because the study was observational.", allow_retry = TRUE,
+  answer("In the population there is no evidence that women are discriminated against.", message = "No, try again. Look at the curves to see if the observed data is consistent with the null hypothesis."),
+  answer("In the population there is no evidence that women are promoted at a different rate from men.", message = "No, try again. Look at the curves to see if the observed data is consistent with the null hypothesis."),
+  answer("In the population there is evidence that women are discriminated against.", message = "Incorrect. Although there is evidence of differential rates of promotion, the study was not set up to understand why the rates of promotion are different."),
+  answer("In the population there is evidence that women are promoted at a different rate, but we cannot tell whether the difference is due to discrimination or something else.", correct = TRUE)
+)
+```
+
+### Null distribution
+
+It seems as though the statistic— difference in promotion rates of 0.2917—is on the extreme end of the permutation distribution.
+That is, there are very few permuted differences which are as extreme as the observed difference.
+
+To quantify the extreme permuted (null) differences, we calculate a p-value.
+
+## Definition of p-value
+
+A p-value is the _probability of observing data as or more extreme than what we actually got, assuming the null hypothesis is true_.
+
+In this example, the p-value (0.03) is the _probability of observing a difference of 0.2917 or greater assuming that promotion rates do not vary across gender_.
+
+### Calculating the p-values
+
+p-value measures the degree of disagreement between the data and the null hypothesis. Here, you will calculate the p-value for the original discrimination dataset.
+
+Recall that you're only interested in the question, "Are men __more likely__ to be promoted than women?" 
+Thus, the p-value (which represents how often a null value is more *extreme*) would be calculated by counting the number of null values which are `greater` than the original difference. 
+
+To retrieve the p-value, we can use the `get_p_value()` function, which comes in the infer package. 
+This function has three arguments (inputs): 
+
+1. a dataset with permuted statistics (output from `generate()`) 
+2. the observed statistic (`obs_stat`) 
+3. the direction of the alternative hypothesis ("greater", "less", or "two-sided")
+
+We can also use the `visualize()` function to visualize where the observed statistic falls in the distribution of permuted statstics, and shade the direction that the p-value was calculated from. 
+The `visualize()` function has many inputs (find out more by typing `?visualize` in your console), but the most important ones are the __same__ as the `get_p_value()` function!  
+
+Now, use the `visualize()` and `get_p_value()` functions for the original dataset. 
+First `visualize()` where the p-value lies on the distribution, and then calculate the p-value. 
+
+- You can test out the different methods for calculating the p-value by trying out: `direction = "greater"`, `direction = "two_sided"`, and `direction = "less"`. 
+
+```{r pvalue, exercise.setup="gender-discrimination-perm-plot-setup"}
+# Visualize and calculate the p-value for the original dataset
+gender_discrimination_perm_1000 %>%
+  ___(obs_stat = ___, direction = "___") %>%
+  ___(___, ___)
+
+```
+
+
+
+```{r pvalue-solution}
+# Visualize and calculate the p-value for the original dataset
+gender_discrimination_perm_1000 %>%
+  visualize(obs_stat = diff_orig, direction = "greater") %>%
+  get_p_value(obs_stat = diff_orig, direction = "greater")
+
+```
+
+Well done! You may have noticed that the observed statistic is borderline "significant" (p-value = 0.03) for the original data. 
+
+### Practice calculating p-values
+
+In the original dataset, 87.5% of the men were promoted and 58.3% of the women were promoted.
+
+Consider a situation where there are 24 men, 24 women, and 35 people are still promoted. But in this new scenario, 75% of the men are promoted and 70.8% of the women are promoted. Does the difference in promotion rates still appear to be "statistically significant"? That is, could this difference in promotion rates have come from random chance?
+
+You'll analyze these new data, contained in `gender_discrimination_new`, using the same permutation algorithm from before.
+
+  (1) Calculate the proportion of those who were and were not promoted in each gender and call this variable `prop`.  
+
+
+```{r pvalue_2, exercise=TRUE}
+#Code from before
+#gender_discrimination %>%
+#  count(gender, decision) %>%
+#  group_by(gender) %>%
+#  mutate(prop = n / sum(n))
+```
+
+
+
+```{r pvalue_2-solution}
+
+# Count the promotions for each gender in the new data
+gender_discrimination_new %>% 
+  count(gender, decision) %>%
+  group_by(gender) %>% 
+  mutate(prop=n()/sum(n))
+```
+
+ (2) Create a new permutation dataset, `gender_discrimination_new_perm` using the specify, hypothesize, generate and calculate workflow. 
+
+```{r pvalue_3, exercise=TRUE}
+
+set.seed(237)
+gender_discrimination_new_perm <- gender_discrimination_new %>%
+  specify() %>%
+  hypothesize( ) %>%
+  generate( ) %>% 
+  calculate( stat=___)
+  
+```
+
+
+
+ (3) Calculate the p-value of the new permutation dataset, `gender_discrimination_new_perm`, and the new observed difference.
+
+
+```{r pvalue_4, exercise=TRUE, exercise.setup="pvalue4-setup"}
+gender_discrimination_new_perm %>%
+  visualize() %>%
+   get_p_value(________)
+```
+
+```{r pvalue_4-solution}
+# Recall the p-value from the original data
+gender_discrimination_perm %>%
+  summarize(p_value = mean(diff_orig <= stat))
+# Find the p-value from the new data
+gender_discrimination_new_perm %>%
+  summarize(p_value = mean(diff_orig_new <= stat))
+```
+
+
+Great work!  Notice that the permutation differences (the two histograms) are essentially the same regardless of whether the original or the new dataset is used. Why do you think that is? 
+
+**Hint:** Does the null hypothesis depend on the dataset, or is it the same for both? 
+
+### Calculating two-sided p-values
+
+What if the original research hypothesis had focused on *any* difference in promotion rates between men and women instead of focusing on whether men are *more likely* to be promoted than women?  In this case, a difference like the one observed would occur twice as often (by chance) because sometimes the difference would be positive and sometimes it would be negative.
+
+When there is no directionality to the alternative hypothesis, the hypothesis and p-value are considered to be *two-sided*. In a two-sided setting, the p-value is double the one-sided p-value.
+
+In this exercise, you'll calculate a two-sided p-value given the original randomization distribution and dataset.
+
+The observed difference is stored in `diff_orig` and the difference in each permutation is the `stat` column of `gender_discrimination_perm`.
+
+Use the `summarize()` function to calculate the two-sided p-value. 
+You will use the p-value calculation from the previous exercise, and make the modification that the p-value is equal to twice the value of the original. 
+
+
+```{r pvalue_5, exercise=TRUE}
+# Calculate the two-sided p-value
+gender_discrimination_perm %>%
+  summarize(p_value = ___)
+```
+
+```{r pvalue_5-hint}
+gender_discrimination_perm %>%
+  summarize(p_value = 2 * mean(___ <= stat))
+```
+
+```{r pvalue_5-solution}
+# Calculate the two-sided p-value
+gender_discrimination_perm %>%
+  summarize(p_value = 2 * mean(diff_orig <= stat))
+```
+
+Good job!  Notice, from the calculation, that the two-sided p-value is twice as big as the one-sided p-value. Two-sided p-values are often advocated for, as a way of avoiding making false "significance" claims.
+
+## Summary of gender discrimination
+
+The observed gender discrimination data is not really consistent with the permuted null differences. Only 30 of the 1000 permuted differences were larger than or equal to the observed statistic. That is, we would have observed data like ours only 3% of the time if men and women were equally likely to be promoted. 
+
+```{r echo = TRUE}
+gender_discrimination_perm %>%
+  summarize(pvalue = mean(diff_orig <= stat)) 
+```
+
+```{r}
+ggplot(gender_discrimination_perm) +
+  geom_histogram(aes(x = stat)) + 
+  geom_vline(xintercept = diff_orig, color = openintro::COL[4,1])
+```
+  
+
+Pay special attention to how the p-value is computed here. First we identify permuted differences that are larger than or equal to the observed statistic and label those situations TRUE (or a value of 1), all other permutations FALSE (or a value of 0). By averaging the 0s and 1s, we can use the `mean()` to find the proportion of times the permuted difference is larger than or equal to the observed difference. 
+
+Because 0.03 is less than 0.05, we decide to reject the null hypothesis in favor of the alternative, claiming that men are promoted at a higher rate than women. That is, we conclude that it was not simply random variability which led to a higher proportion of men being promoted. A p-value of 0.03 is reasonably close to 0.05 which means we should be somewhat careful in making strong claims. We should take the results as a indication that more work should be done on the claims. Indeed, in 40 years since this research was published, many social scientists have been able to replicate research on gender discrimination in the workforce.
+
+Because the study was randomized, that is, they randomly assigned the resumes to the managers, there is nothing systematically different about the two groups except the name on the resume. As an example, it wouldn't make sense to have given the female resumes to the first 24 managers who arrived at the training. Those early arriving individuals might be less inclined to promote anyone given their strict adherence to being on time.
+
+The only difference in the two groups, both the participants as well as the resumes, was the name on the top of the resume.
+
+Therefore, we can conclude that *any difference in promotion rates is due to the gender of the applicant*. That is, we can infer a __causal__ connection between the gender of the applicant being male and a higher promotion rate.
+
+The 35 individuals in the sample were not randomly sampled from all possible American bank managers; they were at a management training session. In order to generalize the results of the study to a larger population, we would need more information about the study and careful thinking about who the study participants might represent.
+
+    
+## Congratulations!
+
+You have successfully completed Lesson 2 in Tutorial 5: Introduction to Statistical Inference. 
