@@ -16,9 +16,6 @@ description: >
 
 ```{r setup, include=FALSE}
 
-#devtools::install_github("ropenscilabs/icon",force=T)
-#devtools::install_github("rundel/learnrhash")
-
 #load packages ---------------------------------
 
 library(learnr)
@@ -39,7 +36,6 @@ gradethis_setup()
 ---
 
 ## Introduction 
-
 
 **ggplot2** is tidyverse's data visualization package - The `gg` in "ggplot2" stands for Grammar of Graphics because the package is inspired by a similarly titled book written by Leland Wilkinson. The book develops a grammar for graphics that enable us to concisely describe the components of a graphic. Specifically, each component is thought of as a layer which gets added on.
 
@@ -184,6 +180,7 @@ Let's create a plot to examine the relationship between engine size (`displ`) an
 ```
 
 
+
 ```{r cty-displ-plot-solution}
 ggplot(data=mpg, mapping=aes(x=displ,y=cty)) + 
       geom_point() + 
@@ -195,8 +192,7 @@ ggplot(data=mpg, mapping=aes(x=displ,y=cty)) +
 ```
 
 
-`r fontawesome::fa("question-circle")` How does the relationship between fuel efficiency and engine size change depending on city or highway driving? Look at the y-axis on both graphs. Also pay attention to the scatter of the points.
- 
+
 Next, we will consider adding some color to our plot which can greatly help with understanding patterns in the data.
 
 ### Color coding points
@@ -270,7 +266,7 @@ ggplot(data = mpg, mapping= aes(x=displ, y=hwy, color=class)) +
   geom_point()
 ```
 
-ggplot2 added a default scale for each aesthetic. 
+ggplot2 added a default scale for each aesthetic behind the scenes. 
 
 ```{r, echo=T, eval=F}
 ggplot(data = mpg, 
@@ -525,6 +521,17 @@ ggplot(
 
   
 ```
+
+```{r facet-species-sex-hint}
+ggplot(
+  penguins, 
+  aes(x = bill_depth_mm, 
+      y = bill_length_mm)) + 
+  geom_point() +
+  
+
+```
+
 
 ```{r facet-species-sex-solution}
 ggplot(
