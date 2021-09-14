@@ -179,7 +179,13 @@ Let's create a plot to examine the relationship between engine size (`displ`) an
 
 ```
 
-
+```{r cty-displ-plot-hint}
+#code out loud:
+# - start with the mpg data frame
+# - map displ to the x-axis and  the y-axis
+# - represent each observation with a point and 
+# - give the plot a title, subtitle, axis labels 
+```
 
 ```{r cty-displ-plot-solution}
 ggplot(data=mpg, mapping=aes(x=displ,y=cty)) + 
@@ -317,6 +323,25 @@ Create a plot of the relationship between `hwy` and `displ` which is faceted by 
 ```{r displ-hwy-facet-grid, exercise=TRUE}
 
 
+```
+
+```{r displ-hwy-facet-grid-hint-1}
+ggplot(data=mpg, 
+       mapping=aes( x=displ, y=hwy )) + 
+
+```
+
+```{r displ-hwy-facet-grid-hint-2}
+ggplot(data=mpg, 
+       mapping=aes( x=displ, y=hwy )) + 
+   geom_point() + 
+```
+
+```{r displ-hwy-facet-grid-hint-3}
+ggplot(data=mpg, 
+       mapping=aes( x=displ, y=hwy )) + 
+   geom_point() + 
+   facet_grid( ) + 
 ```
 
 ```{r displ-hwy-facet-grid-solution}
