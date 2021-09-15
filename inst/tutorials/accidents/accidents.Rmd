@@ -8,8 +8,7 @@ output:
 runtime: shiny_prerendered
 description: >
   Get more practice with data visualization and wrangling in the tidyverse: 
-  practice visualization with ggplot, and data handling with the filter() and 
-  mutate() functions.
+  practice visualization for categorical variables with ggplot, tabyl and mosaicplot 
 
 ---
 
@@ -22,6 +21,7 @@ description: >
 #load packages ------------------------------------------
 library(learnr)
 library(tidyverse)
+library(janitor)
 library(gradethis)
 
 # set options for exercises and checking ---------------------------------------
@@ -34,6 +34,9 @@ knitr::opts_chunk$set(echo = FALSE)
 accidents<-read_csv("accidents_2020.csv",skip=1,
                     col_names=c("id", "addr_type","location","severity_code","severity_desc","collision_type","person_count","ped_count","pedcyl_count","veh_count","injuries","serious_injuries","fatalities","inc_date","under_infl","weather","road","light","speeding","hit_parked_car"))
 
+
+accidents <- accidents %>%  mutate(light=na_if(light,"Unknown"), 
+                                  light=na_if(light, "Other") )
 ```
 
 ---
@@ -52,15 +55,15 @@ knitr::include_graphics("images/traffic.jpg")
 
 ### Learning goals
 
-- Continue practising data visualization skills with ggplot2. 
-- Filter data for certain attributes with `filter()`. 
-- Create new variables based on existing variables in the data with `mutate()`. 
+- Practice data visualization for categorical data  with ggplot. 
+- Make contingency tables for two categorical variables using tabyl.
+- Create and interpret mosaic plots.
 
 
 ### Packages
 
-We will use the **tidyverse** package for the analysis.
-This package is already installed for you, so you load it as usual with the `library` function:
+We will use the **tidyverse** package for the analysis and the **janitor** package for creating contingency tables.
+These packages are already installed for you, so you load it as usual with the `library` function:
 
 ```{r load-packages, exercise = TRUE}
 
@@ -69,13 +72,14 @@ This package is already installed for you, so you load it as usual with the `lib
 
 ```{r load-packages-solution}
 library(tidyverse)
+library(janitor)
 ```
 
 ```{r load-packages-check}
 grade_this_code("The packages are now loaded!")
 ```
 
-## Data
+## Data and codebook
 
 The data has been uploaded with this tutorial and is called `accidents` .
 
@@ -100,13 +104,13 @@ Below is an excerpt of the data dictionary also known as the code book.  Note th
 |`under_infl`| Whether or not the driver was under the influence of drugs or alcohol: **Y**, **N**
 |`weather`|A text description of the weather conditions during the collision
 |`road`|The condition of the road during the collision: **Dry**, **Wet**, **Ice**, **Sand/Mud/Dirt**, **Snow/Slush**, **Standing Water**, **Unknown**
-|`light`|Light conditions during the collision: **Dark - No Street Lights**, **Dark - Street Lights Off**, **Dark - Street Lights On**, **Dark - Unknown Lighting**, **Dusk**, **Dawn**, **Daylight**, **Other**, **Unknown**
+|`light`|Light conditions during the collision: **Dark - No Street Lights**, **Dark - Street Lights Off**, **Dark - Street Lights On**, **Dark - Unknown Lighting**, **Dusk**, **Dawn**, **Daylight**
 |`speeding`|  Whether or not speeding was a factor in the collision: **Y**, **N**
 |`hit_parked_car`|Whether or not the collision involved hitting a parked car: **Y**, **N**
 
 ### First look at the data
 
-You can take a peek at the data using the `glimpse()` function in the box below. You can also take a look at the first few rows of the dataset using `head()`.Try both in the code chunk below. 
+You can take a peek at the data using the `glimpse()` function in the box below. 
 
 ```{r glimpse-data, exercise = TRUE}
 
@@ -144,14 +148,14 @@ grade_this({
   if(identical(.result, 6509) | identical(.result, 6509L)) {
     pass("There are 6,509 rows, therefore, 6,509 accidents were recorded in Seattle in 2020.")
     }
-  if(identical(.result, 23) | identical(.result, 23L)) {
+  if(identical(.result, 20) | identical(.result, 20L)) {
     fail("Each observation is represented in one row. Did you calculate the number of columns instead of rows?")
     }
   fail("Not quite. Each observation is represented in one row. Try looking at the hints for some help!")
 })
 ```
 
-How many variables are recorded on each crash? Use the code chunk below.
+How many variables are recorded on each crash? Again, the output from `glimpse` gives the answer. But you can use `ncol()` to verify the answer. Try it.
 
 ```{r ncol, exercise=TRUE}
 
@@ -167,8 +171,8 @@ Try using ncol()!
 
 ```{r ncol-check}
 grade_this({
-  if(identical(.result, 23) | identical(.result, 23L)) {
-    pass("Since there are 23 columns in the dataset, we know that 23 variables are recorded.")
+  if(identical(.result, 20) | identical(.result, 20L)) {
+    pass("Since there are 20 columns in the dataset, we know that 20 variables are recorded.")
   }
   if(identical(.result, 6509) | identical(.result, 6509L)) {
     fail("Each variable is recorded in a column. Did you maybe use the number of rows?")
@@ -188,7 +192,7 @@ question("What type of variable is addr_type?",
 
 ## Multi-vehicle accidents
 
-Let's use `filter` to subset the data to those accidents with 2 or more vehicles. Use the hints in the code chunk below to perform the filtering. 
+How many accidents involved 2 or more vehicles?  Filter on `veh_count` to find out. 
 
 ``` {r filter-multi-car, exercise = TRUE}
 
@@ -223,7 +227,7 @@ grade_this({
 })
 ```
 
-For more practice with `filter`, try subsetting the data to include only those accidents that involved speeding. 
+How many accidents involved `speeding`?  
 
 ``` {r filter-speeding, exercise = TRUE}
 
@@ -249,7 +253,7 @@ grade_this({
 })
 ```
 
-For even more practice, how many accidents involved 2 or more vehicles and speeding?
+How many accidents involved 2 or more vehicles and speeding?
 
 ```{r filter-multi-car-speed, exercise=TRUE} 
 
@@ -274,64 +278,51 @@ grade_this({
 ```
 
 
-## Injuries
+## Location of accident
 
-The variable `injuries` describes the total number of injuries.
-Create a frequency table of the injuries. See hints for help.
+The variable `addr_type` describes the location of the accident.
+Where do the most accidents occur? Create a frequency table of the `addr_type` in decending order of frequency. See hints for help.
 
 
-```{r injuries-frequency,exercise=TRUE}
+```{r location-frequency,exercise=TRUE}
 
 ```
 
 
-```{r injuries-frequency-hint-1}
+```{r location-frequency-hint-1}
 See the help for the `count()` function, specifically the 
 `sort` argument for reporting the frequency table in descending order of counts, 
 i.e. highest on top.
 ```
 
-```{r injuries-frequency-hint-2}
+```{r location-frequency-hint-2}
 accidents %>% 
   ___ %>% (___, sort=TRUE)
 ```
 
-```{r injuries-frequency-hint-3}
+```{r location-frequency-hint-3}
 accidents %>%
-  count(injuries, sort = TRUE)
+  count(addr_type, sort = TRUE)
 ```
 
-```{r injuries-frequency-check}
+```{r location-frequency-check}
 grade_this({
-  if(identical(.result$n[1], 4613L)) {
+  if(identical(.result$n[1], 4060L)) {
     pass("You have created the correct frequency table!")}
   fail("Not quite. See the hints for help!")
  })
 ```
 
 
-```{r quiz-injuries}
-question("What is the most common number of injuries in the
-dataset?",
-    answer("0", correct = TRUE),
-    answer("1"),
-    answer("2"),
-    answer("3"),
-    answer("4"),
-    answer("5"),
-    answer("6"),
-    allow_retry = TRUE
-  )
-```
 
 
 ## Accident Severity
 
-Recreate the following plot. To match colors, you can use `scale_fill_viridis_d()`.
+Suppose we wish to compare accident severity (`severity_desc`) by the location of the accident (`addr_type`). Let's recreate the following segmented bar plot with the values of `addr_type` on the horizontal axis. Note that the rows that are missing the address type are not represented in the bar plot. This is achieved by filtering the data using the `is.na` function with `addr_type` as the argument.    To match my colors, use the `scale_fill_viridis_d()` layer as the scale associated with the fill variable.
 
 ```{r example-plot, fig.width=6,fig.height=4, echo=FALSE}
 
-ggplot(data=accidents %>% filter(severity_desc != "Unknown"), 
+ggplot(data=accidents %>% filter(!is.na(addr_type)), 
   mapping=aes(x=addr_type, fill=severity_desc)) +
       geom_bar(position = "fill")+
       labs(x="Location of accident",
@@ -343,19 +334,8 @@ ggplot(data=accidents %>% filter(severity_desc != "Unknown"),
 ```
 
 ```{r plot-severity, exercise = TRUE, fig.width=6, echo=FALSE, fig.height=4}
-ggplot(data = ___, aes(x = ___, ___ = ___)) +
-  geom____(___) +
-  ___() +
-  ___(y = ___, x = ___,
-       ___ = ___, 
-       title = ___) +
-  scale_color_viridis_d()
-```
 
-
-```{r plot-severity-hint-1}
-ggplot(data = ___, 
-       mapping=aes(x = ___, ___ = ___)) +
+ggplot(data = ___,   mapping=aes(x = ___, fill = ___)) +
   geom____(___) +
   ___(x = ___, y = ___,
        ___ = ___, 
@@ -363,13 +343,21 @@ ggplot(data = ___,
   scale_fill_viridis_d()
 ```
 
-```{r plot-severity-hint-2}
+```{r plot-severity-hint-1}
+#code out loud:
+# - start with the accidents data frame
+# - filter the data using !is.na(addr_type) 
+# - map addr type to the x-axis and severity desc to the fill 
+# - represent counts with a bar and 
+# - choose position as fill to create segmented bars
+# - give the plot a title, subtitle, axis labels 
+# - add a `scale_fill_viridis_d()` layer to change choose the         viridis palette for the fill theme
 
-filter the data to only include rows where severity-desc != "Unknown"
 ```
 
-```{r plot-severity-hint-3}
-ggplot(data = accidents %>% filter(severity_desc!= "Unknown"), 
+
+```{r plot-severity-hint-2}
+ggplot(data = accidents %>% filter( !is.na(addr_type) ), 
        mapping=aes(x = ___, fill = ___)) +
   geom_bar(___) +
   labs(x = ___, y = ___,
@@ -378,8 +366,8 @@ ggplot(data = accidents %>% filter(severity_desc!= "Unknown"),
   scale_fill_viridis_d()
 ```
 
-```{r plot-severity-hint-4}
-ggplot(data = accidents %>% filter(severity_desc != "Unknown"), 
+```{r plot-severity-hint-3}
+ggplot(data = accidents %>% filter( !is.na(addr_type) ), 
        mapping=aes(x = ___, fill = ___)) +
   geom_bar(position = ___) +
   labs(x = ___, y = ___,
@@ -388,8 +376,8 @@ ggplot(data = accidents %>% filter(severity_desc != "Unknown"),
   scale_fill_viridis_d()
 ```
 
-``` {r plot-severity-hint-5}
-ggplot(data = accidents %>% filter(severity_desc != "Unknown"), 
+``` {r plot-severity-hint-4}
+ggplot(data = accidents %>% filter( !is.na(addr_type) ), 
        mapping=aes(x = addr_type, fill = severity_desc)) +
   geom_bar(position = "fill") +
   labs(x = "Location of accident",
@@ -398,113 +386,142 @@ ggplot(data = accidents %>% filter(severity_desc != "Unknown"),
   scale_fill_viridis_d()
 ```
 
-```{r plot-severity-check}
-grade_this_code("Well done!")
+## Light conditions
+
+Let's now examine the relationship between the light conditions and whether or not it is related to parked cars being hit. In this section, our focus will be creating a contingency table and visualizing the relationship via a mosaicplot. 
+
+But first, let's take a look at the `light` variable and its frequency distribution.
+
+```{r light-values, exercise=TRUE}
+
+accidents %>% count(light)
 ```
 
-```{r plot-interpretation}
-question("Which of the following are true? Check all that apply.", 
-         answer("Most accidents involve property damage only",
-                correct = TRUE),
-         answer("Blocks and intersection have about the same number of serious injury collisions",
-                message = "The percentages are about the same, but not the counts necessarily"),
-         answer("Collisions in intersections tend to be the most severe in terms of injury",
-                correct = TRUE),
+As we can see, there are four categories of darkness. Perhaps we can combine them into fewer categories in some sensible manner? Additionally, the category labels are pretty long and which can result in messy labels in certain types of plots, so at the very least we want to shorten the labels. 
+
+### Recoding light
+
+There are many ways to recode the levels of a categorical variable. In this tutorial, we will focus on using `mutate` and `case_when` to make the change. The `case_when` function from `dplyr` is essentially multiple `ifelse` statements combined together. Each argument within the `case_when` function is a two sided formula separated by a tilda symbol `~`. The left hand side of the formula determines which values match this case. The right hand side provides the replacement value. The last line of the `case_when` holds true for all the categories not mentioned in the previous statements and these are all set to the values in the original variable.
+
+
+
+```{r, echo=TRUE}
+
+
+accidents <- accidents %>% 
+  mutate( light_short = case_when( light %in% c("Dark - No Street Lights",  "Dark - Street Lights Off") ~ "Dark", 
+                                   light == "Dark - Street Lights On"                                    ~ "Dark, lit", 
+                                                                      TRUE                               ~ light),
+          light_short = na_if(light_short, "Dark - Unknown Lighting") )
+
+
+```
+
+What does the above code do? The `case_when` function creates a new variable called `light_short` by 
+
+ - combining the categories "Dark - No Street Lights" and "Dark - Street Lights Off" and calling the new category "Dark" 
+
+ - and shortening the label for the category "Dark - Street Lights On" by replacing it with "Dark, lit".  
+
+The remaining categories are not altered by the `case_when` function. 
+
+Within the same `mutate` function, we are then replacing the category
+"Dark - Unknown Lighting" as a missing value  using the `na_if` function. This makes sense since we are interested in the impact of lighting which is unknown. 
+
+
+Run the following to examine the frequency distribution of the new variable we have just created. Compare the distribution with that of the original variable at the head of this subsection. 
+
+```{r change-light}
+
+accidents <- accidents %>% 
+  mutate( light_short = case_when( light %in% c("Dark - No Street Lights",  "Dark - Street Lights Off") ~ "Dark", 
+                                   light %in% c("Dark - Street Lights On", "Dark - Unknown Lighting") ~ "Dark, lit", 
+                                   TRUE                              
+                           ~ light)  , 
+         light_short = na_if(light_short, "Unknown"),
+         light_short = na_if(light_short, "Dark - Unknown Lighting"))
+
+
+```
+
+```{r count-light-short, exercise=TRUE, exercise.setup="change-light"}
+
+accidents %>% count(light_short)
+
+```
+
+Let's use this new more concise description of the light conditions to examine the relationship between light conditions and hitting parked cars.
+
+### Light condition and hitting parked cars
+
+Relationships between categorical variables are summarized via contingency tables. We can easily create a table using the `tabyl` function from the **janitor** package. Complete the blanks in the `tabyl` function to create a contingency table of the relationship between `light_short` and `hit_parked_car`.  
+
+```{r light-hit-table, exercise=TRUE, exercise.setup="change-light"}
+
+accidents %>%
+          tabyl(___, ____, show_na=___) %>%
+             adorn_totals()%>%
+             adorn_percentages(denominator="row") %>%
+             adorn_pct_formatting(digits=2) %>%
+             adorn_ns()
+
+```
+
+```{r light-hit-table-hint}
+#the explanatory goes first followed by the response
+```
+
+
+
+```{r table-interpretation}
+question("If the variables are independent, what fraction of parked cars should be hit regardless of the light condition?", 
+         answer(" 11.99% ",
+                correct = TRUE, message="Good job!"),
+         answer("27.45%%",
+                message = "This is the fraction of parked cars that get hit in the dark"),
+         answer("88.01%",
+                message = "This is the fraction of parked cars that should not get hit if the variables are independent"),
         allow_retry = TRUE
          )
 ```
 
-### Renaming values of categorical variables
-
-Many of the categorical variables in this data set have very descriptive (long) names for their values. An example is the severity description from the previous bar plot. This can result in messy labels in certain types of plots. There are many ways to change the labels of a categorical variable. In this tutorial, we will focus on using `mutate` and `case_when` to make the change. 
-
-The `case_when` function from `dplyr` is essentially multiple `if_else` statements combined together. 
-
-Consider the variable `light` for instance. The values it takes can be observed by creating a frequency table as we did with `injuries`.
-
-```{r light-values, echo=TRUE}
-accidents %>% count(light)
-```
-
-Let's shorten the names, but at the same time combine a few categories together. 
-
-Run the following code:
-
-```{r change-light, exercise=TRUE}
-accidents <- accidents %>% 
-  mutate( light_short = case_when( 
-                        light == "Dark - No Street Lights" | light == "Dark - Street Lights Off" ~ "Dark", 
-                        light == "Dark - Street Lights On" ~ "Dark, lit", 
-                        light == "Dawn"                    ~ "Dawn",
-                        light == "Daylight"                ~ "Daylight",
-                        light == "Dusk"                    ~ "Dusk", 
-                        TRUE                               ~ light)
-          )
-
-accidents %>% count(light_short)
-
-
-```
-
-What does the above code do? It creates a new variable called `light_short` which takes certain values depending on the value of the original `light` variable. The new variable is added to the `accidents` data set with the left assignment opertor.
-
-Each argument within the `case_when` function is a two sided formula separated by a tilda symbol `~`. The left hand side of the formula determines which values match this case. The right hand side provides the replacement value. The last line of the `case_when` holds true for all the categories not mentioned in the previous statements and these are all set to the values in the original variable.
-
-
-Let's use this new definition of the light variable to examine the relationship between light conditions and hitting parked cars.
-
-### Light conditions and hitting parked cars
+Comparing the percentage of hits that are expected under independence with the observed percentages in the contingency table confirms that the variables `light_short` and `hit_parked_car` are indeed related. In particular, accidents that occur during the daylight have much fewer instances of parked cars getting hit than would be expected if the variables were independent. Conversely, accidents that occur in the dark have many more instances of parked cars getting hit than should be expected. 
 
 A mosaic plot is a visual tool for examining the relationship between two categorical variables. 
 
-Create a mosaic plot of the relationship between `light_short` and `hit_parked_car` using just the rows where `light_short != "NA"`. 
-
-```{r change-light-for-real}
-
-accidents <- accidents %>% 
-  mutate( light_short = case_when( 
-                        light == "Dark - No Street Lights" | light == "Dark - Street Lights Off" ~ "Dark", 
-                        light == "Dark - Street Lights On" ~ "Dark, lit", 
-                        light == "Dawn"                    ~ "Dawn",
-                        light == "Daylight"                ~ "Daylight",
-                        light == "Dusk"                    ~ "Dusk", 
-                        TRUE                               ~ "NA")
-          )
+Create a mosaic plot of the relationship between `light_short` and `hit_parked_car` by filling in the blanks in the code below.
 
 
-```
+```{r light-severity-mosaic, exercise=TRUE, exercise.setup="change-light"}
 
+mosaicplot(___ ~ ____, data = _____, shade = ____ )
 
-```{r light-severity-mosaic, exercise=TRUE, exercise.setup="change-light-for-real"}
-
-accidents %>% filter(________) %>%
-         select(_____, ____) %>% 
-         table() %>% 
-         mosaicplot(shade=TRUE)
 ```
 
 
 ```{r light-severity-mosaic-hint-1}
 
-accidents %>% filter( light_short != "NA") %>%
-         select(_____, ____) %>% 
-         table() %>% 
-         mosaicplot(shade=TRUE)
+mosaicplot( __ ~ ___, data = ___, shade = TRUE)
 ```
 
 ```{r light-severity-mosaic-hint-2}
 
-accidents %>% filter( light_short != "NA") %>%
-         select(light_short, hit_parked_car) %>% 
-         table() %>% 
-         mosaicplot(shade=TRUE)
+mosaicplot(hit_parked_car ~ light_short, data=accidents, shade=TRUE) 
 ```
 
+
+Note that the mosaicplot function ignores the accidents for which the light conditions were missing by default, so we don't need to manually control how missing values are treated. 
+
+Looking at the plot, do we see any reds and blues? These are the cells that depart from independence by having too many or too few cases in them. Compare the colored cells in the mosaicplot with the percentages in the contingency table. 
+
+And finally, what can we conclude from the relationship between light conditions and hitting parked cars? Can we say that the darkness causes people to crash into parked cars? Why or why not? 
+
+<!---
 ```{r mosaic-plot-interpretation}
-question("Which of the following are true? Check all that apply.", 
+question("Which of the following is false? Check all that apply.", 
          answer("Most accidents do not involve parked cars getting hit",
-                correct = TRUE),
-         answer("The variables are independent ",
+                message=""),
+         answer("The variables are independent ", correct=TRUE,
                 message = "Some of the cells are colored blue or red, which suggests an association"),
          answer("There is a higher chance of a parked car being hit in the dark than during day light hours",
                 correct = TRUE),
@@ -512,10 +529,11 @@ question("Which of the following are true? Check all that apply.",
          )
 ```
 
+--->
 
 ## Finish Up
 
-Congratulations! You made it through the tutorial on visualizing categorical data!  
+Congratulations! You made it through the tutorial on visualizing categorical data! Hopefully you found it interesting and are feeling more comfortable with the concepts we have been learning in class today!
 
 ## Acknowledgements
 
