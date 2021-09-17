@@ -11,8 +11,7 @@ description: >
   by analysing bike share data from Washington D.C.
 ---
 
-<!-- Add JavaScript code for making the exercise code larger -->
-<script language="JavaScript" src="js/exercise-font-size.js"></script>
+
 
 ```{r setup, include=FALSE}
 # load packages ----------------------------------------------------------------
@@ -21,13 +20,15 @@ library(gradethis)
 library(tidyverse)
 library(tidymodels)
 library(dsbox)
+
 # set options for exercises and checking ---------------------------------------
 gradethis_setup()
+
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
 # data prep --------------------------------------------------------------------
 # create updted bike dataset for all exercises after wrangling
-mutatedbike <- dcbikeshare %>%
+mutatedbike <- dsbox::dcbikeshare %>%
   mutate(
     season = case_when(
       season == 1 ~ "winter",
@@ -35,16 +36,16 @@ mutatedbike <- dcbikeshare %>%
       season == 3 ~ "summer",
       season == 4 ~ "fall"
     ),
-    season = fct_relevel(season, "spring", "summer", "fall", "winter")) %>%
+    season = fct_relevel(season, "spring")) %>%
   mutate(
     holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no", "yes"),    
+    holiday = fct_relevel(holiday, "no"),    
     workingday = ifelse(workingday == 0, "no", "yes"),
-    workingday = fct_relevel(workingday, "no", "yes")
+    workingday = fct_relevel(workingday, "no")
   ) %>%
   mutate(
     yr = ifelse(yr == 0, "2011", "2012"),
-    yr = fct_relevel(yr, "2011", "2012")
+    yr = fct_relevel(yr, "2011")
   ) %>%
   mutate(
     weathersit = case_when(
@@ -53,7 +54,7 @@ mutatedbike <- dcbikeshare %>%
       weathersit == 3 ~ "light precipitation",
       weathersit == 4 ~ "heavy precipitation"
     ),
-    weathersit = fct_relevel(weathersit, "clear", "mist", "light precipitation")
+    weathersit = fct_relevel(weathersit, "clear")
   ) %>%
   mutate(
     temperature_raw = temp * 41,
@@ -63,154 +64,11 @@ mutatedbike <- dcbikeshare %>%
   )
 ```
 
-```{r recode-holiday-workingday-setup}
-dcbikeshare <- dsbox::dcbikeshare %>%
-  mutate(
-    season = case_when(
-      season == 1 ~ "winter",
-      season == 2 ~ "spring",
-      season == 3 ~ "summer",
-      season == 4 ~ "fall"
-    ),
-    season = fct_relevel(season, "spring", "summer", "fall", "winter")
-  )
-```
 
-```{r recode-yr-setup}
-dcbikeshare <- dsbox::dcbikeshare %>%
-  mutate(
-    season = case_when(
-      season == 1 ~ "winter",
-      season == 2 ~ "spring",
-      season == 3 ~ "summer",
-      season == 4 ~ "fall"
-    ),
-    season = fct_relevel(season, "spring", "summer", "fall", "winter")) %>%
-  mutate(
-    holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no", "yes"),    
-    workingday = ifelse(workingday == 0, "no", "yes"),
-    workingday = fct_relevel(workingday, "no", "yes")
-  )
-```
 
-```{r recode-weathersit-setup}
-dcbikeshare <- dsbox::dcbikeshare %>%
-  mutate(
-    season = case_when(
-      season == 1 ~ "winter",
-      season == 2 ~ "spring",
-      season == 3 ~ "summer",
-      season == 4 ~ "fall"
-    ),
-    season = fct_relevel(season, "spring", "summer", "fall", "winter")) %>%
-  mutate(
-    holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no", "yes"),    
-    workingday = ifelse(workingday == 0, "no", "yes"),
-    workingday = fct_relevel(workingday, "no", "yes")
-  ) %>%
-  mutate(
-    yr = ifelse(yr == 0, "2011", "2012"),
-    yr = fct_relevel(yr, "2011", "2012")
-  )
-```
 
-```{r recode-measures-setup}
-dcbikeshare <- dsbox::dcbikeshare %>%
-  mutate(
-    season = case_when(
-      season == 1 ~ "winter",
-      season == 2 ~ "spring",
-      season == 3 ~ "summer",
-      season == 4 ~ "fall"
-    ),
-    season = fct_relevel(season, "spring", "summer", "fall", "winter")) %>%
-  mutate(
-    holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no", "yes"),    
-    workingday = ifelse(workingday == 0, "no", "yes"),
-    workingday = fct_relevel(workingday, "no", "yes")
-  ) %>%
-  mutate(
-    yr = ifelse(yr == 0, "2011", "2012"),
-    yr = fct_relevel(yr, "2011", "2012")
-  ) %>%
-  mutate(
-    weathersit = case_when(
-      weathersit == 1 ~ "clear",
-      weathersit == 2 ~ "mist",
-      weathersit == 3 ~ "light precipitation",
-      weathersit == 4 ~ "heavy precipitation"
-    ),
-    weathersit = fct_relevel(weathersit, "clear", "mist", "light precipitation")
-  )
-```
 
-```{r check-cnt-setup}
-dcbikeshare <- dsbox::dcbikeshare %>%
-  mutate(
-    season = case_when(
-      season == 1 ~ "winter",
-      season == 2 ~ "spring",
-      season == 3 ~ "summer",
-      season == 4 ~ "fall"
-    ),
-    season = fct_relevel(season, "spring", "summer", "fall", "winter")) %>%
-  mutate(
-    holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no", "yes"),    
-    workingday = ifelse(workingday == 0, "no", "yes"),
-    workingday = fct_relevel(workingday, "no", "yes")
-  ) %>%
-  mutate(
-    yr = ifelse(yr == 0, "2011", "2012"),
-    yr = fct_relevel(yr, "2011", "2012")
-  ) %>%
-  mutate(
-    weathersit = case_when(
-      weathersit == 1 ~ "clear",
-      weathersit == 2 ~ "mist",
-      weathersit == 3 ~ "light precipitation",
-      weathersit == 4 ~ "heavy precipitation"
-    ),
-    weathersit = fct_relevel(weathersit, "clear", "mist", "light precipitation")
-  ) %>%
-  mutate(
-    temperature_raw = temp * 41,
-    feeling_temperature_raw = atemp * 50,
-    humidity_raw = hum * 100,
-    windspeed_raw = windspeed * 67
-  )
-```
 
-```{r recreate-viz-setup}
-dcbikeshare <- mutatedbike
-```
-
-```{r rentals-vs-temp-r2-setup}
-dcbikeshare <- mutatedbike
-cnt_tmp <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(cnt ~ temperature_raw, data = dcbikeshare)
-```
-
-```{r rentals-vs-atemp-r2-setup}
-dcbikeshare <- mutatedbike
-cnt_atmp <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(cnt ~ feeling_temperature_raw, data = dcbikeshare)
-```
-
-```{r adj-r-squared-setup}
-dcbikeshare <- mutatedbike
-cnt_full <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(cnt ~ season + yr + holiday + workingday + weathersit +
-        temperature_raw + feeling_temperature_raw + humidity_raw + 
-        windspeed_raw + feeling_temperature_raw * holiday, 
-      data = dcbikeshare)
-```
 
 ## Introduction
 
@@ -256,12 +114,24 @@ library(dsbox)
 grade_this_code("The packages are now loaded!")
 ```
 
-## Data
+## Data and codebook
 
 The data include daily bike rental counts (by members and casual users) of Capital Bikeshare in Washington, DC in 2011 and 2012 as well as weather information on these days. 
 The data is contained in the `dsbox` package and is called `dcbikeshare`.
 
-The original data sources are http://capitalbikeshare.com/system-data and http://www.freemeteo.com.
+Go ahead and `glimpse` the data to take a peek.
+
+```{r glimpse-data-setup}
+
+dcbikeshare <- dsbox::dcbikeshare
+
+```
+
+```{r glimpse-data, exercise=TRUE, exercise.setup="glimpse-data-setup"}
+
+
+```
+
 
 A description of the variables is below:
 
@@ -287,13 +157,23 @@ A description of the variables is below:
 | `registered`| Count of registered users
 | `cnt` 		  | Count of total rental bikes including both casual and registered
 
+
+In this tutorial, we will consider our response variable to be `cnt`, the count of total rental bikes. The explanatory variables are several some of which are categorical (`season`, `yr`, `holiday`, `workingday`, weathersit`) and others numeric. 
+
 ## Recoding data
+
+In the `dcbikeshare` data frame, all the variables have been entered as numeric values regardless of their type. We will therefore begin by recoding many of the categorical explanatory variables. 
 
 ### Recode season
 
-Recode the `season` variable to be a factor with meaningful level names as outlined in the codebook, with spring as the baseline level. 
+As noted in the codebook, `season` is encoded as a numeric variable taking the values 1, 2, 3 or 4 to denote the seasons: 1: winter, 2: spring, 3: summer, 4: fall
 
-```{r recode-season-exercise, exercise = TRUE}
+Let's recode the `season` variable as a character variable with the name of the season as its value, and also set spring as the baseline level. 
+
+After you have recoded `season`, you can check its distribution with  `count` in this code chunk.
+
+```{r recode-season, exercise = TRUE, exercise.setup="glimpse-data-setup"}
+
 dcbikeshare <- ___ %>%
   mutate(
     season = case_when(
@@ -301,21 +181,23 @@ dcbikeshare <- ___ %>%
     ),
     season = fct_relevel(___)
   )
+
+dcbikeshare %>% count(season) 
 ```
 
 
-```{r recode-season-exercise-hint-1}
+```{r recode-season-hint-1}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     season = case_when(
     season == 1 ~ "winter",
     ___
     ),
-    season = fct_relevel(season, ___, ___, ___, ___)
+    season = fct_relevel(season, ___)
   )
 ```
 
-```{r recode-season-exercise-solution}
+```{r recode-season-hint-2}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     season = case_when(
@@ -324,19 +206,46 @@ dcbikeshare <- dcbikeshare %>%
       season == 3 ~ "summer",
       season == 4 ~ "fall"
     ),
-    season = fct_relevel(season, "spring", "summer", "fall", "winter")
+    season = fct_relevel(season, ___)
   )
+
 ```
 
-```{r recode-season-exercise-check}
-grade_this_code("Your solution is correct!")
+```{r recode-season-solution}
+dcbikeshare <- dcbikeshare %>%
+  mutate(
+    season = case_when(
+      season == 1 ~ "winter",
+      season == 2 ~ "spring",
+      season == 3 ~ "summer",
+      season == 4 ~ "fall"
+    ),
+    season = fct_relevel(season, "spring")
+  )
 ```
 
 ### Recode `holiday` and `workingday`
 
-Recode the binary variables `holiday` and `workingday` to be factors with levels no (0) and yes (1), with no as the baseline level.
+As noted in the codebook, the variables `holiday` and `workingday` take the value of 0 and 1 to denote the labels "no" and "yes". 
 
-```{r recode-holiday-workingday, exercise = TRUE, message = FALSE}
+Recode the variables `holiday` and `workingday` as character variables and replace the numeric values with their corresponding labels. Set the level "no" as the baseline level in each case.
+
+Again, use the `count` function to examine your work. 
+
+```{r recode-holiday-workingday-setup}
+dcbikeshare <- dsbox::dcbikeshare %>%
+  mutate(
+    season = case_when(
+      season == 1 ~ "winter",
+      season == 2 ~ "spring",
+      season == 3 ~ "summer",
+      season == 4 ~ "fall"
+    ),
+    season = fct_relevel(season, "spring")
+  )
+```
+
+```{r recode-holiday-workingday, exercise = TRUE, message = FALSE, exercise.setup="recode-holiday-workingday-setup"}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -360,7 +269,7 @@ dcbikeshare <- dcbikeshare %>%
 dcbikeshare <- dcbikeshare %>%
   mutate(
     holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no", "yes"),    
+    holiday = fct_relevel(holiday, "no"),    
     workingday = ifelse(___),
     workingday = fct_relevel(___)
   )
@@ -370,21 +279,42 @@ dcbikeshare <- dcbikeshare %>%
 dcbikeshare <- dcbikeshare %>%
   mutate(
     holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no", "yes"),    
+    holiday = fct_relevel(holiday, "no"),    
     workingday = ifelse(workingday == 0, "no", "yes"),
-    workingday = fct_relevel(workingday, "no", "yes")
+    workingday = fct_relevel(workingday, "no")
   )
+
+dcbikeshare %>% count(holiday)
+
+dcbikeshare %>% count(workingday) 
 ```
 
-```{r recode-holiday-workingday-check}
-grade_this_code("Your solution is correct!")
-```
+
 
 ### Recode year
 
-Recode the `yr` variable to be a factor with levels 2011 and 2012, with 2011 as the baseline level.
+The variable `yr` is a numeric variable which takes the values 0 and 1 to denote the year the data is from. Let's recode `yr` to be a character variable with levels 2011 and 2012, with 2011 as the baseline level.
 
-```{r recode-yr, exercise = TRUE, message = FALSE}
+
+```{r recode-yr-setup}
+dcbikeshare <- dsbox::dcbikeshare %>%
+  mutate(
+    season = case_when(
+      season == 1 ~ "winter",
+      season == 2 ~ "spring",
+      season == 3 ~ "summer",
+      season == 4 ~ "fall"
+    ),
+    season = fct_relevel(season, "spring")) %>%
+  mutate(
+    holiday = ifelse(holiday == 0, "no", "yes"),      
+    holiday = fct_relevel(holiday, "no"),    
+    workingday = ifelse(workingday == 0, "no", "yes"),
+    workingday = fct_relevel(workingday, "no")
+  )
+```
+
+```{r recode-yr, exercise = TRUE, message = FALSE, exercise.setup="recode-yr-setup"}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -415,19 +345,53 @@ dcbikeshare <- dcbikeshare %>%
 dcbikeshare <- dcbikeshare %>%
   mutate(
     yr = ifelse(yr == 0, "2011", "2012"),
-    yr = fct_relevel(yr, "2011", "2012")
+    yr = fct_relevel(yr, "2011")
   )
 ```
 
-```{r recode-yr-check}
-grade_this_code("Your solution is correct!")
-```
+
 
 ### Recode `weathersit`
 
-Recode the `weathersit` variable as 1 - clear, 2 - mist, 3 - light precipitation, and 4 - heavy precipitation, with clear as the baseline.
+The last categorical variable we will consider is `weathersit`. This variable refers to the amount of precipitation (rain/snow).  Here is its description again from the codebook. 
 
-```{r recode-weathersit, exercise = TRUE, message = FALSE}
+
+| Variable name    | Description 
+|:--------|:-------------------------------------------------------------
+| `weathersit`| 1: Clear, Few clouds, Partly cloudy, Partly cloudy
+|             | 2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist
+|             | 3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds
+|             | 4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog
+
+
+ Recode the `weathersit` variable as 1 - clear, 2 - mist, 3 - light precipitation, and 4 - heavy precipitation, with clear as the baseline. 
+
+
+Again, don't forget to take a look at the distribution of the transformed variable with the `count` function.
+
+```{r recode-weathersit-setup}
+dcbikeshare <- dsbox::dcbikeshare %>%
+  mutate(
+    season = case_when(
+      season == 1 ~ "winter",
+      season == 2 ~ "spring",
+      season == 3 ~ "summer",
+      season == 4 ~ "fall"
+    ),
+    season = fct_relevel(season, "spring")) %>%
+  mutate(
+    holiday = ifelse(holiday == 0, "no", "yes"),      
+    holiday = fct_relevel(holiday, "no"),    
+    workingday = ifelse(workingday == 0, "no", "yes"),
+    workingday = fct_relevel(workingday, "no")
+  ) %>%
+  mutate(
+    yr = ifelse(yr == 0, "2011", "2012"),
+    yr = fct_relevel(yr, "2011")
+  )
+```
+
+```{r recode-weathersit, exercise = TRUE, warning=TRUE, message=FALSE, exercise.setup="recode-weathersit-setup"}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -492,33 +456,65 @@ dcbikeshare <- dcbikeshare %>%
       weathersit == 3 ~ "light precipitation",
       weathersit == 4 ~ "heavy precipitation"
     ),
-    weathersit = fct_relevel(weathersit, "clear", "mist", "light precipitation", "heavy precipitation")
+    weathersit = fct_relevel(weathersit, "clear")
   )
 ```
 
-```{r recode-weathersit-check}
-grade_this_code("Your solution is correct!")
-```
 
-### Recoding warning
-
-At this point, you might wonder what this warning means:
-
-```
-`Warning: Unknown levels in `f`: heavy precipitation`
-```
-
-This is simply R warning us that while it is possible for the `weathersit` variable to have the value 4 for heavy precipitation, this never actually occurs in the data.
+At this point, you might be wondering why the "heavy precipitation" category is missing from the distribution tabulated by `count`. 
+This is simply because while it is possible for the `weathersit` variable to have the value 4 for heavy precipitation, this never actually occurs in the data.
 Consequently, the `weathersit` factor only has three levels.
+
 
 ## Creating new variables
 
 ### Create raw values for temperature, humidity, and windspeed
 
-Calculate raw temperature, feeling temperature, humidity, and windspeed as their values given in the dataset multiplied by the maximum raw values stated in the codebook for each variable. 
+In this section we turn our attention to the numeric variables shown below. 
+
+| Variable name    | Description 
+|:--------|:-------------------------------------------------------------
+| `temp` 			| Normalized temperature in Celsius. The values are divided by 41 (max)
+| `atemp`			| Normalized feeling temperature in Celsius. The values are divided by 50 (max)
+| `hum` 			| Normalized humidity. The values are divided by 100 (max)
+| `windspeed`	| Normalized wind speed. The values are divided by 67 (max)
+
+As you can see, these variables have been normalized by the maximum value for the variable. Let's go ahead and 
+calculate raw temperature, feeling temperature, humidity, and windspeed as their values given in the dataset multiplied by the maximum raw values stated in the codebook for each variable. 
 Instead of writing over the existing variables, create new ones called `temperature_raw`, `feeling_temperature_raw`, `humidity_raw`, `windspeed_raw`.
 
-```{r recode-measures, exercise = TRUE, message= FALSE}
+```{r recode-measures-setup}
+dcbikeshare <- dsbox::dcbikeshare %>%
+  mutate(
+    season = case_when(
+      season == 1 ~ "winter",
+      season == 2 ~ "spring",
+      season == 3 ~ "summer",
+      season == 4 ~ "fall"
+    ),
+    season = fct_relevel(season, "spring")) %>%
+  mutate(
+    holiday = ifelse(holiday == 0, "no", "yes"),      
+    holiday = fct_relevel(holiday, "no"),    
+    workingday = ifelse(workingday == 0, "no", "yes"),
+    workingday = fct_relevel(workingday, "no")
+  ) %>%
+  mutate(
+    yr = ifelse(yr == 0, "2011", "2012"),
+    yr = fct_relevel(yr, "2011")
+  ) %>%
+  mutate(
+    weathersit = case_when(
+      weathersit == 1 ~ "clear",
+      weathersit == 2 ~ "mist",
+      weathersit == 3 ~ "light precipitation",
+      weathersit == 4 ~ "heavy precipitation"
+    ),
+    weathersit = fct_relevel(weathersit, "clear")
+  )
+```
+
+```{r recode-measures, exercise = TRUE, message= FALSE, exercise.setup="recode-measures-setup"}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -569,14 +565,17 @@ dcbikeshare <- dcbikeshare %>%
   )
 ```
 
-```{r recode-measures-check}
-grade_this_code("Your solution is correct!")
-```
 
 
 ## Bike rentals and temperature
 
-Fit a linear model predicting total daily bike rentals `cnt` from raw daily temperature, use `tidy`to print the output and answer the questions below.
+
+Fit a linear model predicting total daily bike rentals `cnt` from raw daily temperature, and use `tidy`to print the output and answer the questions below.
+
+```{r recreate-viz-setup}
+dcbikeshare <- mutatedbike
+```
+
 
 ```{r rentals-vs-temp, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
 cnt_tmp <- lm(___ ~ ___, data = ___)
@@ -620,7 +619,7 @@ Now, based on your findings, answer the following question.
 question("Which interpretations are correct?",
   answer("The model has the intercept at approximately 1215, which means that at a day with a temperature of 0 degrees celsius, we can except to have, on average, 1215 bike rentals.",
          correct = TRUE),
-  answer("The model has the intercept at approximately 162, which means that at a day with a temperature of 0 degrees celsius, we can except to have, on average, 162 bike rentals."),
+  answer("The model has the intercept at approximately 162, which means that at a day with a temperature of 0 degrees celsius, we can expect to have, on average, 162 bike rentals."),
   answer("The slope of the model is approximately 162, which means that, for each additional degree celsius, we can expect bike rentals to increase by 162.",
          correct = TRUE),
   answer("The slope of the model is approximately 1215, which means that, for each additional degree celsius, we can expect bike rentals to increase by 1215."),
@@ -632,7 +631,12 @@ question("Which interpretations are correct?",
 
 Use the chunk below to print out the $R^2$ of the model.
 
-```{r rentals-vs-temp-r2, exercise = TRUE}
+```{r rentals-vs-temp-r2-setup}
+dcbikeshare <- mutatedbike
+cnt_tmp <- lm(cnt ~ temperature_raw, data = dcbikeshare)
+```
+
+```{r rentals-vs-temp-r2, exercise = TRUE, exercise.setup="rentals-vs-temp-r2-setup"}
 glance(___)$___
 ```
 
@@ -702,9 +706,9 @@ Now, based on your findings, answer the following question.
 
 ```{r rentals-vs-atemp-quiz}
 question("Which interpretations are correct?",
-  answer("The model has the intercept at approximately 946, which means that at a day with an apparent temperature of 0 degrees celsius, we can except to have, on average, 946 bike rentals.",
+  answer("The model has the intercept at approximately 946, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 946 bike rentals.",
          correct = TRUE),
-  answer("The model has the intercept at approximately 150, which means that at a day with an apparent temperature of 0 degrees celsius, we can except to have, on average, 150 bike rentals."),
+  answer("The model has the intercept at approximately 150, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 150 bike rentals."),
   answer("The slope of the model is approximately 150, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 150.",
          correct = TRUE),
   answer("The slope of the model is approximately 946, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 946."),
@@ -716,7 +720,12 @@ question("Which interpretations are correct?",
 
 Use the chunk below to print out the $R^2$ of the model.
 
-```{r rentals-vs-atemp-r2, exercise = TRUE}
+```{r rentals-vs-atemp-r2-setup}
+dcbikeshare <- mutatedbike
+cnt_atmp <- lm(cnt ~ feeling_temperature_raw, data = dcbikeshare)
+```
+
+```{r rentals-vs-atemp-r2, exercise = TRUE, exercise.setup="rentals-vs-atemp-r2-setup"}
 glance(___)$___
 ```
 
@@ -758,9 +767,78 @@ question("Which is the better explanatory variable of bike rentals?",
 )
 ```
 
+### Bike rentals, holiday and temperature
+
+Fit a model predicting total daily bike rentals `cnt` from raw daily feeling temperature, whether the day is a `holiday` or not as well as the interaction between the 
+feeling temperature and holiday.
+
+
+```{r m-int-model, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
+cnt_tmp_hol <- lm(___ ~ ___, data = ___)
+tidy(cnt_tmp_hol)
+```
+
+
+```{r m-int-model-hint-1}
+cnt_tmp_hol <- lm(cnt ~ ___ + ___ + ___, 
+                  data = dcbikeshare)
+
+```
+
+```{r m-int-model-hint-2}
+cnt_tmp_hol <- lm(cnt ~ feeling_temperature_raw + ___ + ___, 
+                  data = dcbikeshare)
+
+```
+
+```{r m-int-model-hint-3}
+cnt_tmp_hol <- lm(cnt ~ feeling_temperature_raw + holiday + ___, 
+                  data = dcbikeshare)
+
+```
+
+
+```{r m-int-model-solution}
+cnt_tmp_hol <- lm(cnt ~ feeling_temperature_raw + holiday + holiday:feeling_temperature_raw, data = dcbikeshare)
+tidy(cnt_tmp_hol)
+```
+
+```{r m-int-model-check}
+grade_this({
+  if(identical(floor(.result$estimate[1]), 1002)) {
+    pass("You have fit the model correctly")
+  }
+  if(identical(floor(.result$estimate[1]), 970)) {
+    fail("Did you forget to model the interaction effect between feeling temperature and holiday?")
+  }
+   fail("Not quite. Look at the hints for help!")
+})
+``` 
+
+Investigate how the model values change depending on whether a day is a holiday or not and answer the following questions.
+
+```{r temp-slopes-quiz}
+question("Which of the following statements are correct?",
+  answer("The intercept for non-holidays is higher than for holidays",
+         correct = TRUE),
+  answer("The intercept for non-holidays is lower than for holidays",
+         message = "Look at the regression output of the model for a hint!"),
+  answer("The slope for feeling temperature is steeper for non-holidays than for holidays.",
+         message = "Look at the end of the regression output of for a hint!"),
+  answer("The slope for feeling temperature is steeper for holidays than for non-holidays.",
+         correct = TRUE),
+  correct = "Correct!",
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+
+
 ### Full model
 
-Fit a model predicting total daily bike rentals from season, year, whether the day is holiday or not, whether the day is a workingday or not, the weather category, temperature, feeling temperature, humidity, and windspeed, as well as the interaction between feeling temperature and holiday.
+Now we will go ahead and fit the kitchen sink model: one with everything in it. 
+Fit a model predicting total daily bike rentals `cnt` from `season`, `yr`, whether the day is `holiday` or not, whether the day is a `workingday` or not, the `weathersit` category, `temperature_raw`, `feeling_temperature_raw`, `humidity_raw`, and `windspeed_raw`, as well as the interaction between feeling temperature and holiday.
 
 ```{r m-full, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
 cnt_full <- lm(___ ~ ___, data = ___)
@@ -775,7 +853,7 @@ tidy(cnt_full)
 ```{r m-full-solution}
 cnt_full <- lm(cnt ~ season + yr + holiday + workingday + weathersit +
         temperature_raw + feeling_temperature_raw + humidity_raw +
-        windspeed_raw + feeling_temperature_raw * holiday, 
+        windspeed_raw + feeling_temperature_raw:holiday, 
       data = dcbikeshare)
 tidy(cnt_full)
 ```
@@ -792,9 +870,17 @@ grade_this({
 })
 ``` 
 
+```{r adj-r-squared-setup}
+dcbikeshare <- mutatedbike
+cnt_full <- lm(cnt ~ season + yr + holiday + workingday + weathersit +
+        temperature_raw + feeling_temperature_raw + humidity_raw +
+        windspeed_raw + feeling_temperature_raw:holiday, 
+      data = dcbikeshare)
+```
+
 Record adjusted $R^2$ of the model.
 
-```{r adj-r-squared, exercise = TRUE}
+```{r adj-r-squared, exercise = TRUE, exercise.setup="adj-r-squared-setup"}
 
 ```
 
@@ -814,23 +900,6 @@ glance(cnt_full)$adj.r.squared
 grade_this_code("Your solution is correct!")
 ```
 
-Investigate how the model values change depending on whether a day is a holiday or not and answer the following questions.
-
-```{r temp-slopes-quiz}
-question("Which of the following statements are correct?",
-  answer("The intercept for non-holidays is higher than for holidays",
-         correct = TRUE),
-  answer("The slope for temperature is different between the two models.",
-         message = "Look at the regression output of the full model for a hint!"),
-  answer("The slope for feeling temperature is steeper for non-holidays than for holidays.",
-         message = "Look at the end of the regression output of the full model for a hint!"),
-  answer("The slope for feeling temperature is steeper for holidays than for non-holidays.",
-         correct = TRUE),
-  correct = "Correct!",
-  allow_retry = TRUE,
-  random_answer_order = TRUE
-)
-```
 
 According to this model, assuming everything else is the same, in which season does the model predict total daily bike rentals to be highest and which to be the lowest?
 
@@ -849,22 +918,35 @@ question("Select the correct answer",
 )
 ```
 
+<!--- 
 ### Backward selection
 
-Perform the first step of backward selection by fitting a series of models, each with one explanatory variable removed from the full model you fit in the previous exercise. 
-Record the adjusted $R^2$s of each of these models.
+The full regression model from the previous section may have variables in it that do not necessarily add much once the other variables are included. This leads to needlessly complex models. 
 
-In the chunk below, fit the full model without the `season` variable and print out the $R^2$ score.
+In this section we will perform the first step of backward selection by fitting a series of models, each with one explanatory variable removed from the full model you fit in the previous exercise and record the adjusted $R^2$s of each of these models.
 
-```{r remove-season, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_season <- lm(___ ~ ___, data = ___)
-glance(___)$___
+In the chunk below, fit the full model without the `season` variable and print out the $R^2$ score. An easy way to drop one variable from the model is to use the `update` function. 
+
+For example, to drop the interaction between `holiday` and `feeling_temperature_raw` from the model `cnt_tmp_hol`, we would specify the update function with the model object and a new formula. The new formula can use the period as short hand for keep everything on either the left or right hand side of the formula and the plus or minus sign used to add or remove terms to the model.
+
+```{r echo=T, eval=F}
+update(cnt_tmp_hol, . ~ . - holiday:feeling_temperature_raw)
+
 ```
 
-```{r remove-season-hint-1}
-rm_season <- lm(cnt ~ ___, data = ___)
-glance(___)$adj.r.squared
+
+```{r remove-season, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+rm_season <- update( cnt_full, ___ )
+glance(rm_season)$adj.r.squared
 ```
+
+```{r remove-season-solution}
+rm_season <- update(cnt_full, .~. - season )
+glance(rm_season)$adj.r.squared
+```
+
+
+
 
 ```{r remove-season-check}
 grade_this({
@@ -877,14 +959,14 @@ grade_this({
 
 In the chunk below, fit the full model without the `year` variable and print out the adjusted $R^2$ score.
 
-```{r remove-year, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_year <- lm(cnt ~ ___, data = ___)
+```{r remove-year, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+rm_year <- update( ___, ___) 
 glance(___)$___
 ```
 
-```{r remove-year-hint-1}
-rm_year <- lm(cnt ~ ___, data = ___)
-glance(___)$adj.r.squared
+```{r remove-year-solution}
+rm_year <- update( cnt_full, .~. - yr) 
+glance(rm_year)$adj.r.squared
 ```
 
 ```{r remove-year-check}
@@ -899,8 +981,12 @@ grade_this({
 In the chunk below, fit the full model without the `holiday` variable and print out the adjusted $R^2$ score.
 Remember to also remove the interaction effect between `holiday` and `feeling_temperature_raw`.
 
-```{r remove-holiday, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_holiday <- lm(___ ~ ___, data = ___)
+```{r remove-holiday, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+
+```
+
+```{r remove-holiday-solution}
+rm_holiday <- update( cnt_full, .~. - holiday - holiday:feeling_temperature_raw )
 glance(rm_holiday)$adj.r.squared
 ```
 
@@ -918,10 +1004,16 @@ grade_this({
 
 Fit the full model without the `workingday` variable using the code chunk below! Remember to record the adjusted $R^2$ score.
 
-```{r remove-workingday, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_workingday<- lm(___ ~ ___, data = ___)
-glance(___)$___
+```{r remove-workingday, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+
 ```
+
+
+```{r remove-workingday-solution}
+rm_workingday<- update( cnt_full, .~. - workingday )
+glance(rm_workingday)$adj.r.squared
+```
+
 
 ```{r remove-workingday-check}
 grade_this({
@@ -934,9 +1026,13 @@ grade_this({
 
 Fit the full model without the `weathersit` variable in the chunk below and record the adjusted $R^2$ score.
 
-```{r remove-weathersit, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_weathersit<- lm(___ ~ ___, data = ___)
-glance(___)$___
+```{r remove-weathersit, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+
+```
+
+```{r remove-weathersit-solution}
+rm_weathersit<- update( cnt_full, .~. - weathersit )
+glance(rm_weathersit)$adj.r.squared
 ```
 
 ```{r remove-weathersit-check}
@@ -950,9 +1046,14 @@ grade_this({
 
 Remove the `temperature_raw` variable in the chunk below and record the adjusted $R^2$ score.
 
-```{r remove-tempraw, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_temp_raw<- lm(___ ~ ___, data = ___)
-glance(___)$___
+```{r remove-tempraw, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+
+
+```
+
+```{r remove-tempraw-solution}
+rm_temp_raw<- update( cnt_full, .~.-temperature_raw )
+glance(rm_temp_raw)$adj.r.squared
 ```
 
 ```{r remove-tempraw-check}
@@ -967,9 +1068,14 @@ grade_this({
 In the chunk below, fit the full model without the `feeling_temperature_raw` variable and record the adjusted $R^2$ score. Don't forget to remove the interaction of `holiday` and `feeling_temperature_raw`.
 
 
-```{r remove-feeltempraw, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_feeltemp_raw <- lm(___ ~ ___, data = ___)
-glance(___)$___
+```{r remove-feeltempraw, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+
+
+```
+
+```{r remove-feeltempraw-solution}
+rm_feeltemp_raw <- update( cnt_full, .~. - feeling_temperature_raw - feeling_temperature_raw:holiday )
+glance(rm_feeltemp_raw)$adj.r.squared
 ```
 
 ```{r remove-feeltempraw-check}
@@ -986,9 +1092,14 @@ grade_this({
 
 Fit the full model without the `humidity_raw` variable and record the adjusted $R^2$ score.
 
-```{r remove-humidityraw, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_humidity_raw <- lm(___ ~ ___, data = ___)
-glance(___)$___
+```{r remove-humidityraw, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+
+
+```
+
+```{r remove-humidityraw-solution}
+rm_humidity_raw <- update(cnt_full,  .~. - humidity_raw)
+glance(rm_humidity_raw)$adj.r.squared
 ```
 
 ```{r remove-humidityraw-check}
@@ -1002,9 +1113,14 @@ grade_this({
 
 Fit the full model without the `windspeed_raw` variable and record the adjusted $R^2$ score.
 
-```{r remove-windraw, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_windspeed_raw <- lm(___ ~ ___, data = ___)
-glance(___)$___
+```{r remove-windraw, exercise = TRUE, exercise.setup = "adj-r-squared-setup"}
+
+
+```
+
+```{r remove-windraw-solution}
+rm_windspeed_raw <- update(cnt_full , .~. - windspeed_raw)
+glance(rm_windspeed_raw)$adj.r.squared
 ```
 
 ```{r remove-windraw-check}
@@ -1019,9 +1135,14 @@ grade_this({
 Last, remove the interaction effect between `holiday` and `feeling_temperature_raw` without removing the two variables individually.
 Then, record the adjusted $R^2$.
 
-```{r remove-interaction, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-rm_interaction <- lm(___ ~ ___, data = ___)
-glance(___)$___
+```{r remove-interaction, exercise = TRUE, exercise.setup = "adj-r-squared"}
+
+
+```
+
+```{r remove-interaction-solution}
+rm_interaction <- update( cnt_full, .~.-holiday:feeling_temperature_raw )
+glance(rm_interaction)$adj.r.squared
 ```
 
 ```{r remove-interaction-check}
@@ -1039,7 +1160,7 @@ grade_this({
 Now, using your findings from the previous exercises, answer the following question: 
 
 ```{r backward-selection-quiz}
-question("Which model of these models, if any, gives the highest improvement over the full model?",
+question("Based on the above results, which of these variables should you definitely not drop from the model of these models, if any, gives the highest improvement over the full model?",
   answer("rm_season, rm_workingday, rm_year"),
   answer("rm_season, rm_interaction, rm_holiday"),
   answer("rm_winspeed_raw, rm_humidity_raw, rm_year"),
@@ -1052,6 +1173,8 @@ question("Which model of these models, if any, gives the highest improvement ove
 )
 ```
 
+--->
+
 ## Wrap up
 
 Congratulations!
@@ -1061,4 +1184,4 @@ Hopefully, you have enjoyed this lesson on modelling and data wrangling.
 
 ## Acknowledgment
 
-This tutorial is exercpted from Data Science in a Box.
+This tutorial is excerpted from Data Science in a Box.

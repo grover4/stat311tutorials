@@ -987,9 +987,9 @@ gap2007 %>%
   geom_boxplot()
 ```
 
-## Congratulations!
+## Wrap up
 
-You have successfully completed the lesson on summarizing and visualizing numerical data.
+Congratulations!! You have successfully completed the lesson on summarizing and visualizing numerical data.
 
 
 

@@ -531,7 +531,7 @@ question("Which of the following is false? Check all that apply.",
 
 --->
 
-## Finish Up
+## Wrap Up
 
 Congratulations! You made it through the tutorial on visualizing categorical data! Hopefully you found it interesting and are feeling more comfortable with the concepts we have been learning in class today!
 
