@@ -8,7 +8,7 @@ css: "css/font-size.css"
 runtime: shiny_prerendered
 description: Fit a linear model with a single predictor and interpret regression output
 ---
-<script language="JavaScript" src="js/exercise-font-size.js"></script>
+
 
 ```{r setup, include=FALSE}
 # load packages---------------------------------------------------
@@ -57,24 +57,25 @@ As a reminder, the data were curated by Sandra van Ginhoven and Hilary Coe Cronh
 ### Learning goals
 
 
--   Practice modelling (simple linear regression) and interpreting model results and performance.
+-   Fit a linear model with a single predictor (simple linear regression) and interpret model results and performance.
 -   Predict new data values using model of best fit.
 
 ### Packages
 
-We'll use the **tidyverse** and `broom` packages for this analysis.
-Run the following code to load these packages.
+We'll use the **tidyverse** and **broom** packages for this analysis.
+In addition, we will make use of the `skim` function from the **skimr** package to get a quick vbroad overview of the data frame. Run the following code to load these packages.
 
-```{r load-packages, exercise=TRUE}
+```{r load-packages, exercise=TRUE, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(broom)
+library(skimr)
 
 ```
 
 ```{r load-packages-solution}
 library(tidyverse)
 library(broom)
-
+library(skimr)
 ```
 
 ```{r load-packages-check}
@@ -82,7 +83,7 @@ grade_this_code("The packages are now loaded!")
 ```
 
 ## Data
-The data has been uploaded with this tutorial and is called `pp`.
+The data has been uploaded with this tutorial and is in a dataframe called `pp`.
 The two variables we will be focusing on are the `price` and the surface area `Surface` of a painting. Both are numeric variables.
 
 The description of the variables in the dataset is as follows:
@@ -95,10 +96,10 @@ The description of the variables in the dataset is as follows:
 | `Surface`           | surface area of a painting (inches square)|
 +---------------------+-------------------------------------------+
 
-Take a peek at the data.
+Let's get an overview of the variables in the dataframe using `skim`. Go ahead and run the code below.
 
-```{r glimpse-data, exercise = TRUE }
-
+```{r skim-data, exercise = TRUE }
+pp %>% skim()
 
 ```
 
@@ -114,7 +115,7 @@ The price will be our response variable. Create a histogram to examine its distr
 ggplot(data= ___,
        mapping=aes( x = ____ ))  +
   geom_____() +
-  ___()
+  labs()
 
 ```
 
@@ -155,14 +156,14 @@ Create a scatter plot of the `price` versus `Surface`.
 
 ggplot() +
   geom____() +
-  ___()
+  labs()
 ```
 
 ```{r plot-price-surface-hint-1, fig.width=7, fig.height=3}
 
 ggplot(data=pp,) +
   geom_point() +
-  ___()
+  labs()
 ```
 
 ```{r plot-price-surface-hint-2, fig.width=7, fig.height=3}
@@ -170,7 +171,7 @@ ggplot(data=pp,) +
 ggplot(data=pp, 
        mapping=aes(x=Surface)) +
   geom_point() +
-  ___()
+  labs()
 ```
 
 ```{r plot-price-surface-hint-3, fig.width=7, fig.height=3}
@@ -178,7 +179,7 @@ ggplot(data=pp,
 ggplot(data=pp, 
        mapping=aes(x=Surface)) +
   geom_point() +
-  ___()
+  labs()
 ```
 
 ```{r plot-price-surface-solution, fig.width=7, fig.height=3}
@@ -195,16 +196,15 @@ At this point you may have noticed a few things:
  - the relationship between `price` and `Surface` does not seem very linear
  - some of the values for price and/or surface are missing.
  
-Let's address the last issue first by looking at a quick `summary` of the variables `price` and `Surface`. The `summary` function provides a convenient alternative to `summarize` by reporting the usual suspects along with the minimum, maximum and count of missing values `NA`.
+Let's address the last issue first by reviewing a quick summary of the variables `price` and `Surface` using the `skim` function. 
 
 ```{r summary-price-surface, exercise=TRUE}
 pp %>% 
-   select( price, Surface) %>%
-   summary()
+   skim( price, Surface) 
 
 ```
 
-From the output we can see that the variable `Surface` is missing 176 values. In addition, the minimum value is listed as 0 which is likely a mistake or a missing value. 
+From the output of `skim` we can see that the variable `Surface` is missing 176 values. In addition, the minimum value is listed as 0 which is likely a mistake or a missing value. 
 
 Let's prep the data by filtering out only the rows for which `Surface` is a positive number and then run a quick summary to check the variables again.
 
@@ -215,7 +215,7 @@ Let's prep the data by filtering out only the rows for which `Surface` is a posi
 pp <- pp %>% 
      filter( Surface > 0)
 
-pp %>% select(price, Surface) %>% summary()
+pp %>% skim(price, Surface)
 
 ```
 
@@ -224,7 +224,7 @@ As we did in class with height and width, let's go ahead and transform the varia
 
 Create new variables `log_price` and `log_surface` which are the logarithms (base 2) of `price` and `Surface` respectively.  Be sure to add these variables to the ``pp` data frame. 
 
-Also print summaries of your new variables using `summary()` as we did in the previous code chunk.
+Also print summaries of your new variables using `skim` as we did in the previous code chunk.
 
 ```{r create-vars, exercise=TRUE, exercise.setup="prepare-pp-setup"}
 
@@ -332,7 +332,7 @@ Instead of manually calculating these numbers, we can simply use the function `l
 
 price_surface_fit <- lm( ___ ~____, data= ___ )
 
-tidy( ____ )
+price_surface_fit %>% tidy()
 
 ```
 
@@ -340,15 +340,15 @@ tidy( ____ )
 
 price_surface_fit <- lm( log_price ~____, data= ___ )
 
-tidy( ____ )
-
+price_surface_fit %>% tidy()
 ```
 
 ```{r model-fit-hint-2}
 
 price_surface_fit <- lm( log_price ~log_surface, data= pp )
 
-tidy( ____ )
+price_surface_fit %>% tidy()
+
 
 ```
 
@@ -356,7 +356,8 @@ tidy( ____ )
 
 price_surface_fit <- lm( log_price ~log_surface, data= pp )
 
-tidy( price_surface_fit )
+price_surface_fit %>% tidy()
+
 
 ```
 
@@ -376,19 +377,30 @@ grade_this({
 ```
 
 
+Let's interpret the slope coefficient for `log_surface`. Recall that the slope is the change in the response associated with a unit change in the explanatory variable. When variables are transformed, as they are here, we need to carefully examine what this translates to on the original untransformed scale. 
 
-Based on your findings, answer the following questions:
+Let's denote the slope coefficient for `log_surface` by $b$ 
+meaning when `log_surface` increases by 1 unit, there is found to be an increase of  b units in `log_price`. 
+
+Since the base of the logarithm used here is 2, saying that `log_surface` increases by 1 is equivalent to saying that the surface area being doubled. Therefore, we now know from the model fit that
+
+$$log(\mbox{price for surface 2x}) - log(\mbox{price for surface x}) = b$$
+$$log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) = b$$
+$$2^{log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) } = 2^b$$
+$$\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) = 2^{b}$$
+
+Now use the value for the slope coefficient, $b$, from the output of `tidy` and  answer the following questions:
 
 ```{r model-fit-quiz}
-question("Which interpretation is correct?",
+question("Which interpretation of the slope coefficient is correct?",
   answer("When the surface area increases by 1 square inch, the price increases by 0.20 livres",
     message = "are you forgetting that the variables are log transformed?"  ),
   answer("When the surface area doubles, the price increases, on average, by about 15%", correct=TRUE),
   answer("When the surface area increases by a factor of 10, the price increases on average by a factor of 1.15 ",
     message="are you forgetting that we used a base of 2 for the logarithm transformation?"
   ),
-  answer(" The intercept tells us the price, on average, for paintings with a surface area of 0", 
-         message="are you forgetting that we transformed the x variable?"),
+  answer(" When the surface area doubles, the price increases on average by 1.15 units", 
+         message="are you forgetting that we log transformed price"),
   correct = "Correct!",
   allow_retry = TRUE,
   random_answer_order = TRUE
@@ -400,7 +412,12 @@ question("Which interpretation is correct?",
 ## Making predictions
 
 
-Using the line of best fit, let's make some predictions.
+The line of best fit for relating `log_price` to `log_surface` has
+the equation:
+$$\widehat{log\_price} = 5.657 + 0.202 \times \log\_surface.$$
+
+
+Using this line of best fit, let's make some predictions.
 
 Given a surface area of 100 square inches, what is the predicted price?  Compute using the formula of best fit in the code chunk below. 
 
@@ -408,7 +425,7 @@ Given a surface area of 100 square inches, what is the predicted price?  Compute
 
  - First, convert a surface area of 100 to the corresponding value for `log_surface`
  
- - Calculate the predicted price on the log scale $\widehat{log\_price}$ using a line with slope 0.202 and intercept 5.66.
+ - Calculate the predicted price on the log scale $\widehat{log\_price}$ using a line with slope 0.202 and intercept 5.657.
  
  - Undo the log transformation
 
@@ -417,25 +434,21 @@ Given a surface area of 100 square inches, what is the predicted price?  Compute
 
 ```
 
-```{r predict-price-1-hint-1}
-___ + ___*log2(100)
+```{r predict-price-1-hint}
+2^( ___ + ___*log2(100)  )
 ```
 
-```{r predict-price-1-hint-2}
-What are the values of the slope and the intercept for the best model?
-```
 
 ```{r predict-price-1-solution}
 
-log_price_hat = 5.66 + 0.202*log2(100)
+2^( 5.657 + 0.202*log2(100) )
 
-2^(log_price_hat)
 
 ```
 
 ```{r predict-price-1-check}
 grade_this({
-  if(identical(round(.result, digits = 3), 128.183)) {
+  if(identical(round(.result, digits = 3), 127.917)) {
     pass("You got it!")
   }
   fail("Make sure you are undoing the log transformation to get the prediction for price.")
@@ -451,12 +464,12 @@ Using the same method you did as before, predict the price for a painting with s
 
 
 ```{r predict-price-2-solution}
-2^( 5.66 + 0.202*log2(5000) )
+2^( 5.657 + 0.202*log2(5000) )
 ```
 
 ```{r predict-price-2-check}
 grade_this({
-  if(identical(round(.result, digits = 3), 282.502)) {
+  if(identical(round(.result, digits = 3), 281.915)) {
     pass("You got it!")
   }
   fail("Make sure you are undoing the log transformation.")
