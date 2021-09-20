@@ -19,7 +19,6 @@ description: >
 library(learnr)
 library(tidyverse)
 library(palmerpenguins)
-#library(gradethis)
 
 
 #hide non exercise code chunks---------------
@@ -27,8 +26,6 @@ library(palmerpenguins)
 knitr::opts_chunk$set(echo = FALSE)
 
 
-# set options for exercises and checking ---------------------------------------
-#gradethis_setup()
 ```
 
 ---
@@ -72,12 +69,6 @@ library(tidyverse)
 library(tidyverse)
 ```
 
-<!---
-```{r load-packages-check}
-grade_this_code("The packages are now loaded!")
-```
-
---->
 
 ## The Data
 
