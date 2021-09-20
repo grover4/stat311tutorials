@@ -146,7 +146,7 @@ Try using nrow()!
 ```{r nrow-check}
 grade_this({
   if(identical(.result, 6509) | identical(.result, 6509L)) {
-    pass("There are 6,509 rows, therefore, 6,509 accidents were recorded in Seattle in 2020.")
+    pass("Great! There are 6,509 rows, therefore, 6,509 accidents were recorded in Seattle in 2020.")
     }
   if(identical(.result, 20) | identical(.result, 20L)) {
     fail("Each observation is represented in one row. Did you calculate the number of columns instead of rows?")
@@ -172,7 +172,7 @@ Try using ncol()!
 ```{r ncol-check}
 grade_this({
   if(identical(.result, 20) | identical(.result, 20L)) {
-    pass("Since there are 20 columns in the dataset, we know that 20 variables are recorded.")
+    pass("Great! Since there are 20 columns in the dataset, we know that 20 variables are recorded.")
   }
   if(identical(.result, 6509) | identical(.result, 6509L)) {
     fail("Each variable is recorded in a column. Did you maybe use the number of rows?")
@@ -221,7 +221,7 @@ accidents %>%
 ```{r filter-multi-car-check}
 grade_this({
   if(identical(.result, 3673) | identical(.result, 3673L)) {
-    pass("There are 3,673 rows that correspond to accidents with 2 or more vehicles involved.")
+    pass("Correct! There are 3,673 rows that correspond to accidents with 2 or more vehicles involved.")
   }
   fail("Take a peek at the hints!")
 })
@@ -247,7 +247,7 @@ accidents %>%
 ```{r filter-speeding-check}
 grade_this({
   if(identical(.result, 292) | identical(.result, 292L)) {
-    pass("There are 292 rows that correspond to accidents with speeding involved.")
+    pass("Nice work! There are 292 rows that correspond to accidents with speeding involved.")
   }
   fail("Take a look at the solution!")
 })
@@ -318,7 +318,7 @@ grade_this({
 
 ## Accident Severity
 
-Suppose we wish to compare accident severity (`severity_desc`) by the location of the accident (`addr_type`). Let's recreate the following segmented bar plot with the values of `addr_type` on the horizontal axis. Note that the rows that are missing the address type are not represented in the bar plot. This is achieved by filtering the data using the `is.na` function with `addr_type` as the argument.    To match my colors, use the `scale_fill_viridis_d()` layer as the scale associated with the fill variable.
+Suppose we wish to compare accident severity (`severity_desc`) by the location of the accident (`addr_type`). Let's recreate the following segmented bar plot with the values of `addr_type` on the horizontal axis. Note that the rows that are missing the address type are not represented in the bar plot. This is achieved by filtering the data using the `is.na` function with `addr_type` as the argument.    
 
 ```{r example-plot, fig.width=6,fig.height=4, echo=FALSE}
 
@@ -328,19 +328,17 @@ ggplot(data=accidents %>% filter(!is.na(addr_type)),
       labs(x="Location of accident",
            y="Proportion",
            fill="Severity Description",
-           title="Location and severity of accident")+ 
-       scale_fill_viridis_d()
+           title="Location and severity of accident")
 
 ```
 
 ```{r plot-severity, exercise = TRUE, fig.width=6, echo=FALSE, fig.height=4}
 
 ggplot(data = ___,   mapping=aes(x = ___, fill = ___)) +
-  geom____(___) +
+  geom___(___) +
   ___(x = ___, y = ___,
        ___ = ___, 
-       title = ___) +
-  scale_fill_viridis_d()
+       title = ___) 
 ```
 
 ```{r plot-severity-hint-1}
@@ -351,7 +349,7 @@ ggplot(data = ___,   mapping=aes(x = ___, fill = ___)) +
 # - represent counts with a bar and 
 # - choose position as fill to create segmented bars
 # - give the plot a title, subtitle, axis labels 
-# - add a `scale_fill_viridis_d()` layer to change choose the         viridis palette for the fill theme
+
 
 ```
 
@@ -362,8 +360,7 @@ ggplot(data = accidents %>% filter( !is.na(addr_type) ),
   geom_bar(___) +
   labs(x = ___, y = ___,
        fill = ___, 
-       title = ___) +
-  scale_fill_viridis_d()
+       title = ___) 
 ```
 
 ```{r plot-severity-hint-3}
@@ -372,18 +369,16 @@ ggplot(data = accidents %>% filter( !is.na(addr_type) ),
   geom_bar(position = ___) +
   labs(x = ___, y = ___,
        fill = "Severity Description", 
-       title = ___) +
-  scale_fill_viridis_d()
+       title = ___) 
 ```
 
-``` {r plot-severity-hint-4}
+``` {r plot-severity-solution}
 ggplot(data = accidents %>% filter( !is.na(addr_type) ), 
        mapping=aes(x = addr_type, fill = severity_desc)) +
   geom_bar(position = "fill") +
   labs(x = "Location of accident",
        fill = "Severity Description", 
-       title = "Location and severity of accident") +
-  scale_fill_viridis_d()
+       title = "Location and severity of accident")
 ```
 
 ## Light conditions
