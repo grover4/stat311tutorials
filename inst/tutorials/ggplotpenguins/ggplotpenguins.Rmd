@@ -426,7 +426,7 @@ Now that you have a few tricks under your belt, let’s use them on a different 
 :::{}
 ```{r penguin-fig-1,fig.align="center",out.width="75%"}
 
-knitr::include_graphics("images/penguin-species.png")
+knitr::include_graphics("images/penguin-species.PNG")
 
 ```
 :::
@@ -435,7 +435,7 @@ knitr::include_graphics("images/penguin-species.png")
 
 
 ```{r penguin-fig-2,fig.align="center",out.width="75%"}
-knitr::include_graphics("images/penguin-bill.png")
+knitr::include_graphics("images/penguin-bill.PNG")
 
 ```
 :::
