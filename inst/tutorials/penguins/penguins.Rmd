@@ -254,8 +254,7 @@ Give this a try. Delete the underline in the code below and write `color = class
 ```{r color-aesthetics, exercise = TRUE}
 #ggplot(data = mpg,
 #      mapping = aes(x = displ, y = hwy, ___ )) + 
-#  geom_point()+
-#  scale_color_viridis_d()
+#  geom_point()
 ```
 
 The colors reveal that many of the unusual points in the scatter plots are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage. 
