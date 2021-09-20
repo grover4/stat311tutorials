@@ -1,0 +1,554 @@
+---
+title: "Paris Paintings"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    css: "css/font-size.css"
+runtime: shiny_prerendered
+description: Fit a linear model with a single predictor and interpret regression output
+---
+
+
+```{r setup, include=FALSE}
+# load packages---------------------------------------------------
+library(learnr)
+library(gradethis)
+library(tidyverse)
+
+
+# set options for exercises and checking ---------------------------------------
+tutorial_options(
+  exercise.timelimit = 60, 
+  exercise.checker = gradethis::grade_learnr
+  )
+# hide non-exercise code chunks ------------------------------------------------
+knitr::opts_chunk$set(echo = FALSE)
+
+pp<-read_csv(file="https://raw.githubusercontent.com/rstudio-education/datascience-box/master/course-materials/slides/u4-d01-language-of-models/data/paris-paintings.csv", na=c(" ","n/a","NA"))
+
+
+```
+
+
+```{r prepare-pp-setup}
+
+pp <- pp %>% filter(Surface > 0) %>%  
+        mutate(log_price=log2(price),
+           log_surface=log2(Surface) )
+
+
+price_surface_fit <- lm(log_price ~ log_surface, data=pp)
+
+
+
+```
+
+## Introduction
+
+```{r photo, fig.margin = TRUE, echo = FALSE, out.width="80%"}
+knitr::include_graphics("images/old-auction.png")
+```
+
+In this brief tutorial, we will revisit the Paris Paintings data and and consider how the surface area of a painting affects the price.
+
+As a reminder, the data were curated by Sandra van Ginhoven and Hilary Coe Cronheim (who were PhD students in the Duke Art, Law, and Markets Initiative at the time of putting together this data set) from printed catalogues of 28 auction sales in Paris, 1764 - 1780
+
+### Learning goals
+
+
+-   Fit a linear model with a single predictor (simple linear regression) and interpret model results and performance.
+-   Predict new data values using model of best fit.
+
+### Packages
+
+We'll use the **tidyverse** and **broom** packages for this analysis.
+In addition, we will make use of the `skim` function from the **skimr** package to get a quick vbroad overview of the data frame. Run the following code to load these packages.
+
+```{r load-packages, exercise=TRUE, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(broom)
+library(skimr)
+
+```
+
+```{r load-packages-solution}
+library(tidyverse)
+library(broom)
+library(skimr)
+```
+
+```{r load-packages-check}
+grade_this_code("The packages are now loaded!")
+```
+
+## Data
+The data has been uploaded with this tutorial and is in a dataframe called `pp`.
+The two variables we will be focusing on are the `price` and the surface area `Surface` of a painting. Both are numeric variables.
+
+The description of the variables in the dataset is as follows:
+
++---------------------+-------------------------------------------+
+| Name                | Description                               |
++:====================+:==========================================+
+| `price`             | Price of a painting (in livres)           |
++---------------------+-------------------------------------------+
+| `Surface`           | surface area of a painting (inches square)|
++---------------------+-------------------------------------------+
+
+Let's get an overview of the variables in the dataframe using `skim`. Go ahead and run the code below.
+
+```{r skim-data, exercise = TRUE }
+pp %>% skim()
+
+```
+
+## Patterns in visualisations
+
+### Price
+
+The price will be our response variable. Create a histogram to examine its distribution. 
+
+
+```{r plot-price, exercise=TRUE, fig.width=7,fig.height=3,message=FALSE, warning=FALSE, echo=FALSE}
+
+ggplot(data= ___,
+       mapping=aes( x = ____ ))  +
+  geom_____() +
+  labs()
+
+```
+
+```{r plot-price-hint-1}
+
+ggplot(data= ___,
+       mapping=aes( x = ____ ))  +
+  geom_____(binwidth=___) +
+  labs(x="Price (livres)")
+
+```
+
+```{r plot-price-hint-2}
+
+ggplot(data= pp,
+       mapping=aes( x = price))  +
+  geom_____() +
+  labs(x="Price (livres)")
+
+```
+
+
+```{r plot-price-solution}
+
+ggplot(data= pp,
+       mapping=aes( x = price))  +
+  geom_histogram() +
+  labs(x="Price (livres)")
+
+```
+
+
+### Price versus surface area
+
+Create a scatter plot of the `price` versus `Surface`.  
+
+```{r plot-price-surface, exercise=TRUE}
+
+ggplot() +
+  geom____() +
+  labs()
+```
+
+```{r plot-price-surface-hint-1, fig.width=7, fig.height=3}
+
+ggplot(data=pp,) +
+  geom_point() +
+  labs()
+```
+
+```{r plot-price-surface-hint-2, fig.width=7, fig.height=3}
+
+ggplot(data=pp, 
+       mapping=aes(x=Surface)) +
+  geom_point() +
+  labs()
+```
+
+```{r plot-price-surface-hint-3, fig.width=7, fig.height=3}
+
+ggplot(data=pp, 
+       mapping=aes(x=Surface)) +
+  geom_point() +
+  labs()
+```
+
+```{r plot-price-surface-solution, fig.width=7, fig.height=3}
+
+ggplot(data=pp, 
+       mapping=aes(x=Surface, y=price)) +
+  geom_point() +
+  labs(x="surface", y="price")
+```
+
+At this point you may have noticed a few things: 
+
+ - the distribution of `price` is highly skewed to the right
+ - the relationship between `price` and `Surface` does not seem very linear
+ - some of the values for price and/or surface are missing.
+ 
+Let's address the last issue first by reviewing a quick summary of the variables `price` and `Surface` using the `skim` function. 
+
+```{r summary-price-surface, exercise=TRUE}
+pp %>% 
+   skim( price, Surface) 
+
+```
+
+From the output of `skim` we can see that the variable `Surface` is missing 176 values. In addition, the minimum value is listed as 0 which is likely a mistake or a missing value. 
+
+Let's prep the data by filtering out only the rows for which `Surface` is a positive number and then run a quick summary to check the variables again.
+
+
+
+```{r clean-surface, exercise=TRUE}
+
+pp <- pp %>% 
+     filter( Surface > 0)
+
+pp %>% skim(price, Surface)
+
+```
+
+
+As we did in class with height and width, let's go ahead and transform the variables using the log transformation and hope that this fixes the first two issues noted above.
+
+Create new variables `log_price` and `log_surface` which are the logarithms (base 2) of `price` and `Surface` respectively.  Be sure to add these variables to the ``pp` data frame. 
+
+Also print summaries of your new variables using `skim` as we did in the previous code chunk.
+
+```{r create-vars, exercise=TRUE, exercise.setup="prepare-pp-setup"}
+
+
+
+```
+
+```{r create-vars-hint-1}
+#did you forget the capital S in surface?
+
+```
+
+```{r create-vars-hint-2}
+
+pp <- pp %>%
+     mutate( )
+
+```
+
+```{r create-vars-solution}
+
+pp <- pp %>%
+     mutate(log_price = log2(price),
+            log_surface = log2(Surface) )
+```
+
+
+
+Now create a scatter plot of `log_price` and `log_surface`. Add a `geom_smooth` layer to draw a line through the data cloud.
+
+
+```{r plot-log-price-surface, exercise=TRUE, exercise.setup="prepare-pp-setup" }
+
+
+
+
+```
+
+```{r plot-log-price-surface-hint-1}
+
+ggplot(data=___,
+       mapping=aes(y=___,
+                   x=___ ) ) +
+  geom_point()+
+  geom_smooth()+
+  labs( )
+
+```
+
+```{r plot-log-price-surface-hint-2}
+
+ggplot(data=pp,
+       mapping=aes(y=log_price,
+                   x=log_surface ) ) +
+  geom_point()+
+  geom_smooth(method=___, se=____)+
+  labs(x="log(surface)", y="log(price)" )
+
+```
+
+
+```{r plot-log-price-surface-solution}
+
+
+ggplot(data=pp,
+       mapping=aes(y=log_price,
+                   x=log_surface) )  +
+  geom_point()+
+  geom_smooth(method="lm", se=FALSE)+
+  labs(x="log(surface)", y="log(price)" )
+
+```
+
+
+Based on the plot you created, answer the following question:
+
+```{r plot-quiz}
+question("Which of these statements are true? Select all that apply",
+  answer("There is a positive association between price and surface area on the log transformed scale.", correct = TRUE),
+  answer("There is a negative association between between price and surface area on the log transformed scale.", message = "As surface area increases, does price decrease or increase?"),
+  answer("The correlation between price and surface area on the log transformed scale is weak.", correct = TRUE),
+  answer("The correlation between price and surface area on the log transformed scale is strong.", message = "The data cloud is circular."),
+  correct = "Correct!",
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+
+## Fitting a linear model
+
+We shall *fit* a line using a method called **least squares** to predict the price of a painting from its surface area. The **least squares** method produces a line which minimizes the sum of the squared residuals (aka prediction errors). For this reason, it is often referred to as the *line of best fit*.
+
+The slope and intercept of the best fit line are given by the equations:
+
+$$slope = R \frac{s_y}{s_x} $$
+$$intercept = \bar{y} - slope \times \bar{x}$$
+
+where $x$ and $y$ denote the explanatory and response variables respectively, $R$ is the correlation between them and $\bar{x}, \bar{y},s_{x}$ and $s_y$ are their means and standard deviations.
+
+
+Instead of manually calculating these numbers, we can simply use the function `lm`. The linear model function is specified using a formula syntax $$y \sim x$$.  The resulting estimates may be viewed in a tidy format by inputting the result from `lm` into `tidy`. 
+
+```{r model-fit,exercise=TRUE, exercise.setup="prepare-pp-setup"}
+
+price_surface_fit <- lm( ___ ~____, data= ___ )
+
+price_surface_fit %>% tidy()
+
+```
+
+```{r model-fit-hint-1}
+
+price_surface_fit <- lm( log_price ~____, data= ___ )
+
+price_surface_fit %>% tidy()
+```
+
+```{r model-fit-hint-2}
+
+price_surface_fit <- lm( log_price ~log_surface, data= pp )
+
+price_surface_fit %>% tidy()
+
+
+```
+
+```{r model-fit-solution}
+
+price_surface_fit <- lm( log_price ~log_surface, data= pp )
+
+price_surface_fit %>% tidy()
+
+
+```
+
+```{r model-fit-check}
+grade_this({
+  if(identical(round(.result$estimate[1], digits=1), 5.7)) {
+    pass("You have written the model correctly")
+  }
+  if(identical(round(.result$estimate[1], digits=1), 1.7)) {
+    fail("Did you maybe use log to the base 10?")
+  }
+  if(identical(floor(.result$estimate[1]), 7)) {
+    fail("Did you maybe try to predict log_surface from log_price?")
+  }
+  fail("Not quite. Look at the hints for help!")
+})
+```
+
+
+Let's interpret the slope coefficient for `log_surface`. Recall that the slope is the change in the response associated with a unit change in the explanatory variable. When variables are transformed, as they are here, we need to carefully examine what this translates to on the original untransformed scale. 
+
+Let's denote the slope coefficient for `log_surface` by $b$ 
+meaning when `log_surface` increases by 1 unit, there is found to be an increase of  b units in `log_price`. 
+
+Since the base of the logarithm used here is 2, saying that `log_surface` increases by 1 is equivalent to saying that the surface area being doubled. Therefore, we now know from the model fit that
+
+$$log(\mbox{price for surface 2x}) - log(\mbox{price for surface x}) = b$$
+$$log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) = b$$
+$$2^{log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) } = 2^b$$
+$$\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) = 2^{b}$$
+
+Now use the value for the slope coefficient, $b$, from the output of `tidy` and  answer the following questions:
+
+```{r model-fit-quiz}
+question("Which interpretation of the slope coefficient is correct?",
+  answer("When the surface area increases by 1 square inch, the price increases by 0.20 livres",
+    message = "are you forgetting that the variables are log transformed?"  ),
+  answer("When the surface area doubles, the price increases, on average, by about 15%", correct=TRUE),
+  answer("When the surface area increases by a factor of 10, the price increases on average by a factor of 1.15 ",
+    message="are you forgetting that we used a base of 2 for the logarithm transformation?"
+  ),
+  answer(" When the surface area doubles, the price increases on average by 1.15 units", 
+         message="are you forgetting that we log transformed price"),
+  correct = "Correct!",
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+
+
+## Making predictions
+
+
+The line of best fit for relating `log_price` to `log_surface` has
+the equation:
+$$\widehat{log\_price} = 5.657 + 0.202 \times \log\_surface.$$
+
+
+Using this line of best fit, let's make some predictions.
+
+Given a surface area of 100 square inches, what is the predicted price?  Compute using the formula of best fit in the code chunk below. 
+
+**Hint:** Work through the following steps
+
+ - First, convert a surface area of 100 to the corresponding value for `log_surface`
+ 
+ - Calculate the predicted price on the log scale $\widehat{log\_price}$ using a line with slope 0.202 and intercept 5.657.
+ 
+ - Undo the log transformation
+
+```{r predict-price-1, exercise=TRUE}
+
+
+```
+
+```{r predict-price-1-hint}
+2^( ___ + ___*log2(100)  )
+```
+
+
+```{r predict-price-1-solution}
+
+2^( 5.657 + 0.202*log2(100) )
+
+
+```
+
+```{r predict-price-1-check}
+grade_this({
+  if(identical(round(.result, digits = 3), 127.917)) {
+    pass("You got it!")
+  }
+  fail("Make sure you are undoing the log transformation to get the prediction for price.")
+})
+```
+
+Using the same method you did as before, predict the price for a painting with surface area of 5000 square inches
+
+```{r predict-price-2, exercise=TRUE}
+
+```
+
+
+
+```{r predict-price-2-solution}
+2^( 5.657 + 0.202*log2(5000) )
+```
+
+```{r predict-price-2-check}
+grade_this({
+  if(identical(round(.result, digits = 3), 281.915)) {
+    pass("You got it!")
+  }
+  fail("Make sure you are undoing the log transformation.")
+})
+```
+
+
+<!--- ### Predictions made simple
+
+Instead of manually computing the predictions, we can simply use the `augment()` function from the broom package.
+
+We need to create a new data frame which stores the value of the x variable at which we want to make a prediction. This data frame must contain a variable with the same name as our x variable and the value at which we want to make a prediction. 
+
+The new data frame is then input as the `newdata` argument in the `augment()` function.
+
+```{r augment-predict, exercise = TRUE, exercise.setup = "prepare-pp-setup"}
+
+surf_area <- data.frame(log_surface = log2(100) )
+
+augment(price_surface_fit, newdata = surf_area)
+
+```
+
+```{r augment-predict-solution}
+surf_area <- data.frame(log_surface = log2(100) )
+augment(price_surface_fit, newdata = surf_area)
+```
+
+```{r augment-predict-check}
+grade_this_code("Now you know the trick! ")
+```
+
+Using the `augment()` function, we can also predict the body masses for a vector of x values in one step. Say we want to predict prices for paintings with a surface area of 100, 1,000 and 5,000 square inches.
+
+
+```{r newprice, exercise = TRUE, exercise.setup="prepare-pp-setup"}
+
+surf_area <- data.frame(log_surface=c( _____, _____,____ ) )
+
+```
+
+```{r newprice-solution}
+
+surf_area <- data.frame(log_surface=c( log2(100), log2(1000), log2(5000)) ) )
+```
+
+```{r newprice-check}
+grade_this_code("Great! The values have been stored!")
+```
+
+Now, predict using the `augment()` function:
+
+```{r predict-newprice, exercise = TRUE, exercise.setup="prepare-pp-setup"}
+___(___)
+```
+
+```{r predict-newprice-hint-1}
+How did you do it for a single observation? It's pretty similar.
+```
+```{r predict-newprice-hint-2}
+augment(___, ___ )
+```
+```{r predict-newprice-hint-3}
+augment(price_surface_fit, ___ )
+```
+```{r predict-newprice-solution}
+augment(price_surface_fit, newdata = surf_areas)
+```
+```{r predict-newprice-check}
+grade_this_code("Good job predicting the prices!")
+```
+---> 
+
+## Finish Up
+
+Congratulations! You made it through the tutorial on fitting linear models with a single predictor.
+
+## Acknowledgements
+
+The R code for creating this learnr tutorial was greatly informed by the course materials in [Data Science in a Box](https://datasciencebox.org/interactive-tutorials.html).
+
+

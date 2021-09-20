@@ -4,7 +4,7 @@ output:
      learnr::tutorial:
      progressive: true
      allow_skip: true
-    
+     css: "css/font-size.css"
 runtime: shiny_prerendered
 description: >
   Get more practice with data visualization and wrangling in the tidyverse: 
@@ -31,7 +31,7 @@ gradethis_setup()
 knitr::opts_chunk$set(echo = FALSE)
 
 # read in data ----------------------------------
-accidents<-read_csv("accidents_2020.csv",skip=1,
+accidents<-read_csv("data/accidents_2020.csv",skip=1,
                     col_names=c("id", "addr_type","location","severity_code","severity_desc","collision_type","person_count","ped_count","pedcyl_count","veh_count","injuries","serious_injuries","fatalities","inc_date","under_infl","weather","road","light","speeding","hit_parked_car"))
 
 
