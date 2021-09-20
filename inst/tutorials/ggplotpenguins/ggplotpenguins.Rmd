@@ -325,21 +325,21 @@ Create a plot of the relationship between `hwy` and `displ` which is faceted by 
 
 ```{r displ-hwy-facet-grid-hint-1}
 ggplot(data=mpg, 
-       mapping=aes( x=displ, y=hwy )) + 
+       mapping=aes( x=displ, y=hwy )) 
 
 ```
 
 ```{r displ-hwy-facet-grid-hint-2}
 ggplot(data=mpg, 
        mapping=aes( x=displ, y=hwy )) + 
-   geom_point() + 
+   geom_point() 
 ```
 
 ```{r displ-hwy-facet-grid-hint-3}
 ggplot(data=mpg, 
        mapping=aes( x=displ, y=hwy )) + 
-   geom_point() + 
-   facet_grid( ) + 
+   geom_point() +
+   facet_grid( ) 
 ```
 
 ```{r displ-hwy-facet-grid-solution}
