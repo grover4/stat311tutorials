@@ -311,7 +311,7 @@ Run the following code to examine the relationship between `hwy` and `displ` by 
 ggplot(data=mpg, 
        mapping=aes( x=displ, y=hwy)) + 
    geom_point() +
-    facet_vars(~ fl)
+    facet_wrap(~ fl)
 ```
 
 To facet by 2 variables, it is best to use `facet_grid` which has a slightly different syntax `facet_grid( rows ~ cols)`. 
