@@ -248,13 +248,14 @@ Give this a try. Delete the underline in the code below and write `color = class
 ```{r color-aesthetics, exercise = TRUE}
 #ggplot(data = mpg,
 #      mapping = aes(x = displ, y = hwy, ___ )) + 
-#  geom_point()
+#  geom_point() +
+#  scale_color_viridis_d()
 ```
 
 The colors reveal that many of the unusual points in the scatter plots are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage. 
 
 
-<!--- Note that we have also added a `scale` layer to the ggplot code. Scales control the mapping from the data to your aesthetics. An important property of ggplot2 is that **every** aesthetic in your plot is associated with exactly one scale.
+Note that we have also added a `scale` layer to the ggplot code. Scales control the mapping from the data to your aesthetics. An important property of ggplot2 is that **every** aesthetic in your plot is associated with exactly one scale.
 
 For example, when we write
 
@@ -277,7 +278,7 @@ ggplot(data = mpg,
 The choice of default scale depends on the aesthetic and variable type. For example, `hwy` is a numerical variable mapped to the y aesthetic, so the default scale is `scale_y_continuous()`. Similarly `class` is a categorical variable, so when mapped to the color aesthetic the default scale becomes discrete.
 
 If we want to over-ride the default scale, we will need to add it ourselves as we did for the color palette. The viridis color scheme is designed to be perceived by viewers with common forms of color blindness and is therefore a much better choice than the default.
----> 
+ 
 
 Note that if we place any mappings in a geom layer, ggplot will treat them as local mappings for that layer only. For example, the following code will allow the color of just the points to vary by the type of car, but will not affect the color of the trend line that we add to the plot.
 
@@ -449,12 +450,13 @@ glimpse(penguins)
 ggplot(data = penguins,
        mapping = aes(x = bill_depth_mm,
                      y = bill_length_mm,
-                     colour = species)) +
+                     color = species)) +
   geom_point() +
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species")
+       color = "Species") +
+  scale_color_viridis_d()
 ```
 
 
@@ -471,7 +473,7 @@ ggplot(data = penguins,
 # - represent each observation with a point and 
 # - map color to the species of each bird
 # - give the plot a title, subtitle, axis labels 
-
+# - add a scale_color_viridis() layer at the end if you want to match my colors
 
 ```
 
@@ -512,7 +514,8 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") 
+       color = "Species") +
+  scale_color_viridis_d()
 ```
 
 
