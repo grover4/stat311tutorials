@@ -19,10 +19,7 @@ description: >
 library(learnr)
 library(tidyverse)
 library(janitor)
-#library(gradethis)
 
-# set options for exercises and checking ---------------------------------------
-#gradethis_setup()
 
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
