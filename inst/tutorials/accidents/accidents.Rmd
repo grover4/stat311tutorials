@@ -13,19 +13,16 @@ description: >
 ---
 
 
-<!-- Add JavaScript code for making the exercise code larger -->
-<script language="JavaScript" src="js/exercise-font-size.js"></script>
-
 ```{r setup, include=FALSE}
 
 #load packages ------------------------------------------
 library(learnr)
 library(tidyverse)
 library(janitor)
-library(gradethis)
+#library(gradethis)
 
 # set options for exercises and checking ---------------------------------------
-gradethis_setup()
+#gradethis_setup()
 
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
@@ -73,10 +70,6 @@ These packages are already installed for you, so you load it as usual with the `
 ```{r load-packages-solution}
 library(tidyverse)
 library(janitor)
-```
-
-```{r load-packages-check}
-grade_this_code("The packages are now loaded!")
 ```
 
 ## Data and codebook
@@ -143,6 +136,7 @@ Each row represents one recorded accident!
 Try using nrow()!
 ```
 
+<!---
 ```{r nrow-check}
 grade_this({
   if(identical(.result, 6509) | identical(.result, 6509L)) {
@@ -154,6 +148,7 @@ grade_this({
   fail("Not quite. Each observation is represented in one row. Try looking at the hints for some help!")
 })
 ```
+--->
 
 How many variables are recorded on each crash? Again, the output from `glimpse` gives the answer. But you can use `ncol()` to verify the answer. Try it.
 
@@ -169,6 +164,7 @@ Each variable is encoded is displayed as a column.
 Try using ncol()!
 ```
 
+<!---
 ```{r ncol-check}
 grade_this({
   if(identical(.result, 20) | identical(.result, 20L)) {
@@ -180,6 +176,8 @@ grade_this({
   fail("Not quite. Each variable is represented in a column. Try looking at the hints for some help!")
 })
 ```
+
+--->
 
 ```{r quiz-vars}
 question("What type of variable is addr_type?",
@@ -218,6 +216,7 @@ accidents %>%
   nrow()
 ```
 
+<!---
 ```{r filter-multi-car-check}
 grade_this({
   if(identical(.result, 3673) | identical(.result, 3673L)) {
@@ -226,6 +225,7 @@ grade_this({
   fail("Take a peek at the hints!")
 })
 ```
+--->
 
 How many accidents involved `speeding`?  
 
@@ -244,6 +244,7 @@ accidents %>%
     nrow()
 ```
 
+<!---
 ```{r filter-speeding-check}
 grade_this({
   if(identical(.result, 292) | identical(.result, 292L)) {
@@ -252,6 +253,7 @@ grade_this({
   fail("Take a look at the solution!")
 })
 ```
+--->
 
 How many accidents involved 2 or more vehicles and speeding?
 
@@ -267,7 +269,7 @@ accidents %>%
     nrow()
 ```
 
-
+<!---
 ```{r filter-multi-car-speed-check}
 grade_this({
   if(identical(.result, 164) | identical(.result, 164L)) {
@@ -277,6 +279,7 @@ grade_this({
 })
 ```
 
+--->
 
 ## Location of accident
 
@@ -305,6 +308,8 @@ accidents %>%
   count(addr_type, sort = TRUE)
 ```
 
+<!---
+
 ```{r location-frequency-check}
 grade_this({
   if(identical(.result$n[1], 4060L)) {
@@ -313,7 +318,7 @@ grade_this({
  })
 ```
 
-
+--->
 
 
 ## Accident Severity
