@@ -160,7 +160,7 @@ Let's create a plot to examine the relationship between engine size (`displ`) an
 ```{r ex2, echo=T}
  ggplot(data=mpg, 
        mapping=aes(x=displ,y=hwy)) + 
-      geom_point()+
+      geom_point() +
       labs(x="Engine displacement (liters)",
            y="Miles per gallon",
            title="Fuel economy versus engine size",
@@ -249,13 +249,13 @@ ggplot(data=mpg,
 
 A possible reason for this is they differ in some systematic way from the other cars. To investigate this, let's color-code the points by the `class` of the car. For example, we can color a point green if it belongs to the compact class, blue if it belongs to the midsize class, and so on. 
 
-Give this a try. Delete the underline in the code below and write `color = class` in its place. Run the code after removing the comment (`#`) symbols. What happens? 
+Give this a try. Write `color = class` in place of the dash and run the code. What happens? 
 
 ```{r color-aesthetics, exercise = TRUE}
-#ggplot(data = mpg,
-#      mapping = aes(x = displ, y = hwy, ___________)) + 
-#  geom_point()+
-#  scale_color_viridis_d()
+ggplot(data = mpg,
+      mapping = aes(x = displ, y = hwy, ___ )) + 
+  geom_point() +
+  scale_color_viridis_d()
 ```
 
 The colors reveal that many of the unusual points in the scatter plots are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage. 
