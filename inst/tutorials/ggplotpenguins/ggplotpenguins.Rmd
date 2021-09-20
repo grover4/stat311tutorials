@@ -12,9 +12,6 @@ description: >
 
 
 
-<!-- Add JavaScript code for making the exercise code larger -->
-<script language="JavaScript" src="js/exercise-font-size.js"></script>
-
 ```{r setup, include=FALSE}
 
 #load packages ---------------------------------
