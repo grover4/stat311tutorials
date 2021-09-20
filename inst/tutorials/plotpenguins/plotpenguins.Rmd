@@ -468,12 +468,12 @@ ggplot(data = penguins,
 ```
 
 
-```{r penguin-scatter, exercise=TRUE}
+```{r scatter, exercise=TRUE}
 
 
 ```
 
-```{r penguin-scatter-hint-1}
+```{r scatter-hint-1}
 
 #code out loud:
 # - start with the penguin data frame
@@ -485,14 +485,14 @@ ggplot(data = penguins,
 
 ```
 
-```{r penguin-scatter-hint-2}
+```{r scatter-hint-2}
 ggplot(data = penguins,
        mapping = aes(x = bill_depth_mm,
                      y = bill_length_mm,
                      color = species)) 
 ```
 
-```{r penguin-scatter-hint-3}
+```{r scatter-hint-3}
 
 ggplot(data = penguins,
        mapping = aes(x = bill_depth_mm,
@@ -501,7 +501,7 @@ ggplot(data = penguins,
   geom_point() 
 ```
 
-```{r penguin-scatter-hint-4}
+```{r scatter-hint-4}
 ggplot(data = penguins,
        mapping = aes(x = bill_depth_mm,
                      y = bill_length_mm,
@@ -513,7 +513,7 @@ ggplot(data = penguins,
        color = "Species") 
 ```
 
-```{r penguin-scatter-solution}
+```{r scatter-solution}
 ggplot(data = penguins,
        mapping = aes(x = bill_depth_mm,
                      y = bill_length_mm,
