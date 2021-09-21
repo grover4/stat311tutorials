@@ -261,7 +261,7 @@ Suppose we wish to compare accident severity (`severity_desc`) by the condition 
 ```{r example-plot, fig.width=6,fig.height=4, echo=FALSE}
 
 ggplot(data=accidents %>% filter(!is.na(road)), 
-  mapping=aes(y=addr_type, fill=severity_desc)) +
+  mapping=aes(y=road, fill=severity_desc)) +
       geom_bar(position = "fill")+
       labs(x="Proportion", y="Road condition",
            fill="Severity Description",
@@ -278,8 +278,8 @@ ggplot(data=accidents %>% filter(!is.na(road)),
 ```{r plot-severity-hint-1}
 #code out loud:
 # - start with the accidents data frame
-# - filter the data using !is.na(addr_type) 
-# - map addr type to the x-axis and severity desc to the fill 
+# - filter the data using !is.na(road) 
+# - map road to the y-axis and severity desc to the fill 
 # - represent counts with a bar and 
 # - choose position as fill to create segmented bars
 # - give the plot a title, subtitle, axis labels 
