@@ -223,15 +223,6 @@ accidents %>%
 ```
 
 
-```{r filter-multi-car-speed-check}
-grade_this({
-  if(identical(.result, 164) | identical(.result, 164L)) {
-    pass("There are 164 rows that correspond to accidents with two or more vehicles and speeding involved.")
-  }
-  fail("Take a look at the solution!")
-})
-```
-
 
 
 ## Location of accident
@@ -282,11 +273,7 @@ ggplot(data=accidents %>% filter(!is.na(addr_type)),
 
 ```{r plot-severity, exercise = TRUE}
 
-ggplot(data = ___,   mapping=aes(x = ___, fill = ___)) +
-  geom___(___) +
-  ___(x = ___, y = ___,
-       ___ = ___, 
-       title = ___) 
+
 ```
 
 ```{r plot-severity-hint-1}
