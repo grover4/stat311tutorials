@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = FALSE)
 accidents<-read_csv("data/accidents_2020.csv",skip=1,
                     col_names=c("id", "addr_type","location","severity_code","severity_desc","collision_type","person_count","ped_count","pedcyl_count","veh_count","injuries","serious_injuries","fatalities","inc_date","under_infl","weather","road","light","speeding","hit_parked_car"))
 
-accidents <- accidents %>% select( addr_type, severity_desc, veh_count, light, hit_parked_car) 
+ 
 accidents <- accidents %>%  mutate(light=na_if(light,"Unknown"), 
                                   light=na_if(light, "Other") )
 ```
