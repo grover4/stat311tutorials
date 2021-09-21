@@ -172,7 +172,7 @@ Let's recode the `season` variable as a character variable with the name of the 
 
 After you have recoded `season`, you can check its distribution with  `count` in this code chunk.
 
-```{r recode-season, exercise = TRUE, exercise.setup="glimpse-data-setup"}
+```{r recode-season, exercise = TRUE, exercise.setup="glimpse-data-setup", exercise.completion=FALSE}
 
 dcbikeshare <- ___ %>%
   mutate(
@@ -245,7 +245,7 @@ dcbikeshare <- dsbox::dcbikeshare %>%
   )
 ```
 
-```{r recode-holiday-workingday, exercise = TRUE, message = FALSE, exercise.setup="recode-holiday-workingday-setup"}
+```{r recode-holiday-workingday, exercise = TRUE, message = FALSE, exercise.completion=FALSE}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -314,7 +314,7 @@ dcbikeshare <- dsbox::dcbikeshare %>%
   )
 ```
 
-```{r recode-yr, exercise = TRUE, message = FALSE, exercise.setup="recode-yr-setup"}
+```{r recode-yr, exercise = TRUE, message = FALSE, exercise.completion = FALSE}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -391,7 +391,7 @@ dcbikeshare <- dsbox::dcbikeshare %>%
   )
 ```
 
-```{r recode-weathersit, exercise = TRUE, warning=TRUE, message=FALSE, exercise.setup="recode-weathersit-setup"}
+```{r recode-weathersit, exercise = TRUE, warning=TRUE, message=FALSE, exercise.completion=FALSE}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -514,7 +514,7 @@ dcbikeshare <- dsbox::dcbikeshare %>%
   )
 ```
 
-```{r recode-measures, exercise = TRUE, message= FALSE, exercise.setup="recode-measures-setup"}
+```{r recode-measures, exercise = TRUE, message= FALSE, exercise.completion=FALSE}
 dcbikeshare <- ___ %>%
   ___(
     ___

@@ -248,7 +248,7 @@ library(dsbox)</code></pre>
 <p>As noted in the codebook, <code>season</code> is encoded as a numeric variable taking the values 1, 2, 3 or 4 to denote the seasons: 1: winter, 2: spring, 3: summer, 4: fall</p>
 <p>Let’s recode the <code>season</code> variable as a character variable with the name of the season as its value, and also set spring as the baseline level.</p>
 <p>After you have recoded <code>season</code>, you can check its distribution with <code>count</code> in this code chunk.</p>
-<div class="tutorial-exercise" data-label="recode-season" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise" data-label="recode-season" data-completion="0" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- ___ %&gt;%
   mutate(
     season = case_when(
@@ -282,7 +282,7 @@ dcbikeshare %&gt;% count(season) </code></pre>
     season = fct_relevel(season, ___)
   )</code></pre>
 </div>
-<div class="tutorial-exercise-support" data-label="recode-season-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise-support" data-label="recode-season-hint-3" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- dcbikeshare %&gt;%
   mutate(
     season = case_when(
@@ -300,7 +300,7 @@ dcbikeshare %&gt;% count(season) </code></pre>
 <p>As noted in the codebook, the variables <code>holiday</code> and <code>workingday</code> take the value of 0 and 1 to denote the labels “no” and “yes”.</p>
 <p>Recode the variables <code>holiday</code> and <code>workingday</code> as character variables and replace the numeric values with their corresponding labels. Set the level “no” as the baseline level in each case.</p>
 <p>Again, use the <code>count</code> function to examine your work.</p>
-<div class="tutorial-exercise" data-label="recode-holiday-workingday" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise" data-label="recode-holiday-workingday" data-completion="0" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- ___ %&gt;%
   ___(
     ___
@@ -327,7 +327,7 @@ dcbikeshare %&gt;% count(season) </code></pre>
     workingday = fct_relevel(___)
   )</code></pre>
 </div>
-<div class="tutorial-exercise-support" data-label="recode-holiday-workingday-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise-support" data-label="recode-holiday-workingday-hint-4" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- dcbikeshare %&gt;%
   mutate(
     holiday = ifelse(holiday == 0, &quot;no&quot;, &quot;yes&quot;),      
@@ -344,7 +344,7 @@ dcbikeshare %&gt;% count(workingday) </code></pre>
 <div id="section-recode-year" class="section level3">
 <h3>Recode year</h3>
 <p>The variable <code>yr</code> is a numeric variable which takes the values 0 and 1 to denote the year the data is from. Let’s recode <code>yr</code> to be a character variable with levels 2011 and 2012, with 2011 as the baseline level.</p>
-<div class="tutorial-exercise" data-label="recode-yr" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise" data-label="recode-yr" data-completion="0" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- ___ %&gt;%
   ___(
     ___
@@ -368,7 +368,7 @@ dcbikeshare %&gt;% count(workingday) </code></pre>
     yr = fct_relevel(___)
   )</code></pre>
 </div>
-<div class="tutorial-exercise-support" data-label="recode-yr-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise-support" data-label="recode-yr-hint-4" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- dcbikeshare %&gt;%
   mutate(
     yr = ifelse(yr == 0, &quot;2011&quot;, &quot;2012&quot;),
@@ -411,7 +411,7 @@ dcbikeshare %&gt;% count(workingday) </code></pre>
 </table>
 <p>Recode the <code>weathersit</code> variable as 1 - clear, 2 - mist, 3 - light precipitation, and 4 - heavy precipitation, with clear as the baseline.</p>
 <p>Again, don’t forget to take a look at the distribution of the transformed variable with the <code>count</code> function.</p>
-<div class="tutorial-exercise" data-label="recode-weathersit" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise" data-label="recode-weathersit" data-completion="0" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- ___ %&gt;%
   ___(
     ___
@@ -463,7 +463,7 @@ dcbikeshare %&gt;% count(workingday) </code></pre>
     weathersit = fct_relevel(___)
   )</code></pre>
 </div>
-<div class="tutorial-exercise-support" data-label="recode-weathersit-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise-support" data-label="recode-weathersit-hint-5" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- dcbikeshare %&gt;%
   mutate(
     weathersit = case_when(
@@ -514,7 +514,7 @@ dcbikeshare %&gt;% count(workingday) </code></pre>
 </tbody>
 </table>
 <p>As you can see, these variables have been normalized by the maximum value for the variable. Let’s go ahead and calculate raw temperature, feeling temperature, humidity, and windspeed as their values given in the dataset multiplied by the maximum raw values stated in the codebook for each variable. Instead of writing over the existing variables, create new ones called <code>temperature_raw</code>, <code>feeling_temperature_raw</code>, <code>humidity_raw</code>, <code>windspeed_raw</code>.</p>
-<div class="tutorial-exercise" data-label="recode-measures" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise" data-label="recode-measures" data-completion="0" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- ___ %&gt;%
   ___(
     ___
@@ -551,7 +551,7 @@ dcbikeshare %&gt;% count(workingday) </code></pre>
     windspeed_raw = ___ * ___
   )</code></pre>
 </div>
-<div class="tutorial-exercise-support" data-label="recode-measures-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise-support" data-label="recode-measures-hint-5" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>dcbikeshare &lt;- dcbikeshare %&gt;%
   mutate(
     temperature_raw = temp * 41,
@@ -575,7 +575,7 @@ cnt_tmp %&gt;% tidy()</code></pre>
 cnt_tmp %&gt;%
   tidy()</code></pre>
 </div>
-<div class="tutorial-exercise-support" data-label="rentals-vs-temp-solution" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
+<div class="tutorial-exercise-support" data-label="rentals-vs-temp-hint-2" data-completion="1" data-diagnostics="1" data-startover="1" data-lines="0">
 <pre class="text"><code>cnt_tmp &lt;- lm(cnt ~ temperature_raw, data = dcbikeshare)
 cnt_tmp %&gt;%
   tidy() </code></pre>
@@ -1231,17 +1231,13 @@ learnr:::store_exercise_cache("recode-season", list(setup = "\ndcbikeshare <- ds
         opts = list(label = "\"glimpse-data-setup\""), engine = "r"), 
     list(label = "recode-season", code = "\ndcbikeshare <- ___ %>%\n  mutate(\n    season = case_when(\n    ___\n    ),\n    season = fct_relevel(___)\n  )\n\ndcbikeshare %>% count(season) ", 
         opts = list(label = "\"recode-season\"", exercise = "TRUE", 
-            exercise.setup = "\"glimpse-data-setup\""), engine = "r")), 
-    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("dcbikeshare <- dcbikeshare %>%", 
-    "  mutate(", "    season = case_when(", "      season == 1 ~ \"winter\",", 
-    "      season == 2 ~ \"spring\",", "      season == 3 ~ \"summer\",", 
-    "      season == 4 ~ \"fall\"", "    ),", "    season = fct_relevel(season, \"spring\")", 
-    "  )"), chunk_opts = list(label = "recode-season-solution")), 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, strip.white = TRUE, 
-        size = "normalsize", background = "#F7F7F7", cache = 0, 
-        cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
+            exercise.setup = "\"glimpse-data-setup\"", exercise.completion = "FALSE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = NULL, options = list(eval = FALSE, 
+        echo = TRUE, results = "markup", tidy = FALSE, tidy.opts = NULL, 
+        collapse = FALSE, prompt = FALSE, comment = NA, highlight = FALSE, 
+        strip.white = TRUE, size = "normalsize", background = "#F7F7F7", 
+        cache = 0, cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
         cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
         cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
         fig.align = "default", fig.path = "dcbikeshare_files/figure-html/", 
@@ -1257,10 +1253,10 @@ learnr:::store_exercise_cache("recode-season", list(setup = "\ndcbikeshare <- ds
         exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, ...) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
         label = "recode-season", exercise = TRUE, exercise.setup = "glimpse-data-setup", 
-        code = c("", "dcbikeshare <- ___ %>%", "  mutate(", "    season = case_when(", 
-        "    ___", "    ),", "    season = fct_relevel(___)", 
-        "  )", "", "dcbikeshare %>% count(season) "), out.width.px = 624, 
-        out.height.px = 384, params.src = "recode-season, exercise = TRUE, exercise.setup=\"glimpse-data-setup\"", 
+        exercise.completion = FALSE, code = c("", "dcbikeshare <- ___ %>%", 
+        "  mutate(", "    season = case_when(", "    ___", "    ),", 
+        "    season = fct_relevel(___)", "  )", "", "dcbikeshare %>% count(season) "
+        ), out.width.px = 624, out.height.px = 384, params.src = "recode-season, exercise = TRUE, exercise.setup=\"glimpse-data-setup\", exercise.completion=FALSE", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r"))
 </script>
  
@@ -1279,59 +1275,9 @@ learnr:::store_exercise_cache("recode-holiday-workingday", list(setup = "dcbikes
         engine = "r"), list(label = "recode-holiday-workingday", 
         code = "dcbikeshare <- ___ %>%\n  ___(\n    ___\n  )", 
         opts = list(label = "\"recode-holiday-workingday\"", 
-            exercise = "TRUE", message = "FALSE", exercise.setup = "\"recode-holiday-workingday-setup\""), 
+            exercise = "TRUE", message = "FALSE", exercise.completion = "FALSE"), 
         engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure(c("dcbikeshare <- dcbikeshare %>%", 
-    "  mutate(", "    holiday = ifelse(holiday == 0, \"no\", \"yes\"),      ", 
-    "    holiday = fct_relevel(holiday, \"no\"),    ", "    workingday = ifelse(workingday == 0, \"no\", \"yes\"),", 
-    "    workingday = fct_relevel(workingday, \"no\")", "  )", 
-    "", "dcbikeshare %>% count(holiday)", "", "dcbikeshare %>% count(workingday) "
-    ), chunk_opts = list(label = "recode-holiday-workingday-solution")), 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, strip.white = TRUE, 
-        size = "normalsize", background = "#F7F7F7", cache = 0, 
-        cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
-        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
-        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
-        fig.align = "default", fig.path = "dcbikeshare_files/figure-html/", 
-        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
-        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
-        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
-        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
-        max.print = 1000, tutorial = TRUE, exercise.timelimit = 60, 
-        exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, ...) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, ...)\n}", 
-        exercise.error.check.code = "gradethis_error_checker()", 
-        label = "recode-holiday-workingday", exercise = TRUE, 
-        exercise.setup = "recode-holiday-workingday-setup", code = c("dcbikeshare <- ___ %>%", 
-        "  ___(", "    ___", "  )"), out.width.px = 624, out.height.px = 384, 
-        params.src = "recode-holiday-workingday, exercise = TRUE, message = FALSE, exercise.setup=\"recode-holiday-workingday-setup\"", 
-        fig.num = 0, exercise.df_print = "paged"), engine = "r"))
-</script>
- 
-<script type="application/shiny-prerendered" data-context="server">
-`tutorial-exercise-recode-yr-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-recode-yr-code-editor`)), session)
-output$`tutorial-exercise-recode-yr-output` <- renderUI({
-  `tutorial-exercise-recode-yr-result`()
-})
-</script>
- 
-<script type="application/shiny-prerendered" data-context="server">
-learnr:::store_exercise_cache("recode-yr", list(setup = "dcbikeshare <- dsbox::dcbikeshare %>%\n  mutate(\n    season = case_when(\n      season == 1 ~ \"winter\",\n      season == 2 ~ \"spring\",\n      season == 3 ~ \"summer\",\n      season == 4 ~ \"fall\"\n    ),\n    season = fct_relevel(season, \"spring\")) %>%\n  mutate(\n    holiday = ifelse(holiday == 0, \"no\", \"yes\"),      \n    holiday = fct_relevel(holiday, \"no\"),    \n    workingday = ifelse(workingday == 0, \"no\", \"yes\"),\n    workingday = fct_relevel(workingday, \"no\")\n  )", 
-    chunks = list(list(label = "recode-yr-setup", code = "dcbikeshare <- dsbox::dcbikeshare %>%\n  mutate(\n    season = case_when(\n      season == 1 ~ \"winter\",\n      season == 2 ~ \"spring\",\n      season == 3 ~ \"summer\",\n      season == 4 ~ \"fall\"\n    ),\n    season = fct_relevel(season, \"spring\")) %>%\n  mutate(\n    holiday = ifelse(holiday == 0, \"no\", \"yes\"),      \n    holiday = fct_relevel(holiday, \"no\"),    \n    workingday = ifelse(workingday == 0, \"no\", \"yes\"),\n    workingday = fct_relevel(workingday, \"no\")\n  )", 
-        opts = list(label = "\"recode-yr-setup\""), engine = "r"), 
-        list(label = "recode-yr", code = "dcbikeshare <- ___ %>%\n  ___(\n    ___\n  )", 
-            opts = list(label = "\"recode-yr\"", exercise = "TRUE", 
-                message = "FALSE", exercise.setup = "\"recode-yr-setup\""), 
-            engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure(c("dcbikeshare <- dcbikeshare %>%", 
-    "  mutate(", "    yr = ifelse(yr == 0, \"2011\", \"2012\"),", 
-    "    yr = fct_relevel(yr, \"2011\")", "  )"), chunk_opts = list(
-        label = "recode-yr-solution")), options = list(eval = FALSE, 
+    check = NULL, solution = NULL, options = list(eval = FALSE, 
         echo = TRUE, results = "markup", tidy = FALSE, tidy.opts = NULL, 
         collapse = FALSE, prompt = FALSE, comment = NA, highlight = FALSE, 
         strip.white = TRUE, size = "normalsize", background = "#F7F7F7", 
@@ -1350,9 +1296,50 @@ learnr:::store_exercise_cache("recode-yr", list(setup = "dcbikeshare <- dsbox::d
         max.print = 1000, tutorial = TRUE, exercise.timelimit = 60, 
         exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, ...) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
-        label = "recode-yr", exercise = TRUE, exercise.setup = "recode-yr-setup", 
+        label = "recode-holiday-workingday", exercise = TRUE, 
+        exercise.completion = FALSE, code = c("dcbikeshare <- ___ %>%", 
+        "  ___(", "    ___", "  )"), out.width.px = 624, out.height.px = 384, 
+        params.src = "recode-holiday-workingday, exercise = TRUE, message = FALSE, exercise.completion=FALSE", 
+        fig.num = 0, exercise.df_print = "paged"), engine = "r"))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-recode-yr-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-recode-yr-code-editor`)), session)
+output$`tutorial-exercise-recode-yr-output` <- renderUI({
+  `tutorial-exercise-recode-yr-result`()
+})
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache("recode-yr", list(setup = "dcbikeshare <- dsbox::dcbikeshare %>%\n  mutate(\n    season = case_when(\n      season == 1 ~ \"winter\",\n      season == 2 ~ \"spring\",\n      season == 3 ~ \"summer\",\n      season == 4 ~ \"fall\"\n    ),\n    season = fct_relevel(season, \"spring\")) %>%\n  mutate(\n    holiday = ifelse(holiday == 0, \"no\", \"yes\"),      \n    holiday = fct_relevel(holiday, \"no\"),    \n    workingday = ifelse(workingday == 0, \"no\", \"yes\"),\n    workingday = fct_relevel(workingday, \"no\")\n  )", 
+    chunks = list(list(label = "recode-yr-setup", code = "dcbikeshare <- dsbox::dcbikeshare %>%\n  mutate(\n    season = case_when(\n      season == 1 ~ \"winter\",\n      season == 2 ~ \"spring\",\n      season == 3 ~ \"summer\",\n      season == 4 ~ \"fall\"\n    ),\n    season = fct_relevel(season, \"spring\")) %>%\n  mutate(\n    holiday = ifelse(holiday == 0, \"no\", \"yes\"),      \n    holiday = fct_relevel(holiday, \"no\"),    \n    workingday = ifelse(workingday == 0, \"no\", \"yes\"),\n    workingday = fct_relevel(workingday, \"no\")\n  )", 
+        opts = list(label = "\"recode-yr-setup\""), engine = "r"), 
+        list(label = "recode-yr", code = "dcbikeshare <- ___ %>%\n  ___(\n    ___\n  )", 
+            opts = list(label = "\"recode-yr\"", exercise = "TRUE", 
+                message = "FALSE", exercise.completion = "FALSE"), 
+            engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = NULL, options = list(eval = FALSE, 
+        echo = TRUE, results = "markup", tidy = FALSE, tidy.opts = NULL, 
+        collapse = FALSE, prompt = FALSE, comment = NA, highlight = FALSE, 
+        strip.white = TRUE, size = "normalsize", background = "#F7F7F7", 
+        cache = 0, cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "dcbikeshare_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = FALSE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, tutorial = TRUE, exercise.timelimit = 60, 
+        exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, ...) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, ...)\n}", 
+        exercise.error.check.code = "gradethis_error_checker()", 
+        label = "recode-yr", exercise = TRUE, exercise.completion = FALSE, 
         code = c("dcbikeshare <- ___ %>%", "  ___(", "    ___", 
-        "  )"), out.width.px = 624, out.height.px = 384, params.src = "recode-yr, exercise = TRUE, message = FALSE, exercise.setup=\"recode-yr-setup\"", 
+        "  )"), out.width.px = 624, out.height.px = 384, params.src = "recode-yr, exercise = TRUE, message = FALSE, exercise.completion = FALSE", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r"))
 </script>
  
@@ -1369,19 +1356,13 @@ learnr:::store_exercise_cache("recode-weathersit", list(setup = "dcbikeshare <- 
         opts = list(label = "\"recode-weathersit-setup\""), engine = "r"), 
         list(label = "recode-weathersit", code = "dcbikeshare <- ___ %>%\n  ___(\n    ___\n    ),\n    ___\n  )", 
             opts = list(label = "\"recode-weathersit\"", exercise = "TRUE", 
-                warning = "TRUE", message = "FALSE", exercise.setup = "\"recode-weathersit-setup\""), 
+                warning = "TRUE", message = "FALSE", exercise.completion = "FALSE"), 
             engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure(c("dcbikeshare <- dcbikeshare %>%", 
-    "  mutate(", "    weathersit = case_when(", "      weathersit == 1 ~ \"clear\",", 
-    "      weathersit == 2 ~ \"mist\",", "      weathersit == 3 ~ \"light precipitation\",", 
-    "      weathersit == 4 ~ \"heavy precipitation\"", "    ),", 
-    "    weathersit = fct_relevel(weathersit, \"clear\")", "  )"
-    ), chunk_opts = list(label = "recode-weathersit-solution")), 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, strip.white = TRUE, 
-        size = "normalsize", background = "#F7F7F7", cache = 0, 
-        cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
+    check = NULL, solution = NULL, options = list(eval = FALSE, 
+        echo = TRUE, results = "markup", tidy = FALSE, tidy.opts = NULL, 
+        collapse = FALSE, prompt = FALSE, comment = NA, highlight = FALSE, 
+        strip.white = TRUE, size = "normalsize", background = "#F7F7F7", 
+        cache = 0, cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
         cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
         cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
         fig.align = "default", fig.path = "dcbikeshare_files/figure-html/", 
@@ -1396,10 +1377,10 @@ learnr:::store_exercise_cache("recode-weathersit", list(setup = "dcbikeshare <- 
         max.print = 1000, tutorial = TRUE, exercise.timelimit = 60, 
         exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, ...) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
-        label = "recode-weathersit", exercise = TRUE, exercise.setup = "recode-weathersit-setup", 
+        label = "recode-weathersit", exercise = TRUE, exercise.completion = FALSE, 
         code = c("dcbikeshare <- ___ %>%", "  ___(", "    ___", 
         "    ),", "    ___", "  )"), out.width.px = 624, out.height.px = 384, 
-        params.src = "recode-weathersit, exercise = TRUE, warning=TRUE, message=FALSE, exercise.setup=\"recode-weathersit-setup\"", 
+        params.src = "recode-weathersit, exercise = TRUE, warning=TRUE, message=FALSE, exercise.completion=FALSE", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r"))
 </script>
  
@@ -1416,17 +1397,13 @@ learnr:::store_exercise_cache("recode-measures", list(setup = "dcbikeshare <- ds
         opts = list(label = "\"recode-measures-setup\""), engine = "r"), 
         list(label = "recode-measures", code = "dcbikeshare <- ___ %>%\n  ___(\n    ___\n  )", 
             opts = list(label = "\"recode-measures\"", exercise = "TRUE", 
-                message = "FALSE", exercise.setup = "\"recode-measures-setup\""), 
+                message = "FALSE", exercise.completion = "FALSE"), 
             engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure(c("dcbikeshare <- dcbikeshare %>%", 
-    "  mutate(", "    temperature_raw = temp * 41,", "    feeling_temperature_raw = atemp * 50,", 
-    "    humidity_raw = hum * 100,", "    windspeed_raw = windspeed * 67", 
-    "  )"), chunk_opts = list(label = "recode-measures-solution")), 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, strip.white = TRUE, 
-        size = "normalsize", background = "#F7F7F7", cache = 0, 
-        cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
+    check = NULL, solution = NULL, options = list(eval = FALSE, 
+        echo = TRUE, results = "markup", tidy = FALSE, tidy.opts = NULL, 
+        collapse = FALSE, prompt = FALSE, comment = NA, highlight = FALSE, 
+        strip.white = TRUE, size = "normalsize", background = "#F7F7F7", 
+        cache = 0, cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
         cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
         cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
         fig.align = "default", fig.path = "dcbikeshare_files/figure-html/", 
@@ -1441,9 +1418,9 @@ learnr:::store_exercise_cache("recode-measures", list(setup = "dcbikeshare <- ds
         max.print = 1000, tutorial = TRUE, exercise.timelimit = 60, 
         exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, ...) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
-        label = "recode-measures", exercise = TRUE, exercise.setup = "recode-measures-setup", 
+        label = "recode-measures", exercise = TRUE, exercise.completion = FALSE, 
         code = c("dcbikeshare <- ___ %>%", "  ___(", "    ___", 
-        "  )"), out.width.px = 624, out.height.px = 384, params.src = "recode-measures, exercise = TRUE, message= FALSE, exercise.setup=\"recode-measures-setup\"", 
+        "  )"), out.width.px = 624, out.height.px = 384, params.src = "recode-measures, exercise = TRUE, message= FALSE, exercise.completion=FALSE", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r"))
 </script>
  
@@ -1471,11 +1448,9 @@ learnr:::store_exercise_cache("rentals-vs-temp", list(setup = "dcbikeshare <- mu
     "     fail(\"Did you maybe try to predict the weather from the number of bike rentals?\")", 
     "   }", "   fail(\"Not quite. Look at the hints for help!\")", 
     " })"), chunk_opts = list(label = "rentals-vs-temp-check")), 
-    solution = structure(c("cnt_tmp <- lm(cnt ~ temperature_raw, data = dcbikeshare)", 
-    "cnt_tmp %>%", "  tidy() "), chunk_opts = list(label = "rentals-vs-temp-solution")), 
-    options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, strip.white = TRUE, 
+    solution = NULL, options = list(eval = FALSE, echo = TRUE, 
+        results = "markup", tidy = FALSE, tidy.opts = NULL, collapse = FALSE, 
+        prompt = FALSE, comment = NA, highlight = FALSE, strip.white = TRUE, 
         size = "normalsize", background = "#F7F7F7", cache = 0, 
         cache.path = "dcbikeshare_cache/html/", cache.vars = NULL, 
         cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
@@ -1501,22 +1476,22 @@ learnr:::store_exercise_cache("rentals-vs-temp", list(setup = "dcbikeshare <- mu
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "rentals-vs-temp-quiz", 
     question = structure("Which interpretations are correct?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_3c02d59", 
+    "character")), answers = list(structure(list(id = "lnr_ans_fb2e4b5", 
         option = "The model has the intercept at approximately 1215, which means that at a day with a temperature of 0 degrees celsius, we can except to have, on average, 1215 bike rentals.", 
         value = "The model has the intercept at approximately 1215, which means that at a day with a temperature of 0 degrees celsius, we can except to have, on average, 1215 bike rentals.", 
         label = structure("The model has the intercept at approximately 1215, which means that at a day with a temperature of 0 degrees celsius, we can except to have, on average, 1215 bike rentals.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c914958", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c1f136d", 
         option = "The model has the intercept at approximately 162, which means that at a day with a temperature of 0 degrees celsius, we can expect to have, on average, 162 bike rentals.", 
         value = "The model has the intercept at approximately 162, which means that at a day with a temperature of 0 degrees celsius, we can expect to have, on average, 162 bike rentals.", 
         label = structure("The model has the intercept at approximately 162, which means that at a day with a temperature of 0 degrees celsius, we can expect to have, on average, 162 bike rentals.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_3a7224", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b72c05", 
         option = "The slope of the model is approximately 162, which means that, for each additional degree celsius, we can expect bike rentals to increase by 162.", 
         value = "The slope of the model is approximately 162, which means that, for each additional degree celsius, we can expect bike rentals to increase by 162.", 
         label = structure("The slope of the model is approximately 162, which means that, for each additional degree celsius, we can expect bike rentals to increase by 162.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_123246d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_2ddc135", 
         option = "The slope of the model is approximately 1215, which means that, for each additional degree celsius, we can expect bike rentals to increase by 1215.", 
         value = "The slope of the model is approximately 1215, which means that, for each additional degree celsius, we can expect bike rentals to increase by 1215.", 
         label = structure("The slope of the model is approximately 1215, which means that, for each additional degree celsius, we can expect bike rentals to increase by 1215.", html = TRUE, class = c("html", 
@@ -1530,7 +1505,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
         answer = "rentals-vs-temp-quiz-answer", question = "rentals-vs-temp-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \nWhich interpretations are correct?\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 494853829.769566, options = list()), class = c("learnr_checkbox", 
+    seed = 3417360.99840867, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")))
 </script>
  
@@ -1579,22 +1554,22 @@ learnr:::store_exercise_cache("rentals-vs-temp-r2", list(setup = "dcbikeshare <-
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "rentals-vs-temp-r2-quiz", 
     question = structure("What does the R-squared mean in this context?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_391c6ca", 
+    "character")), answers = list(structure(list(id = "lnr_ans_a970616", 
         option = "39.4% of the variability in the number of total daily bike rental is explained by temperature.", 
         value = "39.4% of the variability in the number of total daily bike rental is explained by temperature.", 
         label = structure("39.4% of the variability in the number of total daily bike rental is explained by temperature.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_8a6bf63", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b0b0432", 
         option = "The model predicts the correct number of bike rentals 39.4% of the time", 
         value = "The model predicts the correct number of bike rentals 39.4% of the time", 
         label = structure("The model predicts the correct number of bike rentals 39.4% of the time", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_6192f04", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ec40360", 
         option = "On average, the number of bike rentals predicted by the model differs from the actual number of bike rentals by 39.4%", 
         value = "On average, the number of bike rentals predicted by the model differs from the actual number of bike rentals by 39.4%", 
         label = structure("On average, the number of bike rentals predicted by the model differs from the actual number of bike rentals by 39.4%", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a59ddf8", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7c86228", 
         option = "On average, the number of bike rentals predicted squared by the model differs from the actual number of bike rentals squared by 39.4%", 
         value = "On average, the number of bike rentals predicted squared by the model differs from the actual number of bike rentals squared by 39.4%", 
         label = structure("On average, the number of bike rentals predicted squared by the model differs from the actual number of bike rentals squared by 39.4%", html = TRUE, class = c("html", 
@@ -1608,7 +1583,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
         answer = "rentals-vs-temp-r2-quiz-answer", question = "rentals-vs-temp-r2-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \nWhat does the R-squared mean in this context?\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 704311861.172029, options = list()), class = c("learnr_radio", 
+    seed = 636832437.703452, options = list()), class = c("learnr_radio", 
 "tutorial_question")))
 </script>
  
@@ -1667,22 +1642,22 @@ learnr:::store_exercise_cache("rentals-vs-atemp", list(setup = "dcbikeshare <- m
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "rentals-vs-atemp-quiz", 
     question = structure("Which interpretations are correct?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_aa0470c", 
+    "character")), answers = list(structure(list(id = "lnr_ans_269defc", 
         option = "The model has the intercept at approximately 946, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 946 bike rentals.", 
         value = "The model has the intercept at approximately 946, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 946 bike rentals.", 
         label = structure("The model has the intercept at approximately 946, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 946 bike rentals.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1b5597d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_69a4fe3", 
         option = "The model has the intercept at approximately 150, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 150 bike rentals.", 
         value = "The model has the intercept at approximately 150, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 150 bike rentals.", 
         label = structure("The model has the intercept at approximately 150, which means that at a day with an apparent temperature of 0 degrees celsius, we can expect to have, on average, 150 bike rentals.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ad04890", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ef19e19", 
         option = "The slope of the model is approximately 150, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 150.", 
         value = "The slope of the model is approximately 150, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 150.", 
         label = structure("The slope of the model is approximately 150, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 150.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_71d45af", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a928eec", 
         option = "The slope of the model is approximately 946, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 946.", 
         value = "The slope of the model is approximately 946, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 946.", 
         label = structure("The slope of the model is approximately 946, which means that, for each additional degree in apparent temperature, we can expect bike rentals to increase by 946.", html = TRUE, class = c("html", 
@@ -1696,7 +1671,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
         answer = "rentals-vs-atemp-quiz-answer", question = "rentals-vs-atemp-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \nWhich interpretations are correct?\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1563843493.77178, options = list()), class = c("learnr_checkbox", 
+    seed = 1022307880.02395, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")))
 </script>
  
@@ -1745,10 +1720,10 @@ learnr:::store_exercise_cache("rentals-vs-atemp-r2", list(setup = "dcbikeshare <
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "rentals-vs-atemp-r2-quiz", 
     question = structure("39.8% of the variability in the number of total daily bike rentals is explained by apparent temperature.", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_eb99962", 
+    "character")), answers = list(structure(list(id = "lnr_ans_705b448", 
         option = "True", value = "True", label = structure("True", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_ee4ef4d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7a9e926", 
         option = "False", value = "False", label = structure("False", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -1760,31 +1735,31 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
         answer = "rentals-vs-atemp-r2-quiz-answer", question = "rentals-vs-atemp-r2-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \n39.8% of the variability in the number of total daily bike rentals is explained by apparent temperature.\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 383951146.321209, options = list()), class = c("learnr_radio", 
+    seed = 1341149097.87548, options = list()), class = c("learnr_radio", 
 "tutorial_question")))
 </script>
  
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "better-predictor-quiz", 
     question = structure("Which is the better explanatory variable of bike rentals?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_ab54651", 
+    "character")), answers = list(structure(list(id = "lnr_ans_ebcf524", 
         option = "Feeling temperature is the better predictor, since the R-squared is slightly higher.", 
         value = "Feeling temperature is the better predictor, since the R-squared is slightly higher.", 
         label = structure("Feeling temperature is the better predictor, since the R-squared is slightly higher.", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_312a771", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a5295ea", 
         option = "Feeling temperature is the better predictor, since the R-squared is slightly lower.", 
         value = "Feeling temperature is the better predictor, since the R-squared is slightly lower.", 
         label = structure("Feeling temperature is the better predictor, since the R-squared is slightly lower.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Determine the R-squared values again to find the correct answer!", html = TRUE, class = c("html", 
         "character"))), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4778da6", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_44dccfb", 
         option = "Absolute temperature is a worse predictor, since the R-squared is higher.", 
         value = "Absolute temperature is a worse predictor, since the R-squared is higher.", 
         label = structure("Absolute temperature is a worse predictor, since the R-squared is higher.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Determine the R-squared values again to find the correct answer!", html = TRUE, class = c("html", 
         "character"))), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_77de52a", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_c1334ed", 
         option = "Absolute temperature is a better predictor, because the R-squared is higher.", 
         value = "Absolute temperature is a better predictor, because the R-squared is higher.", 
         label = structure("Absolute temperature is a better predictor, because the R-squared is higher.", html = TRUE, class = c("html", 
@@ -1799,7 +1774,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
         answer = "better-predictor-quiz-answer", question = "better-predictor-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \nWhich is the better explanatory variable of bike rentals?\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 931861357.066068, options = list()), class = c("learnr_radio", 
+    seed = 1365314705.86423, options = list()), class = c("learnr_radio", 
 "tutorial_question")))
 </script>
  
@@ -1853,24 +1828,24 @@ learnr:::store_exercise_cache("m-int-model", list(setup = "dcbikeshare <- mutate
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", label = "temp-slopes-quiz", 
     question = structure("Which of the following statements are correct?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_cfac890", 
+    "character")), answers = list(structure(list(id = "lnr_ans_1b5746f", 
         option = "The intercept for non-holidays is higher than for holidays", 
         value = "The intercept for non-holidays is higher than for holidays", 
         label = structure("The intercept for non-holidays is higher than for holidays", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_492510", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_376517e", 
         option = "The intercept for non-holidays is lower than for holidays", 
         value = "The intercept for non-holidays is lower than for holidays", 
         label = structure("The intercept for non-holidays is lower than for holidays", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Look at the regression output of the model for a hint!", html = TRUE, class = c("html", 
         "character"))), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_7c80dfc", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5ec4414", 
         option = "The slope for feeling temperature is steeper for non-holidays than for holidays.", 
         value = "The slope for feeling temperature is steeper for non-holidays than for holidays.", 
         label = structure("The slope for feeling temperature is steeper for non-holidays than for holidays.", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = structure("Look at the end of the regression output of for a hint!", html = TRUE, class = c("html", 
         "character"))), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_6d7f4cf", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1fff8a8", 
         option = "The slope for feeling temperature is steeper for holidays than for non-holidays.", 
         value = "The slope for feeling temperature is steeper for holidays than for non-holidays.", 
         label = structure("The slope for feeling temperature is steeper for holidays than for non-holidays.", html = TRUE, class = c("html", 
@@ -1884,7 +1859,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_checkbox", lab
         answer = "temp-slopes-quiz-answer", question = "temp-slopes-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \nWhich of the following statements are correct?\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1642711245.23505, options = list()), class = c("learnr_checkbox", 
+    seed = 270331107.874117, options = list()), class = c("learnr_checkbox", 
 "tutorial_question")))
 </script>
  
@@ -1979,27 +1954,27 @@ learnr:::store_exercise_cache("adj-r-squared", list(setup = "dcbikeshare <- muta
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "intercept-quiz", 
     question = structure("Select the correct answer", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_ff8c2af", 
+    "character")), answers = list(structure(list(id = "lnr_ans_66b3789", 
         option = "Highest: Fall, Lowest: Winter", value = "Highest: Fall, Lowest: Winter", 
         label = structure("Highest: Fall, Lowest: Winter", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e0005af", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9b7b40", 
         option = "Highest: Summer, Lowest: Winter", value = "Highest: Summer, Lowest: Winter", 
         label = structure("Highest: Summer, Lowest: Winter", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5d52c2d", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_551fda1", 
         option = "Highest: Fall, Lowest: Spring", value = "Highest: Fall, Lowest: Spring", 
         label = structure("Highest: Fall, Lowest: Spring", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1725525", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_1b8c5ac", 
         option = "Highest: Spring, Lowest: Winter", value = "Highest: Spring, Lowest: Winter", 
         label = structure("Highest: Spring, Lowest: Winter", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_a630e0f", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_df38a30", 
         option = "Highest: Spring, Lowest: Fall", value = "Highest: Spring, Lowest: Fall", 
         label = structure("Highest: Spring, Lowest: Fall", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_b9e8eb8", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_860e6a5", 
         option = "Highest: Summer, Lowest: Fall", value = "Highest: Summer, Lowest: Fall", 
         label = structure("Highest: Summer, Lowest: Fall", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
@@ -2012,7 +1987,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
         answer = "intercept-quiz-answer", question = "intercept-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \nSelect the correct answer\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = TRUE, allow_retry = TRUE, 
-    seed = 1085875590.99435, options = list()), class = c("learnr_radio", 
+    seed = 2128166414.509, options = list()), class = c("learnr_radio", 
 "tutorial_question")))
 </script>
  
@@ -2483,28 +2458,28 @@ learnr:::store_exercise_cache("remove-interaction", list(setup = "dcbikeshare <-
 <script type="application/shiny-prerendered" data-context="server">
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "backward-selection-quiz", 
     question = structure("Based on the above results, which of these variables should you definitely not drop from the model of these models, if any, gives the highest improvement over the full model?", html = TRUE, class = c("html", 
-    "character")), answers = list(structure(list(id = "lnr_ans_94a7ef2", 
+    "character")), answers = list(structure(list(id = "lnr_ans_9a171cc", 
         option = "rm_season, rm_workingday, rm_year", value = "rm_season, rm_workingday, rm_year", 
         label = structure("rm_season, rm_workingday, rm_year", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_e21311", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_231e931", 
         option = "rm_season, rm_interaction, rm_holiday", value = "rm_season, rm_interaction, rm_holiday", 
         label = structure("rm_season, rm_interaction, rm_holiday", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_d815acd", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5be2744", 
         option = "rm_winspeed_raw, rm_humidity_raw, rm_year", 
         value = "rm_winspeed_raw, rm_humidity_raw, rm_year", 
         label = structure("rm_winspeed_raw, rm_humidity_raw, rm_year", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_fb17786", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_37d610b", 
         option = "rm_feeltemp_raw, rm_workingday, rm_interaction", 
         value = "rm_feeltemp_raw, rm_workingday, rm_interaction", 
         label = structure("rm_feeltemp_raw, rm_workingday, rm_interaction", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_85c187c", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_4bb922e", 
         option = "All", value = "All", label = structure("All", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL), class = c("tutorial_question_answer", 
-    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_17e92b3", 
+    "tutorial_quiz_answer")), structure(list(id = "lnr_ans_9da41af", 
         option = "None", value = "None", label = structure("None", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
@@ -2516,7 +2491,7 @@ learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label 
         answer = "backward-selection-quiz-answer", question = "backward-selection-quiz"), 
     loading = structure("<strong>Loading:<\u002fstrong> \nBased on the above results, which of these variables should you definitely not drop from the model of these models, if any, gives the highest improvement over the full model?\n<br/><br/><br/>", html = TRUE, class = c("html", 
     "character")), random_answer_order = FALSE, allow_retry = TRUE, 
-    seed = 477569185.277615, options = list()), class = c("learnr_radio", 
+    seed = 333351964.844771, options = list()), class = c("learnr_radio", 
 "tutorial_question")))
 </script>
  <!--html_preserve-->
