@@ -19,10 +19,7 @@ description: >
 library(learnr)
 library(tidyverse)
 library(janitor)
-library(gradethis)
 
-# set options for exercises and checking ---------------------------------------
-gradethis_setup()
 
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
@@ -137,18 +134,6 @@ Try using nrow()!
 ```
 
 
-```{r nrow-check}
-grade_this({
-  if(identical(.result, 6509) | identical(.result, 6509L)) {
-    pass("Great! There are 6,509 rows, therefore, 6,509 accidents were recorded in Seattle in 2020.")
-    }
-  if(identical(.result, 20) | identical(.result, 20L)) {
-    fail("Each observation is represented in one row. Did you calculate the number of columns instead of rows?")
-    }
-  fail("Not quite. Each observation is represented in one row. Try looking at the hints for some help!")
-})
-```
-
 
 How many variables are recorded on each crash? Again, the output from `glimpse` gives the answer. But you can use `ncol()` to verify the answer. Try it.
 
@@ -162,19 +147,6 @@ Each variable is encoded is displayed as a column.
 
 ```{r ncol-hint-2}
 Try using ncol()!
-```
-
-
-```{r ncol-check}
-grade_this({
-  if(identical(.result, 20) | identical(.result, 20L)) {
-    pass("Great! Since there are 20 columns in the dataset, we know that 20 variables are recorded.")
-  }
-  if(identical(.result, 6509) | identical(.result, 6509L)) {
-    fail("Each variable is recorded in a column. Did you maybe use the number of rows?")
-  }
-  fail("Not quite. Each variable is represented in a column. Try looking at the hints for some help!")
-})
 ```
 
 
@@ -245,16 +217,6 @@ accidents %>%
 ```
 
 
-```{r filter-speeding-check}
-grade_this({
-  if(identical(.result, 292) | identical(.result, 292L)) {
-    pass("Nice work! There are 292 rows that correspond to accidents with speeding involved.")
-  }
-  fail("Take a look at the solution!")
-})
-```
-
-
 How many accidents involved 2 or more vehicles and speeding?
 
 ```{r filter-multi-car-speed, exercise=TRUE} 
@@ -309,15 +271,6 @@ accidents %>%
 ```
 
 
-```{r location-frequency-check}
-grade_this({
-  if(identical(.result$n[1], 4060L)) {
-    pass("You have created the correct frequency table!")}
-  fail("Not quite. See the hints for help!")
- })
-```
-
-
 
 
 ## Accident Severity
@@ -336,7 +289,7 @@ ggplot(data=accidents %>% filter(!is.na(addr_type)),
 
 ```
 
-```{r plot-severity, exercise = TRUE, exercise.blanks = "___+"}
+```{r plot-severity, exercise = TRUE}
 
 ggplot(data = ___,   mapping=aes(x = ___, fill = ___)) +
   geom___(___) +
