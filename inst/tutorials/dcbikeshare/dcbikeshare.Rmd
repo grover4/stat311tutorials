@@ -211,7 +211,7 @@ dcbikeshare <- dcbikeshare %>%
 
 ```
 
-```{r recode-season-solution}
+```{r recode-season-hint-3}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     season = case_when(
@@ -275,7 +275,7 @@ dcbikeshare <- dcbikeshare %>%
   )
 ```
 
-```{r recode-holiday-workingday-solution}
+```{r recode-holiday-workingday-hint-4}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     holiday = ifelse(holiday == 0, "no", "yes"),      
@@ -341,7 +341,7 @@ dcbikeshare <- dcbikeshare %>%
   )
 ```
 
-```{r recode-yr-solution}
+```{r recode-yr-hint-4}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     yr = ifelse(yr == 0, "2011", "2012"),
@@ -447,7 +447,7 @@ dcbikeshare <- dcbikeshare %>%
   )
 ```
 
-```{r recode-weathersit-solution}
+```{r recode-weathersit-hint-5}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     weathersit = case_when(
@@ -555,7 +555,7 @@ dcbikeshare <- ___ %>%
   )
 ```
 
-```{r recode-measures-solution}
+```{r recode-measures-hint-5}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     temperature_raw = temp * 41,
@@ -589,7 +589,7 @@ cnt_tmp %>%
   tidy()
 ```
 
-```{r rentals-vs-temp-solution}
+```{r rentals-vs-temp-hint-2}
 cnt_tmp <- lm(cnt ~ temperature_raw, data = dcbikeshare)
 cnt_tmp %>%
   tidy() 

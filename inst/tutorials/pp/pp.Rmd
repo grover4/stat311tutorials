@@ -15,6 +15,7 @@ description: Fit a linear model with a single predictor and interpret regression
 library(learnr)
 library(gradethis)
 library(tidyverse)
+library(broom)
 library(skimr)
 
 
@@ -184,7 +185,7 @@ ggplot(data=pp,
   labs()
 ```
 
-```{r plot-price-surface-solution, fig.width=7, fig.height=3}
+```{r plot-price-surface-hint-4, fig.width=7, fig.height=3}
 
 ggplot(data=pp, 
        mapping=aes(x=Surface, y=price)) +
@@ -246,7 +247,7 @@ pp <- pp %>%
 
 ```
 
-```{r create-vars-solution}
+```{r create-vars-hint}
 
 pp <- pp %>%
      mutate(log_price = log2(price),
@@ -288,7 +289,7 @@ ggplot(data=pp,
 ```
 
 
-```{r plot-log-price-surface-solution}
+```{r plot-log-price-surface-hint-3}
 
 
 ggplot(data=pp,
@@ -354,7 +355,7 @@ price_surface_fit %>% tidy()
 
 ```
 
-```{r model-fit-solution}
+```{r model-fit-hint-3}
 
 price_surface_fit <- lm( log_price ~log_surface, data= pp )
 
@@ -382,7 +383,7 @@ grade_this({
 Let's interpret the slope coefficient for `log_surface`. Recall that the slope is the change in the response associated with a unit change in the explanatory variable. When variables are transformed, as they are here, we need to carefully examine what this translates to on the original untransformed scale. 
 
 Let's denote the slope coefficient for `log_surface` by $b$ 
-meaning when `log_surface` increases by 1 unit, there is found to be an increase of  b units in `log_price`. 
+meaning when `log_surface` increases by 1 unit, there is found to be an increase of  $b$ units in `log_price`. 
 
 Since the base of the logarithm used here is 2, saying that `log_surface` increases by 1 is equivalent to saying that the surface area being doubled. Therefore, we now know from the model fit that
 
@@ -391,7 +392,7 @@ $$log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \righ
 $$2^{log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) } = 2^b$$
 $$\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) = 2^{b}$$
 
-Now use the value for the slope coefficient, $b$, from the output of `tidy` and  answer the following questions:
+Now use the numerical value for the slope coefficient, $b$, from the output of `tidy` and  answer the following questions:
 
 ```{r model-fit-quiz}
 question("Which interpretation of the slope coefficient is correct?",
