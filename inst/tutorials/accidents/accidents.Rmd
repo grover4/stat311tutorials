@@ -189,15 +189,6 @@ accidents %>%
 ```
 
 
-```{r filter-multi-car-check}
-grade_this({
-  if(identical(.result, 3673) | identical(.result, 3673L)) {
-    pass("Correct! There are 3,673 rows that correspond to accidents with 2 or more vehicles involved.")
-  }
-  fail("Take a peek at the hints!")
-})
-```
-
 
 How many accidents involved `speeding`?  
 
