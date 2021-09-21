@@ -225,31 +225,31 @@ accidents %>%
 
 
 
-## Location of accident
+## Road conditions
 
-The variable `addr_type` describes the location of the accident.
-Where do the most accidents occur? Create a frequency table of the `addr_type` in decending order of frequency. See hints for help.
+The variable `road`` describes the condition of the road at the scene of the accident.
+What are the road conditions for most accidents? Create a frequency table of `road` in decending order of frequency. See hints for help.
 
 
-```{r location-frequency,exercise=TRUE}
+```{r road-frequency,exercise=TRUE}
 
 ```
 
 
-```{r location-frequency-hint-1}
+```{r road-frequency-hint-1}
 See the help for the `count()` function, specifically the 
 `sort` argument for reporting the frequency table in descending order of counts, 
 i.e. highest on top.
 ```
 
-```{r location-frequency-hint-2}
+```{r road-frequency-hint-2}
 accidents %>% 
   ___ %>% (___, sort=TRUE)
 ```
 
-```{r location-frequency-hint-3}
+```{r road-frequency-hint-3}
 accidents %>%
-  count(addr_type, sort = TRUE)
+  count(road, sort = TRUE)
 ```
 
 
@@ -257,17 +257,16 @@ accidents %>%
 
 ## Accident Severity
 
-Suppose we wish to compare accident severity (`severity_desc`) by the location of the accident (`addr_type`). Let's recreate the following segmented bar plot with the values of `addr_type` on the horizontal axis. Note that the rows that are missing the address type are not represented in the bar plot. This is achieved by filtering the data using the `is.na` function with `addr_type` as the argument.    
+Suppose we wish to compare accident severity (`severity_desc`) by the condition of the road (`road`). Recreate the following segmented bar plot with the values of `road` on the horizontal axis. Note that the rows that are missing the road conditions are not represented in the bar plot. This is achieved by filtering the data using the `is.na` function with `road` as the argument.    
 
 ```{r example-plot, fig.width=6,fig.height=4, echo=FALSE}
 
-ggplot(data=accidents %>% filter(!is.na(addr_type)), 
-  mapping=aes(x=addr_type, fill=severity_desc)) +
+ggplot(data=accidents %>% filter(!is.na(road)), 
+  mapping=aes(y=addr_type, fill=severity_desc)) +
       geom_bar(position = "fill")+
-      labs(x="Location of accident",
-           y="Proportion",
+      labs(x="Proportion", y="Road condition",
            fill="Severity Description",
-           title="Location and severity of accident")
+           title="Road conditions and severity of accident")
 
 ```
 
@@ -291,17 +290,17 @@ ggplot(data=accidents %>% filter(!is.na(addr_type)),
 
 
 ```{r plot-severity-hint-2}
-ggplot(data = accidents %>% filter( !is.na(addr_type) ), 
-       mapping=aes(x = ___, fill = ___)) +
+ggplot(data = accidents %>% filter( !is.na(road) ), 
+       mapping=aes(y = ___, fill = ___)) +
   geom_bar(___) +
-  labs(x = ___, y = ___,
+  labs(x= ___, y = ___,
        fill = ___, 
        title = ___) 
 ```
 
 ```{r plot-severity-hint-3}
-ggplot(data = accidents %>% filter( !is.na(addr_type) ), 
-       mapping=aes(x = ___, fill = ___)) +
+ggplot(data = accidents %>% filter( !is.na(road) ), 
+       mapping=aes(y = ___, fill = ___)) +
   geom_bar(position = ___) +
   labs(x = ___, y = ___,
        fill = "Severity Description", 
@@ -309,12 +308,12 @@ ggplot(data = accidents %>% filter( !is.na(addr_type) ),
 ```
 
 ``` {r plot-severity-solution}
-ggplot(data = accidents %>% filter( !is.na(addr_type) ), 
-       mapping=aes(x = addr_type, fill = severity_desc)) +
+ggplot(data = accidents %>% filter( !is.na(road) ), 
+       mapping=aes(y = road, fill = severity_desc)) +
   geom_bar(position = "fill") +
-  labs(x = "Location of accident",
+  labs(x ="Proportion", y = "Road condition",
        fill = "Severity Description", 
-       title = "Location and severity of accident")
+       title = "Road conditions and severity of accident")
 ```
 
 ## Light conditions
