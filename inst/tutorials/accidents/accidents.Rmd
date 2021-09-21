@@ -227,8 +227,7 @@ accidents %>%
 
 ## Road conditions
 
-The variable `road`` describes the condition of the road at the scene of the accident.
-What are the road conditions for most accidents? Create a frequency table of `road` in decending order of frequency. See hints for help.
+The variable `road` describes the condition of the road at the scene of the accident.  Create a frequency table of `road` in descending order of frequency. See hints for help. Are the results surprising?
 
 
 ```{r road-frequency,exercise=TRUE}
@@ -257,7 +256,7 @@ accidents %>%
 
 ## Accident Severity
 
-Suppose we wish to compare accident severity (`severity_desc`) by the condition of the road (`road`). Recreate the following segmented bar plot with the values of `road` on the horizontal axis. Note that the rows that are missing the road conditions are not represented in the bar plot. This is achieved by filtering the data using the `is.na` function with `road` as the argument.    
+Suppose we wish to compare accident severity (`severity_desc`) by the condition of the road (`road`). Recreate the following segmented bar plot with the values of `road` on the vertical axis. Note that the rows that are missing the road conditions are not represented in the bar plot. This is achieved by filtering the data using the `is.na` function with `road` as the argument.    
 
 ```{r example-plot, fig.width=6,fig.height=4, echo=FALSE}
 
