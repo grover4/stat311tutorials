@@ -20,7 +20,7 @@ library(learnr)
 library(tidyverse)
 library(janitor)
 
-tutorial_options(exercise.timelimit = 360)
+tutorial_options(exercise.timelimit = 350)
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
 
