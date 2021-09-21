@@ -271,6 +271,7 @@ ggplot(data=accidents %>% filter(!is.na(addr_type)),
 
 ```
 
+
 ```{r plot-severity, exercise = TRUE}
 
 
@@ -389,7 +390,7 @@ Relationships between categorical variables are summarized via contingency table
 ```{r light-hit-table, exercise=TRUE, exercise.setup="change-light"}
 
 accidents %>%
-          tabyl(___, ____, show_na=___) %>%
+          tabyl(___, ___, show_na = ___) %>%
              adorn_totals()%>%
              adorn_percentages(denominator="row") %>%
              adorn_pct_formatting(digits=2) %>%
@@ -424,7 +425,7 @@ Create a mosaic plot of the relationship between `light_short` and `hit_parked_c
 
 ```{r light-severity-mosaic, exercise=TRUE, exercise.setup="change-light"}
 
-mosaicplot(___ ~ ____, data = _____, shade = ____ )
+mosaicplot(___ ~ ___, data = ___, shade = ___ )
 
 ```
 
