@@ -514,7 +514,7 @@ dcbikeshare <- dsbox::dcbikeshare %>%
   )
 ```
 
-```{r recode-measures, exercise = TRUE, message= FALSE, exercise.completion=FALSE}
+```{r recode-measures, exercise = TRUE, exercise.completion=FALSE}
 dcbikeshare <- ___ %>%
   ___(
     ___
@@ -570,7 +570,7 @@ dcbikeshare <- dcbikeshare %>%
 ## Bike rentals and temperature
 
 
-Fit a linear model predicting total daily bike rentals `cnt` from raw daily temperature, and use `tidy`to print the output and answer the questions below.
+Fit a linear model predicting total daily bike rentals `cnt` from raw daily temperature variable you just created, and use `tidy`to print the output and answer the questions below.
 
 ```{r recreate-viz-setup}
 dcbikeshare <- mutatedbike
@@ -665,11 +665,11 @@ question("What does the R-squared mean in this context?",
 
 ### Bike rentals vs feeling temperature
 
-Fit another linear model predicting total daily bike rentals from raw daily feeling temperature. 
+Fit another linear model predicting total daily bike rentals from raw daily feeling temperature you just created in the previous section. 
 Then, proceed to answering the questions below.
 
 ```{r rentals-vs-atemp, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
-cnt_atmp <- lm(cnt ~ feeling_temperature_raw, data = dcbikeshare)
+cnt_atmp <- lm(___ ~ ___, data = dcbikeshare)
 ___ %>%
   ___
 ```

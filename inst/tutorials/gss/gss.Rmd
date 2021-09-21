@@ -139,7 +139,7 @@ For the first exercise, create a new variable called `email` that combines these
 
 
 ```{r email-variable, exercise=TRUE}
-gss16 <- gss16 %> 
+gss16 <- gss16 %>%
    ___
 ```
 
@@ -153,7 +153,7 @@ gss16 <- gss16 %>%
   mutate(email = ___)
 ```
 
-```{r email-variable-solution}
+```{r email-variable-hint-4}
 gss16 <- gss16 %>%
   mutate(email = emailmin + emailhr * 60)
 ```
@@ -183,7 +183,7 @@ gss16_email <- gss16 %>%
   filter(___(email))
 ```
 
-```{r filter-email-solution}
+```{r filter-email-hint-3}
 gss16_email <- gss16 %>%
   filter(!is.na(email))
 ```
@@ -227,7 +227,7 @@ There are a few functions we use from the `infer` package in doing this:
 - And finally, `calculate()` calculates the sample statistic. In this case, we're using the mean, but we could just as easily calculate, say, medians.
 
 
-Fill in the blanks in the following code block to create the bootstrapped data frame:
+Fill in the blanks in the following code block to create a bootstrapped data frame which contains the mean amount of time that individuals in each of 1,000 bootstrap samples spend checking email at work:
 
 ```{r create-boot-df, exercise = TRUE, exercise.setup = "setup-seed-email-na"}
 boot_df <- gss16_email %>%
