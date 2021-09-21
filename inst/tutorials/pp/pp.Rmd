@@ -15,6 +15,7 @@ description: Fit a linear model with a single predictor and interpret regression
 library(learnr)
 library(gradethis)
 library(tidyverse)
+library(skimr)
 
 
 # set options for exercises and checking ---------------------------------------
@@ -22,6 +23,7 @@ tutorial_options(
   exercise.timelimit = 60, 
   exercise.checker = gradethis::grade_learnr
   )
+
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
 
@@ -138,7 +140,7 @@ ggplot(data= pp,
 ```
 
 
-```{r plot-price-solution}
+```{r plot-price-hint-3}
 
 ggplot(data= pp,
        mapping=aes( x = price))  +

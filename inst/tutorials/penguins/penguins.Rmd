@@ -289,9 +289,8 @@ If we want to over-ride the default scale, we will need to add it ourselves as w
 Note that if we place any mappings in a geom layer, ggplot will treat them as local mappings for that layer only. For example, the following code will allow the color of just the points to vary by the type of car, but will not affect the color of the trend line that we add to the plot.
 
 ```{r color-local-mapping, exercise=TRUE}
-ggplot(data=mpg, 
-       mapping=aes(x=displ,y=hwy)) + 
-   geom_point(mapping=aes(color=class)) +
+ggplot(data = mpg, mapping = aes( x = displ, y = hwy)) + 
+   geom_point(mapping = aes(color = class)) +
    geom_smooth() + scale_color_viridis_d()
 ```
 
@@ -357,9 +356,8 @@ There are times however where we simply want to **set** the aesthetic to somethi
 For instance, maybe we want all our points in a scatter plot to be red. This is done in the relevant layer of the ggplot function using `color="red"`. 
 
 ```{r set-aes, exercise=TRUE}
-ggplot(data=mpg,
-       mapping=aes(x=displ,y=hwy)) + 
-   geom_point(color="red")
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+   geom_point(color = "red")
 ```
 
 Change the color to pink, blue, green, whatever you fancy and see the difference. If you want to see the full list of colors R knows about, type `colors()` in the code chunk. 
@@ -371,8 +369,7 @@ A `geom` is a geometric object which represents the data. To put it simply, `geo
 For example, the following code produces a density plot of highway fuel efficiency categorized by the drive train. Each `geom` has a list of arguments, some of which are unique to it. For example, the `adjust` in `geom_density` determines the smoothing window in much the same way as `binwidth` for a histogram.  
 
 ```{r histo-hwy, echo=T}
-ggplot(data=mpg,
-       mapping=aes(x = hwy,fill = drv))+
+ggplot(data = mpg, mapping = aes(x = hwy, fill = drv))+
   geom_density(adjust = 2, alpha = 0.5)
 
 ```
@@ -385,7 +382,7 @@ Type in the code to produce a density plot for `cty` with `class` as the fill va
 
 ```{r ex6, exercise=TRUE, warning=FALSE, message=FALSE}
 ggplot( data = ___, mapping = aes(x = ___, fill = ___ ) )+ 
-  geom___ ( adjust = ___, alpha = ___ )
+  geom___( adjust = ___, alpha = ___ )
 
 ```
 
@@ -511,7 +508,7 @@ ggplot(data = penguins,
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
        color = "Species") +
-  scale_color_viridis_d()
+  scale_colour_viridis_d()
 
 ```
 

@@ -35,6 +35,11 @@ life <- read_csv(file="data/life_exp.csv") %>%
     state = str_to_title(state),
     county = str_to_title(county)
    )
+
+life_wa = life %>%
+  filter(state == "Washington") %>%
+  mutate(expectancy = round(expectancy, digits = 1 )) %>%
+  select(county, expectancy)
 ```
 
 ## Measures of center
@@ -50,22 +55,29 @@ life
 ```
 
 
-We are going to focus on the life expectancy in the state of Washington which happens to have 39 counties. Let's filter the data for counties from that state, and name the resulting data frame `life_wa`. To make the rest of the conversation simpler we'll also round the life expectancy values to one decimal place.
+We are going to focus on the life expectancy in the state of Washington which happens to have 39 counties. Let's filter the data for counties from "Washington", and name the resulting data frame `life_wa`. To make the rest of the conversation simpler we'll also round the life expectancy values to one decimal place. Finally just select the variables `county` and `expectancy`.
 
 
-```{r life-wa, echo=TRUE}
+```{r life-wa, exercise=TRUE}
+
+life_wa <- life %>%
+  filter(state == "___") %>%
+  mutate(expectancy = round(expectancy, digits = ___ )) %>%
+  select(___, ___)
+
+life_wa
+```
+
+```{r life-wa-solution}
 
 life_wa <- life %>%
   filter(state == "Washington") %>%
-  mutate(expectancy = round(expectancy, digits=1)) %>%
+  mutate(expectancy = round(expectancy, digits = 1 )) %>%
   select(county, expectancy)
-```
 
-Here is a look at those counties:
-
-```{r life-wa-view}
 life_wa
 ```
+
 
 ```{r life-exp-mean}
 life_wa_summary <- life_wa %>%
@@ -98,13 +110,15 @@ ggplot(data = life_wa, aes(x = expectancy)) +
         axis.title.y = element_blank())
 ```
 
-To answer this question, we need to think about what "typical" means. One statistic we commonly use to describe a typical observation is the **mean**, or in other words, the arithmetic average. The average life expectancy for counties in Washington is `r life_wa_summary$mean` years.
+To answer this question, we need to think about what "typical" means. One statistic we commonly use to describe a typical observation is the **mean**, or in other words, the arithmetic average. 
 
-```{r mean, echo = TRUE}
+```{r mean, exercise = TRUE}
 life_wa %>%
   summarise(mean = mean(expectancy))
 ```
 
+
+The average life expectancy for counties in Washington is `r life_wa_summary$mean` years.
 Let's add that value as a red, dashed line to our dot plot.
 
 ```{r life-wa-plot-mean}
@@ -167,70 +181,58 @@ ggplot(d, aes(x = x, fill = distribution)) +
 ```{r mc1}
 question("A track coach wants to determine an appropriate heart rate for an average athlete during their workouts. She chooses five of her runners and asks them to wear heart monitors. In the middle of the workout, she reads the following heart rates for the five athletes: 130, 135, 140, 145, 325. Which of the following is an appropriate measure of center for this data?",
   answer("Mean", message = "Not quite, that outlier is a doozy! Try again."),
-  answer("Median", correct = TRUE, message = "Nice! Let's continue to the next exercise."),
+  answer("Median", correct = TRUE, message = "Nice! "),
   answer("Mode", message = "Not quite, there are no repeats in this dataset. try again."),
   allow_retry = TRUE
 )
 ```
 
-
-Now that we have some sensible measures of center, we can answer questions like: is the typical county life expectancy on the West Coast similar to the typical life expectancy in the rest of the country?
-
-
-
 ### Groupwise means
 
-To answer this, we start by creating a new variable that will be "West" if the state value is one of "California", "Oregon", or "Washington", and "Not West" otherwise, and save it back to the original dataset. 
+Suppose we are interested in comparing life expectancy in the states California, Oregon, Washington with the rest of the country. To make this comparison, we start by creating a new variable called `coast` that takes the value "west" if the state value is one of "California", "Oregon", or "Washington", and "not west" otherwise, and save it back to the original dataset. We then `group_by` this new variable and calculate summaries of life expectancy. 
 
-```{r life-mutate}
-life <- life %>%
-  mutate(coast = ifelse( state %in% c("California", "Oregon", "Washington"), "West", "Not West") )
+
+Fill in the blanks in the following code to calculate the mean and median life expectancy by coast.
+
+```{r life-groupby, exercise=TRUE}
+life %>%
+  mutate(coast = ifelse( state %in% c("___", "___", "___"), "___", "not west") ) %>%
+  group_by(___) %>%
+  summarize( mean = mean(___), median = median(___) )
 ```
 
-To compute groupwise means, we pipe the dataset into the `group_by()` function indicating that we'd like to establish groups based on our new variable. Then we can `summarize()` those groups, West Coast counties and non-West Coast counties, by taking the `mean()` and `median()` of their life expectancies. The result is shown below.
-
-```{r life-groupby}
+```{r life-groupby-hint-1}
 life %>%
+  mutate(coast = ifelse( state %in% c("Washington", "Oregon", "California"), "west", "not west") ) %>%
+  group_by(___) %>%
+  summarize( mean = mean(___), median = median(___) )
+```
+
+
+```{r life-groupby-hint-2}
+life %>%
+  mutate(coast = ifelse( state %in% c("Washington", "Oregon", "California"), "west", "not west") ) %>%
   group_by(coast) %>%
-  summarize(round(mean(expectancy),2),
-            round(median(expectancy),2))
+  summarize( mean = mean(___), median = median(___) )
 ```
 
-We learn that looking at both mean and median, the typical West Coast county has a slightly higher average life expectancy than counties not on the West Coast.
-
-### Without `group_by()`
-
-`group_by()` and `summarize()` form a powerful pair of functions, so let's look into how they work. Let's look at a slice of 8 rows in the middle of the dataset.
-
-
-```{r life-slice-styled}
+```{r life-groupby-solution}
 life %>%
-  slice(240:247) %>%
-  gt() %>%
-  tab_style(
-    style = list(
-      cell_fill(color = COL[2,4]),
-      cell_text(weight = "bold")
-      ),
-    locations = cells_body(
-      columns = vars(expectancy))
-  )
+  mutate(coast = ifelse( state %in% c("Washington", "Oregon", "California"), "west", "not west") ) %>%
+  group_by(coast) %>%
+  summarize( mean = mean(expectancy), median = median(expectancy) )
 ```
 
 
-We can `summarize()` the expectancy variable by taking its `mean()` across all 8 rows.
+We learn that looking at both mean and median, that the typical West Coast county has a slightly higher average life expectancy than counties not on the West Coast.
 
-```{r life-summarize}
-life %>%
-  slice(240:247) %>%
-  summarize(round(mean(expectancy),digits=2) )
-```
+`group_by()` and `summarize()` form a powerful pair of functions, so let's look into how they work. 
+When we add a line to group by `coast`, we are effectively breaking the dataset into two groups and calculating the `mean()` or `median()` of the expectancy variable for each group separately.
 
-### With `group_by()`
+```{r life-gr-sum-gt}
+life <- life %>%
+  mutate(coast = ifelse( state %in% c("California", "Oregon", "Washington"), "west", "not west") )
 
-If we add a line to group by the west coast, it's effectively breaking the dataset into two groups and calculating the `mean()` of the expectancy variable for each one separately.
-
-```{r life-gr-sum-gt,}
 life %>%
   slice(240:247) %>%
   gt() %>%
@@ -240,8 +242,8 @@ life %>%
       cell_text(weight = "bold")
       ),
     locations = cells_body(
-      columns = vars(expectancy),
-      rows = coast == TRUE)
+      columns = c(expectancy),
+      rows = coast == "west")
   ) %>%
     tab_style(
     style = list(
@@ -249,19 +251,13 @@ life %>%
       cell_text(weight = "bold")
       ),
     locations = cells_body(
-      columns = vars(expectancy),
-      rows = coast == FALSE)
+      columns = c(expectancy),
+      rows = coast == "not west")
   )
 ```
 
-```{r life-gr-sum}
-life %>%
-  slice(240:247) %>%
-  group_by(coast) %>%
-  summarize(round( mean(expectancy), digits=2) )
-```
 
-As seen in the example above, `group_by()` and `summarize()` open up lots of possibilities for analysis, so let's get started.
+The functions `group_by()` and `summarize()` open up lots of possibilities for analysis, so let's get started.
 
 
 
@@ -269,32 +265,36 @@ As seen in the example above, `group_by()` and `summarize()` open up lots of pos
 
 ### Calculate center measures
 
-Throughout this lesson, you will use data from `gapminder`, which tracks demographic data in countries of the world over time. To learn more about it, you can bring up the help file with `?gapminder`.
+Throughout this lesson, you will use data from `gapminder`, which tracks demographic data in countries of the world over time. Take a peek at the dataframe in the code chunk below.
 
-For this exercise, focus on how the life expectancy differs from continent to continent. This requires that you conduct your analysis not at the country level, but aggregated up to the continent level. This is made possible by the one-two punch of `group_by()` and `summarize()`, a very powerful syntax for carrying out the same analysis on different subsets of the full dataset.
+```{r peek-gap, exercise=TRUE}
+
+
+```
+
+In the next exercise, we will focus on how the life expectancy differs from continent to continent. This requires that you conduct your analysis not at the country level, but aggregated up to the continent level. This is made possible by the one-two punch of `group_by()` and `summarize()`. Here are the specific steps that need to be in your code:
 
 - Create a dataset called `gap2007` that contains only data from the year 2007.
-- Using `gap2007`, calculate the mean and median life expectancy for each continent.
-- Confirm the trends that you see in the medians by generating side-by-side boxplots of life expectancy for each continent.
+
+- Using `gap2007`, calculate the mean and median `lifeExp` for each `continent`.
+
+- Confirm the trends that you see by generating side-by-side boxplots of `lifeExp` by `continent`.
 
 ```{r ex1, exercise = TRUE}
-# Create dataset of 2007 data
-gap2007 <- filter(___, ___)
-# Compute groupwise mean and median lifeExp
+
+gap2007 <- gapminder %>% filter(___)
+
 gap2007 %>%
   group_by(___) %>%
-  summarize(___,
-            ___)
-# Generate boxplots of lifeExp for each continent
-gap2007 %>%
-  ggplot(aes(x = ___, y = ___)) +
-  ___
+  summarize(mean = ___, median = ___)
+
+ggplot(data = ___, mapping = aes(x = ___, y = ___)) +
+ geom___() 
 ```
 
 ```{r ex1-hint-1} 
 ## The first step is to filter the gapminder to only have the year 2007
-gap2007 <- filter(gapminder, 
-                  year == 2007)
+gap2007 <- gapminder %>% filter(year == 2007)
 ```
 
 ```{r ex1-hint-2} 
@@ -304,8 +304,7 @@ gap2007 <- filter(gapminder,
 ## 3. Find the mean and median life expectancy of each continent 
 gap2007 %>%
   group_by(continent) %>%
-  summarize(mean(lifeExp),
-            median(lifeExp))
+  summarize(mean = mean(lifeExp), median = median(lifeExp))
 ```
 
 ```{r ex1-hint-3} 
@@ -313,24 +312,21 @@ gap2007 %>%
 ## 1. Use the gap2007 data 
 ## 2. Declare our x and y variables 
 ## 3. Add boxplots to the plot
-gap2007 %>%
-  ggplot(aes(x = continent, y = lifeExp)) +
+
+ggplot(data = gapminder, mapping = aes(x = continent, y = lifeExp)) +
   geom_boxplot()
 ```
 
 
 ```{r ex1-solution}
-# Create dataset of 2007 data
-gap2007 <- filter(gapminder, year == 2007)
-# Compute groupwise mean and median lifeExp
+gap2007 <- gapminder %>% filter(year == 2007)
+
 gap2007 %>%
   group_by(continent) %>%
-  summarize(mean(lifeExp),
-            median(lifeExp))
-# Generate boxplots of lifeExp for each continent
-gap2007 %>%
-  ggplot(aes(x = continent, y = lifeExp)) +
-  geom_boxplot()
+  summarize(mean = mean(lifeExp), median = median(lifeExp))
+
+ggplot(data = gap2007, mapping = aes(x = continent, y = lifeExp)) +
+ geom_boxplot() 
 ```
 
 
@@ -410,7 +406,7 @@ life_wa %>%
 
 In R, you can use the built-in `var()` function to calculate the sample variance.
 
-```{r var, echo = TRUE}
+```{r var, echo=TRUE}
 life_wa %>%
   summarise(var = var(expectancy))
 ```
@@ -558,8 +554,9 @@ Let's extend the powerful `group_by()` and `summarize()` syntax to measures of s
 
 The `gap2007` dataset that you created in an earlier exercise is available in your workspace.
 
-- For each continent in `gap2007`, summarize life expectancies using the `sd()`, the `IQR()`, and the count of countries, `n()`. No need to name the new columns produced here. Keep in mind the `n()` function does not take any arguments!
-- Graphically compare the spread of these distributions by constructing overlaid density plots of life expectancy broken down by continent.
+- For each continent in `gap2007`, summarize life expectancies using the `sd()`, the `IQR()`, and the count of countries in each continent using the `n()` function. Keep in mind that `n()` does not take any arguments!
+
+- Graphically compare the spread of these distributions by constructing density plots of life expectancy faceted by continent.
 
 ```{r ex2-setup}
 gap2007 <- filter(gapminder, year == 2007)
@@ -567,72 +564,76 @@ gap2007 <- filter(gapminder, year == 2007)
 
 ```{r ex2, exercise = TRUE}
 # Compute groupwise measures of spread
+
 gap2007 %>%
   group_by(___) %>%
-  summarize(___,
-            ___,
-            ___)
+  summarize(sd = ___,
+            iqr = ___,
+            nobs = ___)
+
 # Generate overlaid density plots
+
 gap2007 %>%
-  ggplot(aes(x = ___, fill = ___)) +
-  geom_density(alpha = 0.3)
+  ggplot(aes(x = ___)) +
+  geom_density() +
+  facet_wrap( ~ ___, scales="free")
 ```
 
 ```{r ex2-hint-1}
 ## First group the data based on the continent of the observation
 gap2007 %>%
   group_by(continent) %>%
-  summarize(__,
-            ___,
-            ___)
+  summarize(sd = __,
+            iqr = ___,
+            nobs = ___)
 ```
 
 ```{r ex2-hint-2}
 # Next, specify the statistics that should be calculated
 gap2007 %>%
   group_by(continent) %>%
-  summarize(sd(___),
-            IQR(___),
-            n())
+  summarize(sd = sd(___),
+            iqr = IQR(___),
+            nobs = n())
 ```
 
 ```{r ex2-hint-3}
 # Finally, specify what variable should be used in the calculations
 gap2007 %>%
   group_by(continent) %>%
-  summarize(sd(lifeExp),
-            IQR(lifeExp),
-            n())
+  summarize(sd = sd(lifeExp),
+            iqr = IQR(lifeExp),
+            nobs = n())
 ```
 
 ```{r ex2-hint-4}
-## Last step -- create density plots with the different continents overlaid 
-## To differentiate between the continents, we fill each one with a different color
-## We use an alpha of 0.3 to allow for us to see the shape of every density plot
-gap2007 %>%
-  ggplot(aes(x = lifeExp, fill = continent)) +
-  geom_density(alpha = 0.3)
+## Last step -- create density plots with the different continents # faceted by continent.  We will set the argument scales="free" rather than "fixed" so we can properly view the shape of each distribution
+
+ggplot(data = gap2007, mapping = aes(x = lifeExp) ) +
+  geom_density() + 
+  facet_wrap( ~ continent, scales="free") 
 ```
 
 ```{r ex2-solution}
 # Compute groupwise measures of spread
 gap2007 %>%
   group_by(continent) %>%
-  summarize(sd(lifeExp),
-            IQR(lifeExp),
-            n())
+  summarize(sd = sd(lifeExp),
+            iqr = IQR(lifeExp),
+            nobs = n())
+
 # Generate overlaid density plots
-gap2007 %>%
-  ggplot(aes(x = lifeExp, fill = continent)) +
-  geom_density(alpha = 0.3)
+ggplot(data = gap2007, mapping = aes(x = lifeExp)) +
+  geom_density() + 
+  facet_wrap(~ continent, scales="free")
 ```
 
 Consider the density plots shown here. What are the most appropriate measures to describe their centers and spreads? In this exercise, you'll select the measures and then calculate them.
 
-Using the shapes of the density plots you created above, calculate the most appropriate measures of center and spread for the distribution of life expectancy in the countries of the Americas. Note you'll need to apply a filter here!
+Using the shapes of the density plots you created above, calculate the most appropriate measures of center and spread for the distribution of life expectancy in the countries in Asia. Note you'll need to apply a filter here!
 
-```{r ex3, exercise = TRUE}
-# Compute stats for lifeExp in Americas
+```{r ex3, exercise = TRUE, exercise.setup="ex2-setup"}
+
 gap2007 %>%
   filter(___) %>%
   summarize(___,
@@ -640,35 +641,30 @@ gap2007 %>%
 ```
 
 ```{r ex3-hint-1}
-# First filter the data to only include the Americas
+# First filter the data to only include Asia
 gap2007 %>%
-  filter(continent == "Americas") %>%
-  summarize(mean(___),
-            sd(___))
+  filter(continent == "Asia") %>%
+  summarize(___, 
+            ___) 
 ```
 
 ```{r ex3-hint-2}
 # Next define the summary measures that will be used
 gap2007 %>%
-  filter(continent == "Americas") %>%
-  summarize(mean(___),
-            sd(___))
-```
-
-```{r ex3-hint-3}
-# Finally, specify what variables will be summarized
-gap2007 %>%
-  filter(continent == "Americas") %>%
-  summarize(mean(lifeExp),
-            sd(lifeExp))
+  filter(continent == "Asia") %>%
+  summarize(median = median(___),
+            iqr = IQR(___))
 ```
 
 ```{r ex3-solution}
+# Finally, specify what variables will be summarized
 gap2007 %>%
-  filter(continent == "Americas") %>%
-  summarize(mean(lifeExp),
-            sd(lifeExp))
+  filter(continent == "Asia") %>%
+  summarize(median = median(lifeExp),
+            iqr = IQR(lifeExp))
 ```
+
+
 
 
 ## Shape and transformations
@@ -771,22 +767,25 @@ Here you'll focus on the population variable, which exhibits strong right skew, 
 Using the `gap2007` data:
 
 - Create a density plot of the population variable (`pop`).
+
 - Use `mutate()` to create a new variable called `log_pop` that is the natural log of the population, and
 save this new variable back into `gap2007`.
+
 - Create the same density plot as before with your transformed variable.
 
-```{r ex4-setup}
-gap2007 <- filter(gapminder, year == 2007)
-```
 
-```{r ex4, exercise = TRUE}
+
+```{r ex4, exercise = TRUE, exercise.setup="ex2-setup"}
+
 # Create density plot of population variable
 gap2007 %>%
   ggplot(aes(x = ___)) +
   ___
+
 # Transform the skewed pop variable
 gap2007 <- gap2007 %>%
   mutate(___)
+
 # Create density plot of transformed population variable
 gap2007 %>%
   ggplot(aes(x = ___)) +
@@ -815,13 +814,18 @@ gap2007 %>%
 
 ```{r ex4-solution}
 # Create density plot of old variable
+
 gap2007 %>%
   ggplot(aes(x = pop)) +
   geom_density()
+
 # Transform the skewed pop variable
+
 gap2007 <- gap2007 %>%
   mutate(log_pop = log(pop))
+
 # Create density plot of new variable
+
 gap2007 %>%
   ggplot(aes(x = log_pop)) +
   geom_density()
@@ -830,42 +834,30 @@ gap2007 %>%
 
 ## Outliers
 
-We've discussed three different aspects of a distribution that are important to note
+We've discussed three different aspects of a distribution - center, spread and shape -  that are important to note
+when conducting an exploratory data analysis. A fourth and final thing to look for are outliers. These are observations that have extreme values far from the bulk of the distribution. They're often very interesting cases, but they're also good to know about before proceeding with more formal analysis.
 
-### Characteristics of a distribution
-
-- Center
-
-- Variability
-
-- Shape
-
-- Outliers
-
-
-When conducting an exploratory data analysis: center, variability, and shape. A fourth and final thing to look for are outliers. These are observations that have extreme values far from the bulk of the distribution. They're often very interesting cases, but they're also good to know about before proceeding with more formal analysis.
-
-We saw some extreme values when we plotted the distribution of income for counties on the West Coast. What are we to make of this blip of counties? One thing we can do is display the data using a boxplot. To make the boxplot a bit easier to compare with a density plot, you can specify the categorical variable (`west_coast`) as the y-variable. This option creates vertically stacked boxplots rather than horizontally stacked boxplots. 
+We saw some extreme values when we created the density plot of income for counties on the West Coast. What are we to make of this blip of counties? One thing we can do is display the data using a boxplot. To make the boxplot a bit easier to compare with a density plot, you can specify the categorical variable (`coast`) as the y-variable instead of a `fill`. This option labels the y axis with the values of `coast` rather than in a separate legend. 
 
 ```{r, echo = TRUE, eval = FALSE}
 ggplot(life, aes(x = income, fill = coast)) +
   geom_density(alpha = 0.5)
-ggplot(life, aes(x = income, y = coast, color = coast)) +
-  geom_boxplot(alpha = 0.5) + 
-  theme(legend.position = "hide")
+
+ggplot(life, aes(x = income, y = coast)) +
+  geom_boxplot(alpha = 0.5) 
 ```
 
 
-```{r coast-income, fig.width = 7}
+```{r coast-income, fig.width = 8}
 p1 <- ggplot(life, aes(x = income, fill = coast)) +
   geom_density(alpha = 0.5)
-p2 <- ggplot(life, aes(x = income, y = coast, color = coast)) +
-  geom_boxplot(alpha = 0.5) + 
-  theme(legend.position = "hide")
+
+p2 <- ggplot(life, aes(x = income, y = coast)) +
+  geom_boxplot(alpha = 0.5) 
 p1 + p2
 ```
 
-What we see is interesting: the boxplot flags many counties as outliers, both along the West Coast but also in the rest of the country as well. So why was the blip more apparent on the West Coast? It has to do with sample size. There are far fewer counties in the West Coast group, so these few outliers have an oversized effect on the density plot. In the case of the non-West Coast group, there are many more counties that ended up washing out the effect of the outliers in the density plot.
+What we see is interesting: the boxplot flags many counties as outliers, both along the West Coast but also in the rest of the country as well. So why was the blip more apparent on the West Coast? It has to do with sample size. There are far fewer counties in the West Coast group, so these few outliers have an over-sized effect on the density plot. In the case of the non-West Coast group, there are many more counties that ended up washing out the effect of the outliers in the density plot.
 
 ## Indicating outliers
 
@@ -876,7 +868,7 @@ life <- life %>%
   mutate(is_outlier = income > 75000)
 ```
 
-A useful tool when inspecting outliers is to filtering the dataset to only include outliers, and then arranging them in decreasing order. Let's do that next.
+A useful tool when inspecting outliers is to filter the dataset to only include outliers, and then arrange them in decreasing order. Let's do that next.
 
 ```{r, echo = TRUE}
 life %>%
@@ -893,10 +885,10 @@ We can also try rebuilding the density plots without the outliers.
 To do this, we form a pipeline where the first step is to filter on those counties that are not outliers. Recall that `is_outlier` is a vector of `TRUE`s and `FALSE`s. We can simply state that we are not interested in any of the values that are `TRUE` by adding an exclamation point (`!`) before the name of the variable. We can then pipe this filtered dataset into the same `ggplot()` code we used for the original overlaid density plots.
 
 ```{r, echo = TRUE, eval = FALSE}
-life %>%
-  filter(!is_outlier) %>%  
-  ggplot(aes(x = income, fill = coast)) +
+  
+ggplot(data = life %>% filter(!is_outlier), mapping = aes(x = income, fill = coast)) + 
   geom_density(alpha = 0.3)
+
 ggplot(life, aes(x = income, fill = coast)) +
   geom_density(alpha = 0.3)
 ```
@@ -919,25 +911,25 @@ The result is a plot that focuses much more on the body of the distribution. You
 Consider the distribution, shown here, of the life expectancies of the countries in Asia. The boxplot identifies one clear outlier: a country with a notably low life expectancy. 
 
 ```{r}
-gap2007 <- filter(gapminder, year == 2007)
-gap2007 %>%
-  filter(continent == "Asia") %>%
+gapminder %>% 
+  filter(year == 2007, continent == "Asia") %>%
   ggplot(aes(x = lifeExp)) +
   geom_boxplot()
 ```
 
 Next, we'll build a plot with that country removed. The `gap2007` is still available in your workspace. To carry out this process we need to use the following steps: 
 
-1. Use `filter()` to retain only observations from Asia
-2. Use `mutate()` to create a new variable called `is_outlier`
-3. Use `if_else()` to specify how the `is_outlier` variable should be made, where countries with a life expectancy less than 50 should get a value of `TRUE` and everyone else should get a value of `FALSE`
-4. Create a boxplot of the life expectancies of the non-outlier countries
+ - Use `filter()` to retain only observations from Asia
 
-```{r ex5-setup}
-gap2007 <- filter(gapminder, year == 2007)
-```
+ - Use `mutate()` to create a new variable called `is_outlier`
 
-```{r ex5, exercise = TRUE}
+ - Use `if_else()` to specify how the `is_outlier` variable should be made, where countries with a life expectancy less than 50 should get a value of `TRUE` and everyone else should get a value of `FALSE`
+
+ - Create a boxplot of the life expectancies of the non-outlier countries
+
+
+
+```{r ex5, exercise = TRUE, exercise.setup="ex2-setup"}
 # Create a boxplot of the distribution of life expectancy with the outlier removed 
 gap2007 %>% 
   filter(___) %>%
@@ -978,7 +970,7 @@ gap2007 %>%
 ```
 
 ```{r ex5-solution}
-# Create a boxplot of the distribution of life expectancy with the outlier removed 
+# Create a boxplot of the distribution of life expectancy with the outlier removed by piping in the dataframe to ggplot
 gap2007 %>%
   filter(continent == "Asia") %>%
   mutate(is_outlier = if_else(lifeExp < 50, TRUE, FALSE)) %>% 
@@ -991,7 +983,9 @@ gap2007 %>%
 
 Congratulations!! You have successfully completed the lesson on summarizing and visualizing numerical data.
 
+## Acknowledgment
 
+This tutorial is excerpted from Introduction to Modern Statistics.
 
 
 
