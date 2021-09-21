@@ -165,10 +165,17 @@ Let's create a plot to examine the relationship between engine size (`displ`) an
 
  The plot shows a negative relationship between engine size (`displ`) and highway fuel efficiency (`hwy`) as one might expect. 
  
- Type code in the code chunk below to produce a scatter plot of the city miles per gallon (`cty`) and engine size (`displ`). Customize the plot as above to produce labels for the axes and a title.
+ Fill in the blanks in the code chunk below to produce a scatter plot of the city miles per gallon (`cty`) and engine size (`displ`). Customize the plot as above to produce labels for the axes and a title.
  
 ```{r cty-displ-plot, exercise=TRUE}
 
+ggplot(data = ___, mapping = aes( x = ___, y = ___ )) + 
+  geom___() +
+  labs( x = ___, 
+        y = ___, 
+        title = ___, 
+        subtitle = ___,
+        caption = ___ )
 ```
 
 ```{r cty-displ-plot-hint}
@@ -180,7 +187,7 @@ Let's create a plot to examine the relationship between engine size (`displ`) an
 ```
 
 ```{r cty-displ-plot-solution}
-ggplot(data=mpg, mapping=aes(x=displ,y=cty)) + 
+ggplot(data = mpg, mapping=aes( x = displ,y = cty)) + 
       geom_point() + 
       labs(x="Engine size (liters)",
            y="Miles per gallon",
@@ -248,12 +255,12 @@ Give this a try. Delete the underline in the code below and write `color = class
 ```{r color-aesthetics, exercise = TRUE}
 #ggplot(data = mpg,
 #      mapping = aes(x = displ, y = hwy, ___ )) + 
-#  geom_point() 
+#  geom_point() + scale_color_viridis_d()
 ```
 
 The colors reveal that many of the unusual points in the scatter plots are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage. 
 
-<!---
+
 Note that we have also added a `scale` layer to the ggplot code. Scales control the mapping from the data to your aesthetics. An important property of ggplot2 is that **every** aesthetic in your plot is associated with exactly one scale.
 
 For example, when we write
@@ -277,7 +284,7 @@ ggplot(data = mpg,
 The choice of default scale depends on the aesthetic and variable type. For example, `hwy` is a numerical variable mapped to the y aesthetic, so the default scale is `scale_y_continuous()`. Similarly `class` is a categorical variable, so when mapped to the color aesthetic the default scale becomes discrete.
 
 If we want to over-ride the default scale, we will need to add it ourselves as we did for the color palette. The viridis color scheme is designed to be perceived by viewers with common forms of color blindness and is therefore a much better choice than the default.
---->
+
 
 Note that if we place any mappings in a geom layer, ggplot will treat them as local mappings for that layer only. For example, the following code will allow the color of just the points to vary by the type of car, but will not affect the color of the trend line that we add to the plot.
 
@@ -285,7 +292,7 @@ Note that if we place any mappings in a geom layer, ggplot will treat them as lo
 ggplot(data=mpg, 
        mapping=aes(x=displ,y=hwy)) + 
    geom_point(mapping=aes(color=class)) +
-   geom_smooth() 
+   geom_smooth() + scale_color_viridis_d()
 ```
 
 
@@ -307,7 +314,7 @@ ggplot(data=mpg,
 
 To facet by 2 variables, it is best to use `facet_grid` which has a slightly different syntax `facet_grid( rows ~ cols)`. 
 
-Create a plot of the relationship between `hwy` and `displ` which is faceted by the type of drive train `drv` and the type of fuel `fl`
+Create a plot of the relationship between `hwy` and `displ` which is faceted by the type of drive train `drv` and the type of fuel `fl`. I have left the code chunk empty so you get some practice with the syntax of ggplot. Feel free to peek at the hints if you need help. 
 
 ```{r displ-hwy-facet-grid, exercise=TRUE}
 
@@ -316,26 +323,26 @@ Create a plot of the relationship between `hwy` and `displ` which is faceted by 
 
 ```{r displ-hwy-facet-grid-hint-1}
 ggplot(data=mpg, 
-       mapping=aes( x=displ, y=hwy )) 
+       mapping=aes( x = displ, y = hwy )) 
 
 ```
 
 ```{r displ-hwy-facet-grid-hint-2}
 ggplot(data=mpg, 
-       mapping=aes( x=displ, y=hwy )) + 
+       mapping=aes( x = displ, y = hwy )) + 
    geom_point() 
 ```
 
 ```{r displ-hwy-facet-grid-hint-3}
 ggplot(data=mpg, 
-       mapping=aes( x=displ, y=hwy )) + 
+       mapping=aes( x = displ, y = hwy )) + 
    geom_point() +
    facet_grid( ) 
 ```
 
 ```{r displ-hwy-facet-grid-solution}
 ggplot(data=mpg, 
-       mapping=aes( x=displ, y=hwy )) + 
+       mapping=aes( x = displ, y = hwy )) + 
    geom_point() +
     facet_grid(drv ~ fl)
 
@@ -355,6 +362,7 @@ ggplot(data=mpg,
    geom_point(color="red")
 ```
 
+Change the color to pink, blue, green, whatever you fancy and see the difference. If you want to see the full list of colors R knows about, type `colors()` in the code chunk. 
 
 ### Geometric Objects
 
@@ -364,8 +372,8 @@ For example, the following code produces a density plot of highway fuel efficien
 
 ```{r histo-hwy, echo=T}
 ggplot(data=mpg,
-       mapping=aes(x=hwy,fill=drv))+
-  geom_density(adjust=2,alpha=0.5)
+       mapping=aes(x = hwy,fill = drv))+
+  geom_density(adjust = 2, alpha = 0.5)
 
 ```
 
@@ -373,20 +381,21 @@ When the `geom` is an object that has area, as with a density curve, the color a
 
 
 
-Type in the code to produce a density plot for `cty` with `fl` as the fill variable. Play around with the bandwidth parameter `adjust` to see how it affects the density plot. 
+Type in the code to produce a density plot for `cty` with `class` as the fill variable. Play around with the bandwidth parameter `adjust` to see how it affects the density plot. 
 
-```{r ex6, exercise=TRUE}
-
+```{r ex6, exercise=TRUE, warning=FALSE, message=FALSE}
+ggplot( data = ___, mapping = aes(x = ___, fill = ___ ) )+ 
+  geom___ ( adjust = ___, alpha = ___ )
 
 ```
 
 ```{r ex6-solution}
-ggplot(data=mpg,mapping=aes(x=cty,fill=fl))+
-  geom_density(adjust=2,alpha=0.5)+
+ggplot(data = mpg, mapping = aes(x = cty, fill = class))+
+  geom_density( adjust = 2, alpha = 0.2)+
   labs(x="miles per gallon",
        y="Density",
        title="Fuel efficiency for city driving",
-       fill="Drive train")
+       fill="Class of car")
 
 ```
 
@@ -394,8 +403,7 @@ ggplot(data=mpg,mapping=aes(x=cty,fill=fl))+
 Another useful `geom` is the boxplot. The following code creates a boxplot to compare the engine size `displ` by type of transmission `trans`. 
 ```{r engine-trans, exercise=TRUE}
 
-ggplot(data=mpg,
-       mapping=aes(x=displ,fill=trans) )+
+ggplot(data = mpg, mapping = aes(x = displ, fill = trans) )+
   geom_boxplot()
 ```
 
@@ -454,7 +462,8 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") 
+       color = "Species") +
+    scale_color_viridis_d()
 ```
 
 
@@ -471,6 +480,7 @@ ggplot(data = penguins,
 # - represent each observation with a point and 
 # - map color to the species of each bird
 # - give the plot a title, subtitle, axis labels 
+# - add a scale_color_viridis layer to match the color palette 
 
 ```
 
@@ -500,7 +510,9 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") 
+       color = "Species") +
+  scale_color_viridis_d()
+
 ```
 
 
