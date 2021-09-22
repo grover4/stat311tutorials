@@ -72,9 +72,8 @@ mutatedbike <- dsbox::dcbikeshare %>%
 
 ## Introduction
 
-```{r photo, fig.margin = TRUE, echo = FALSE, out.width="100%", fig.cap="Photo by El Salanzo on Unsplash"}
-knitr::include_graphics("images/el-salanzo-yUvQnZY29Oc-unsplash.jpg")
-```
+![Photo by El Salanzo on Unsplash](images/el-salanzo-yUvQnZY29Oc-unsplash.jpg)
+
 
 Bike sharing systems are a new generation of traditional bike rentals where the whole process from membership, rental and return back has become automatic. 
 Through these systems, the user is able to easily rent a bike from a particular position and return it back at another position. 

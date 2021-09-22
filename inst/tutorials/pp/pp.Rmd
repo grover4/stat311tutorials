@@ -49,9 +49,8 @@ price_surface_fit <- lm(log_price ~ log_surface, data=pp)
 
 ## Introduction
 
-```{r photo, fig.margin = TRUE, echo = FALSE, out.width="80%"}
-knitr::include_graphics("images/old-auction.png")
-```
+![](images/old-auction.png)
+
 
 In this brief tutorial, we will revisit the Paris Paintings data and and consider how the surface area of a painting affects the price.
 

@@ -64,9 +64,8 @@ boot_df_median <- gss16_email %>%
 
 ## Introduction
 
-```{r photo, fig.margin = TRUE, echo = FALSE, out.width = "100%", fig.cap = "Photo by Christian Wiediger on Unsplash."}
-knitr::include_graphics("images/christian-wiediger-70ku6P7kgmc-unsplash.jpg")
-```
+![Photo by Christian Wiediger on Unsplash](images/christian-wiediger-70ku6P7kgmc-unsplash.jpg)
+
 
 The General Social Survey (GSS) gathers data on contemporary American society in order to monitor and explain trends and constants in attitudes, behaviors, and attributes. 
 Hundreds of trends have been tracked since 1972. 

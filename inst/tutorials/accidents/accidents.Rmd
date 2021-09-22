@@ -41,11 +41,7 @@ In this tutorial, we will look at traffic accident data in Seattle.
 The data are open and made available [online](https://data-seattlecitygis.opendata.arcgis.com/datasets/5b5c745e0f1f48e7a53acec63a0022ab_0) by Seattle GeoData. 
 It covers all recorded accidents in Seattle from Jan 1 2020 through Dec 16 2020; some of the variables were deleted for the purposes of this exercise.
 
-```{r fig, out.width="100%"}
-
-knitr::include_graphics("images/traffic.jpg")
-
-```
+![](images/traffic.jpg)
 
 ### Learning goals
 

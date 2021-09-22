@@ -540,12 +540,8 @@ question("Which list of numbers, A or B, has a standard deviation of about 5?",
 ```
 
 
+![](images/sd.png)
 
-
-```{r mc5-pre}
-knitr::include_graphics("images/sd.png")
-
-```
 
 
 ### Calculate spread measures
@@ -677,9 +673,7 @@ The modality of a distribution is the number of prominent humps that show up in 
 
 The other aspect to the shape of the distribution concerns its skew.
 
-```{r modalities, out.width=600}
-knitr::include_graphics("images/modalities.png")
-```
+![](images/modalities.png)
 
 ### Skew
 
@@ -689,9 +683,8 @@ If that long tail stretches out to the left, its referred to as "left-skewed." I
 
 If neither tail is longer than the other, the distribution is called "symmetric."
 
-```{r skewness, out.width=600}
-knitr::include_graphics("images/skewness.png")
-```
+![](images/skewness.png)
+
 
 ### Shape of income
 

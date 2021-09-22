@@ -6,11 +6,9 @@ output:
     allow_skip: true
     css: "css/font-size.css"
 runtime: shiny_prerendered
-description: >
+description: 
  Practice data visualization with ggplot. 
 ---
-
-
 
 ```{r setup, include=FALSE}
 
@@ -28,38 +26,15 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```
 
----
+------------------------------------------------------------------------
 
-## Introduction 
+## Introduction
 
 **ggplot2** is tidyverse's data visualization package - The `gg` in "ggplot2" stands for Grammar of Graphics because the package is inspired by a similarly titled book written by Leland Wilkinson. The book develops a grammar for graphics that enable us to concisely describe the components of a graphic. Specifically, each component is thought of as a layer which gets added on.
 
-:::: {style="display:flex;"}
-
-:::{}
-```{r fig-ggplot-logo,fig.align="left"}
-
-knitr::include_graphics("images/ggplot2-part-of-tidyverse.png")
-
-```
-:::
-
-:::{}
-
-
-```{r fig-book,fig.align="right"}
-
-knitr::include_graphics("images/grammar-of-graphics.png")
-
-```
-:::
-
-::::
-
-
+![](images/ggplot2-part-of-tidyverse.png)
 
 To use ggplot2 functions, we need to begin by loading the **tidyverse** package. Go ahead and load it and run the code.
-
 
 ```{r load-packages, exercise=TRUE}
 
@@ -69,7 +44,6 @@ To use ggplot2 functions, we need to begin by loading the **tidyverse** package.
 library(tidyverse)
 ```
 
-
 ## The Data
 
 For this tutorial, we will use the `mpg` dataframe from the `ggplot2` package. To see the `mpg` dataframe, type `mpg` in the code chunk below and click "Run Code"
@@ -77,7 +51,6 @@ For this tutorial, we will use the `mpg` dataframe from the `ggplot2` package. T
 ```{r ex1, exercise=TRUE}
 
 ```
-
 
 ```{r how-many-cars}
 question("How many cars are in the dataframe?",
@@ -88,21 +61,17 @@ question("How many cars are in the dataframe?",
 )
 ```
 
+Among the variables in `mpg` are
 
-Among the variables in `mpg` are 
-
- - `displ`, engine displacement, in liters
- - `hwy`,  fuel efficiency on the highway in miles per gallon. 
- 
+-   `displ`, engine displacement, in liters
+-   `hwy`, fuel efficiency on the highway in miles per gallon.
 
 To see the *codebook* (description of variables) for `mpg`, type `?mpg` which should open its help page in a new browser tab.
 
 ```{r about-mpg, exercise=TRUE}
 
 ```
- 
 
- 
 ```{r what-is-drv}
  question("What does the variable `drv` describe?", 
   answer( "whether a car has a 4 wheel, or front wheel or rear wheel drive train", correct=TRUE),
@@ -112,16 +81,17 @@ To see the *codebook* (description of variables) for `mpg`, type `?mpg` which sh
 )
   
 ```
-## The Grammer of Graphics 
- 
-With ggplot, we begin a plot with the data frame. This creates a blank coordinate system. 
+
+## The Grammer of Graphics
+
+With ggplot, we begin a plot with the data frame. This creates a blank coordinate system.
 
 The `mapping` argument which comes next defines how variables in your data set are mapped to visual properties. The `mapping` argument is always paired with `aes()` which stands for *aes*thetics. Aesthetics include $x$, $y$, as well as things like the size, shape, and color of your points and much more.
 
 The next layer is the `geom` which specifies the type of graph you wish to create. `ggplot()` comes with many geom functions that each build a different plot. You can actually use multiple geoms in a single ggplot.
- 
- The structure of the code for plots can be summarized as
- 
+
+The structure of the code for plots can be summarized as
+
 ```{r ggplot-structure, echo=T, eval=F}
 
 ggplot(data=[dataset], 
@@ -130,8 +100,7 @@ ggplot(data=[dataset],
    other options`
 ```
 
- 
-We can omit the names of the first two arguments when building plots with ggplot as shown below. 
+We can omit the names of the first two arguments when building plots with ggplot as shown below.
 
 ```{r ggplot-structure-omit, echo=T, eval=F}
 
@@ -141,15 +110,11 @@ ggplot([dataset],
    other options`
 ```
 
-
-However, I prefer not to omit names and will encourage you to do the same. 
-
-
+However, I prefer not to omit names and will encourage you to do the same.
 
 ### Are cars with bigger engines less fuel efficient?
 
 Let's create a plot to examine the relationship between engine size (`displ`) and fuel economy. The following code creates a scatter plot with `displ` on the x-axis and highway miles per gallon (`hwy`) on the y-axis. I have also created descriptive axis labels and titles using the `labs` layer.
-
 
 ```{r ex2, echo=T}
  ggplot(data=mpg, 
@@ -161,12 +126,11 @@ Let's create a plot to examine the relationship between engine size (`displ`) an
            subtitle="Data for highway driving",
            caption="Source: mpg data from ggplot2 package")
 ```
- 
 
- The plot shows a negative relationship between engine size (`displ`) and highway fuel efficiency (`hwy`) as one might expect. 
- 
- Fill in the blanks in the code chunk below to produce a scatter plot of the city miles per gallon (`cty`) and engine size (`displ`). Customize the plot as above to produce labels for the axes and a title.
- 
+The plot shows a negative relationship between engine size (`displ`) and highway fuel efficiency (`hwy`) as one might expect.
+
+Fill in the blanks in the code chunk below to produce a scatter plot of the city miles per gallon (`cty`) and engine size (`displ`). Customize the plot as above to produce labels for the axes and a title.
+
 ```{r cty-displ-plot, exercise=TRUE}
 
 ggplot(data = ___, mapping = aes( x = ___, y = ___ )) + 
@@ -196,19 +160,15 @@ ggplot(data = mpg, mapping=aes( x = displ,y = cty)) +
            caption="Source: mpg data from ggplot2 package")
 ```
 
-
-
 Next, we will consider adding some color to our plot which can greatly help with understanding patterns in the data.
 
 ### Color coding points
 
-In both the scatter plots of the previous section , one group of cars (shown  below) have a higher mileage than you might expect for the size of their engine. 
+In both the scatter plots of the previous section , one group of cars (shown below) have a higher mileage than you might expect for the size of their engine.
 
+::: {style="display:flex;"}
+<div>
 
-
-:::: {style="display:flex;"}
-
-:::{}
 ```{r fig-hwy,fig.align="center", out.width="80%"}
 ggplot(data=mpg, 
        mapping=aes(x=displ,y=hwy)) + 
@@ -221,10 +181,10 @@ ggplot(data=mpg,
            subtitle="Data for highway driving",
            caption="Source: mpg data from ggplot2 package")
 ```
-:::
 
-:::{}
+</div>
 
+<div>
 
 ```{r fig-cty,fig.align="center",out.width="80%"}
 ggplot(data=mpg, 
@@ -242,15 +202,13 @@ ggplot(data=mpg,
            caption="Source: mpg data from ggplot2 package")
 
 ```
+
+</div>
 :::
 
-::::
+A possible reason for this is they differ in some systematic way from the other cars. To investigate this, let's color-code the points by the `class` of the car. For example, we can color a point green if it belongs to the compact class, blue if it belongs to the midsize class, and so on.
 
-
-
-A possible reason for this is they differ in some systematic way from the other cars. To investigate this, let's color-code the points by the `class` of the car. For example, we can color a point green if it belongs to the compact class, blue if it belongs to the midsize class, and so on. 
-
-Give this a try. Delete the underline in the code below and write `color = class` in its place. Run the code after removing the comment (`#`) symbols. What happens? 
+Give this a try. Delete the underline in the code below and write `color = class` in its place. Run the code after removing the comment (`#`) symbols. What happens?
 
 ```{r color-aesthetics, exercise = TRUE}
 #ggplot(data = mpg,
@@ -258,8 +216,7 @@ Give this a try. Delete the underline in the code below and write `color = class
 #  geom_point() + scale_color_viridis_d()
 ```
 
-The colors reveal that many of the unusual points in the scatter plots are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage. 
-
+The colors reveal that many of the unusual points in the scatter plots are two-seater cars. These cars are in fact sports cars! Sports cars have large engines like SUVs and pickup trucks, but small bodies like midsize and compact cars, which improves their gas mileage.
 
 Note that we have also added a `scale` layer to the ggplot code. Scales control the mapping from the data to your aesthetics. An important property of ggplot2 is that **every** aesthetic in your plot is associated with exactly one scale.
 
@@ -270,7 +227,7 @@ ggplot(data = mpg, mapping= aes(x=displ, y=hwy, color=class)) +
   geom_point()
 ```
 
-ggplot2 added a default scale for each aesthetic behind the scenes. 
+ggplot2 added a default scale for each aesthetic behind the scenes.
 
 ```{r, echo=T, eval=F}
 ggplot(data = mpg, 
@@ -281,10 +238,10 @@ ggplot(data = mpg,
   scale_color_discrete()
 
 ```
+
 The choice of default scale depends on the aesthetic and variable type. For example, `hwy` is a numerical variable mapped to the y aesthetic, so the default scale is `scale_y_continuous()`. Similarly `class` is a categorical variable, so when mapped to the color aesthetic the default scale becomes discrete.
 
 If we want to over-ride the default scale, we will need to add it ourselves as we did for the color palette. The viridis color scheme is designed to be perceived by viewers with common forms of color blindness and is therefore a much better choice than the default.
-
 
 Note that if we place any mappings in a geom layer, ggplot will treat them as local mappings for that layer only. For example, the following code will allow the color of just the points to vary by the type of car, but will not affect the color of the trend line that we add to the plot.
 
@@ -294,15 +251,13 @@ ggplot(data = mpg, mapping = aes( x = displ, y = hwy)) +
    geom_smooth() + scale_color_viridis_d()
 ```
 
-
-
 ### Faceting a plot
 
 Color is one way to add an additional variable. But there is a lot of overlap between the points belonging to the different classes. It would be nice to see the classes side by side rather than on the same plot. Fortunately, ggplot has a way to split the plot into facets or subplots, each of which displays a subset of data. This can be useful for exploring conditional relationships, especially in big data sets.
 
 To facet a scatter plot by one variable, we use `facet_wrap()`. The only required argument is the first one which specifies the facet variable. Optional arguments may be used to customize the number of rows, number of columns, labels and so on.
 
-Run the following code to examine the relationship between `hwy` and `displ` by the type of fuel `fl` used in the vehicle. 
+Run the following code to examine the relationship between `hwy` and `displ` by the type of fuel `fl` used in the vehicle.
 
 ```{r displ-hwy-class-facet, exercise=T}
 ggplot(data=mpg, 
@@ -311,9 +266,9 @@ ggplot(data=mpg,
     facet_wrap(~ fl)
 ```
 
-To facet by 2 variables, it is best to use `facet_grid` which has a slightly different syntax `facet_grid( rows ~ cols)`. 
+To facet by 2 variables, it is best to use `facet_grid` which has a slightly different syntax `facet_grid( rows ~ cols)`.
 
-Create a plot of the relationship between `hwy` and `displ` which is faceted by the type of drive train `drv` and the type of fuel `fl`. I have left the code chunk empty so you get some practice with the syntax of ggplot. Feel free to peek at the hints if you need help. 
+Create a plot of the relationship between `hwy` and `displ` which is faceted by the type of drive train `drv` and the type of fuel `fl`. I have left the code chunk empty so you get some practice with the syntax of ggplot. Feel free to peek at the hints if you need help.
 
 ```{r displ-hwy-facet-grid, exercise=TRUE}
 
@@ -349,24 +304,24 @@ ggplot(data=mpg,
 
 ### Setting versus Mapping Aesthetics
 
-We refer to linking an aesthetic such as color or fill to a variable as **mapping** the aesthetic. 
+We refer to linking an aesthetic such as color or fill to a variable as **mapping** the aesthetic.
 
-There are times however where we simply want to **set** the aesthetic to something. 
+There are times however where we simply want to **set** the aesthetic to something.
 
-For instance, maybe we want all our points in a scatter plot to be red. This is done in the relevant layer of the ggplot function using `color="red"`. 
+For instance, maybe we want all our points in a scatter plot to be red. This is done in the relevant layer of the ggplot function using `color="red"`.
 
 ```{r set-aes, exercise=TRUE}
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
    geom_point(color = "red")
 ```
 
-Change the color to pink, blue, green, whatever you fancy and see the difference. If you want to see the full list of colors R knows about, type `colors()` in the code chunk. 
+Change the color to pink, blue, green, whatever you fancy and see the difference. If you want to see the full list of colors R knows about, type `colors()` in the code chunk.
 
 ### Geometric Objects
 
-A `geom` is a geometric object which represents the data. To put it simply, `geom` tells ggplot what type of graph we want. So far, we have looked at `geom_point` where the geometric object being plotted is a point. Some other useful examples are: `geom_histogram`, `geom_density` and `geom_boxplot`. 
+A `geom` is a geometric object which represents the data. To put it simply, `geom` tells ggplot what type of graph we want. So far, we have looked at `geom_point` where the geometric object being plotted is a point. Some other useful examples are: `geom_histogram`, `geom_density` and `geom_boxplot`.
 
-For example, the following code produces a density plot of highway fuel efficiency categorized by the drive train. Each `geom` has a list of arguments, some of which are unique to it. For example, the `adjust` in `geom_density` determines the smoothing window in much the same way as `binwidth` for a histogram.  
+For example, the following code produces a density plot of highway fuel efficiency categorized by the drive train. Each `geom` has a list of arguments, some of which are unique to it. For example, the `adjust` in `geom_density` determines the smoothing window in much the same way as `binwidth` for a histogram.
 
 ```{r histo-hwy, echo=T}
 ggplot(data = mpg, mapping = aes(x = hwy, fill = drv))+
@@ -374,11 +329,9 @@ ggplot(data = mpg, mapping = aes(x = hwy, fill = drv))+
 
 ```
 
-When the `geom` is an object that has area, as with a density curve, the color aesthetic would simply apply to the outline of the shape. To fill in the shape with color, we need to use `fill` rather than `color`. 
+When the `geom` is an object that has area, as with a density curve, the color aesthetic would simply apply to the outline of the shape. To fill in the shape with color, we need to use `fill` rather than `color`.
 
-
-
-Type in the code to produce a density plot for `cty` with `class` as the fill variable. Play around with the bandwidth parameter `adjust` to see how it affects the density plot. 
+Type in the code to produce a density plot for `cty` with `class` as the fill variable. Play around with the bandwidth parameter `adjust` to see how it affects the density plot.
 
 ```{r ex6, exercise=TRUE, warning=FALSE, message=FALSE}
 ggplot( data = ___, mapping = aes(x = ___, fill = ___ ) )+ 
@@ -396,15 +349,13 @@ ggplot(data = mpg, mapping = aes(x = cty, fill = class))+
 
 ```
 
+Another useful `geom` is the boxplot. The following code creates a boxplot to compare the engine size `displ` by type of transmission `trans`.
 
-Another useful `geom` is the boxplot. The following code creates a boxplot to compare the engine size `displ` by type of transmission `trans`. 
 ```{r engine-trans, exercise=TRUE}
 
 ggplot(data = mpg, mapping = aes(x = displ, fill = trans) )+
   geom_boxplot()
 ```
-
-
 
 ## Common Mistakes
 
@@ -412,31 +363,11 @@ ggplot(data = mpg, mapping = aes(x = displ, fill = trans) )+
 
 2.Remember that R is case sensitive. Be sure to write variable names exactly as they appear.
 
-
 ## Palmer Penguins
 
-Now that you have a few tricks under your belt, let’s use them on a different dataframe. The `penguins` data frame contains size measurements for three penguin species living on islands in the Palmer archipelago. The data is part of the `palmerpenguins` package. 
+Now that you have a few tricks under your belt, let's use them on a different dataframe. The `penguins` data frame contains size measurements for three penguin species living on islands in the Palmer archipelago. The data is part of the `palmerpenguins` package.
 
-:::: {style="display:flex;"}
-
-:::{}
-```{r penguin-fig-1,fig.align="center",out.width="75%"}
-
-knitr::include_graphics("images/penguin-species.PNG")
-
-```
-:::
-
-:::{}
-
-
-```{r penguin-fig-2,fig.align="center",out.width="75%"}
-knitr::include_graphics("images/penguin-bill.PNG")
-
-```
-:::
-
-::::
+![](images/penguin-species.PNG)
 
 
 Load the package and take a quick peek at the data and view its dimensions by running the code below.
@@ -447,8 +378,7 @@ glimpse(penguins)
 
 ```
 
-
-1. Recreate the following plot.
+1.  Recreate the following plot.
 
 ```{r, message=F,warning=F}
 ggplot(data = penguins,
@@ -462,7 +392,6 @@ ggplot(data = penguins,
        color = "Species") +
     scale_color_viridis_d()
 ```
-
 
 ```{r scatter, exercise=TRUE}
 
@@ -497,7 +426,6 @@ ggplot(data = penguins,
   geom_point() 
 ```
 
-
 ```{r scatter-solution}
 ggplot(data = penguins,
        mapping = aes(x = bill_depth_mm,
@@ -512,8 +440,7 @@ ggplot(data = penguins,
 
 ```
 
-
-2. Recreate the following plot.
+2.  Recreate the following plot.
 
 ```{r facet, message=F, warning=F}
 ggplot(
@@ -541,7 +468,6 @@ ggplot(
 
 ```
 
-
 ```{r facet-species-sex-solution}
 ggplot(
   penguins, 
@@ -553,13 +479,11 @@ ggplot(
 
 ```
 
-
-3. Pick a numerical variable and a categorical variable and make a visualisation (you pick the type!) to display the relationship between the two variables. 
+3.  Pick a numerical variable and a categorical variable and make a visualisation (you pick the type!) to display the relationship between the two variables.
 
 ```{r num-cat, exercise=TRUE}
 
 ```
-
 
 ## Wrap Up
 
@@ -571,13 +495,10 @@ If you get stuck, start with Google. This strategy is particularly useful for er
 
 And of course, you may also ask your TAs or instructor for help.
 
-
 ## Acknowledgements
 
+The tutorial is excerpted from *R for Data Science* by Hadley Wickham and Garrett Grolemund, published by O'Reilly Media, Inc., 2016, ISBN: 9781491910399. You can purchase the book at [shop.oreilly.com](http://shop.oreilly.com/product/0636920034407.do).
 
+The R code for creating this learnr tutorial was also greatly informed by the learnr tutorials in RStudio Cloud's primers found [here](https://github.com/rstudio-education/primers).
 
-The tutorial is excerpted from _R for Data Science_ by Hadley Wickham and Garrett Grolemund, published by O’Reilly Media, Inc., 2016, ISBN: 9781491910399. You can purchase the book at [shop.oreilly.com](http://shop.oreilly.com/product/0636920034407.do).
-
-The R code for creating this learnr tutorial was also greatly informed by the learnr tutorials in  RStudio Cloud's primers found [here](https://github.com/rstudio-education/primers).
-
-Finally, thanks are always due to Mine &Ccedil;etinkaya-Rundel for inspiring a community of statistics teachers with her wonderful Data Science in a Box course materials 
+Finally, thanks are always due to Mine Çetinkaya-Rundel for inspiring a community of statistics teachers with her wonderful Data Science in a Box course materials
