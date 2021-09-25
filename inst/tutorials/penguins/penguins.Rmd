@@ -13,7 +13,7 @@ description:
 ```{r setup, include=FALSE}
 
 #load packages ---------------------------------
-
+Sys.setenv(TZ = "America/Los-Angeles")
 library(learnr)
 library(tidyverse)
 library(palmerpenguins)
