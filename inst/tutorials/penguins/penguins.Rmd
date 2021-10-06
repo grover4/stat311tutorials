@@ -213,7 +213,7 @@ A possible reason for this is they differ in some systematic way from the other 
 
 Give this a try. Delete the underline in the code below and write `color = class` in its place. Run the code after removing the comment (`#`) symbols. What happens?
 
-```{r color-class, exercise = T}
+```{r color-class, exercise = T, exercise.timelimit=60}
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy, ___ )) + 
   geom_point() + 
   scale_color_viridis_d()
