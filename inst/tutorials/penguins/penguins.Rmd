@@ -11,12 +11,14 @@ description:
 ---
 
 ```{r setup, include=FALSE}
+#devtools::install_github("rundel/learnrhash")
 
 #load packages ---------------------------------
 Sys.setenv(TZ = "America/Los-Angeles")
 library(learnr)
 library(tidyverse)
 library(palmerpenguins)
+library(learnrhash)
 
 
 #hide non exercise code chunks---------------
@@ -494,6 +496,14 @@ It is important to keep in mind that we have barely scratched the surface of the
 If you get stuck, start with Google. This strategy is particularly useful for error messages. Simply copy and paste the error message into your query.
 
 And of course, you may also ask your TAs or instructor for help.
+
+```{r context="server"}
+learnrhash::encoder_logic(strip_output=TRUE)
+```
+
+```{r encode, echo=FALSE}
+learnrhash::encoder_ui()
+```
 
 ## Acknowledgements
 
