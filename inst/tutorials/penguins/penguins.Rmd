@@ -11,7 +11,8 @@ description:
 ---
 
 ```{r setup, include=FALSE}
-#devtools::install_github("rundel/learnrhash")
+
+#devtools::install_github("rundel/learnrhash", force=TRUE)
 
 #load packages ---------------------------------
 Sys.setenv(TZ = "America/Los-Angeles")
