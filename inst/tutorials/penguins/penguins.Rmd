@@ -16,10 +16,10 @@ description:
 
 #load packages ---------------------------------
 Sys.setenv(TZ = "America/Los-Angeles")
-library(learnr)
+
 library(tidyverse)
 library(palmerpenguins)
-library(learnrhash)
+library(learnr)
 
 
 #hide non exercise code chunks---------------
@@ -213,8 +213,8 @@ A possible reason for this is they differ in some systematic way from the other 
 
 Give this a try. Delete the underline in the code below and write `color = class` in its place. Run the code after removing the comment (`#`) symbols. What happens?
 
-```{r color-class, exercise = T, exercise.timelimit=60}
-ggplot(data = mpg, mapping = aes(x = displ, y = hwy, ___ )) + 
+```{r color-class, exercise = T}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color=class )) + 
   geom_point() + 
   scale_color_viridis_d()
 ```
@@ -392,8 +392,7 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") +
-    scale_color_viridis_d()
+       color = "Species") 
 ```
 
 ```{r scatter, exercise=TRUE}
@@ -438,8 +437,7 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") +
-  scale_colour_viridis_d()
+       color = "Species") 
 
 ```
 
@@ -488,7 +486,7 @@ ggplot(
 
 ```
 
-## Wrap Up
+## Wrap up
 
 Congratulations on making it through this very brisk introduction to ggplot! There is tons more you could do with ggplot; the key is to be open to learning.
 
@@ -498,13 +496,7 @@ If you get stuck, start with Google. This strategy is particularly useful for er
 
 And of course, you may also ask your TAs or instructor for help.
 
-```{r context="server"}
-learnrhash::encoder_logic(strip_output=TRUE)
-```
 
-```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
-```
 
 ## Acknowledgements
 
