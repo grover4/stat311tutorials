@@ -14,11 +14,13 @@ description: >
 
 ```{r setup, include=FALSE}
 # load packages ----------------------------------------------------------------
-library(learnr)
-library(gradethis)
+
 library(tidyverse)
 library(tidymodels)
 library(dsbox)
+library(learnr)
+library(learnrhash)
+library(gradethis)
 # set options for exercises and checking ---------------------------------------
 gradethis_setup()
 # hide non-exercise code chunks ------------------------------------------------
@@ -498,6 +500,15 @@ That's it!
 You've finished the tutorial on bootstrapping, congratulations!
 We hope you enjoyed this exploration. 
 
+If this is a participation activity, generate the hash and submit. 
+
+```{r context="server"}
+learnrhash::encoder_logic(strip_output=TRUE)
+```
+
+```{r encode, echo=FALSE}
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
+```
 
 ## Acknowledgements
 

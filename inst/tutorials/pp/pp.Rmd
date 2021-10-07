@@ -12,27 +12,22 @@ description: Fit a linear model with a single predictor and interpret regression
 
 ```{r setup, include=FALSE}
 # load packages---------------------------------------------------
-library(learnr)
-library(gradethis)
+
 library(tidyverse)
 library(broom)
 library(skimr)
-
+library(learnr)
+library(learnrhash)
+library(gradethis)
 
 # set options for exercises and checking ---------------------------------------
-tutorial_options(
-  exercise.timelimit = 60, 
-  exercise.checker = gradethis::grade_learnr
-  )
+gradethis_setup()
 
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
 
-pp<-read_csv(file="https://raw.githubusercontent.com/rstudio-education/datascience-box/master/course-materials/slides/u4-d01-language-of-models/data/paris-paintings.csv", na=c(" ","n/a","NA"))
-
-
+pp<-read_csv(file="https://raw.githubusercontent.com/rstudio-education/datascience-box/master/course-materials/slides/u4-d01-language-of-models/data/paris-paintings.csv", na=c("","n/a","NA"))
 ```
-
 
 ```{r prepare-pp-setup}
 
@@ -42,8 +37,6 @@ pp <- pp %>% filter(Surface > 0) %>%
 
 
 price_surface_fit <- lm(log_price ~ log_surface, data=pp)
-
-
 
 ```
 
@@ -545,9 +538,20 @@ grade_this_code("Good job predicting the prices!")
 ```
 ---> 
 
-## Finish Up
+## Wrap Up
 
 Congratulations! You made it through the tutorial on fitting linear models with a single predictor.
+
+If this is a participation activity, generate the hash and submit. 
+
+```{r context="server"}
+learnrhash::encoder_logic(strip_output=TRUE)
+```
+
+```{r encode, echo=FALSE}
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
+```
+
 
 ## Acknowledgements
 

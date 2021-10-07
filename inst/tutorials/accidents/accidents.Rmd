@@ -16,9 +16,11 @@ description: >
 ```{r setup, include=FALSE}
 
 #load packages ------------------------------------------
-library(learnr)
+
 library(tidyverse)
 library(janitor)
+library(learnr)
+library(learnrhash)
 
 tutorial_options(exercise.timelimit = 60)
 # hide non-exercise code chunks ------------------------------------------------
@@ -464,6 +466,17 @@ question("Which of the following is false? Check all that apply.",
 ## Wrap Up
 
 Congratulations! You made it through the tutorial on visualizing categorical data! Hopefully you found it interesting and are feeling more comfortable with the concepts we have been learning in class today!
+
+If this is a participation activity, generate the hash and submit. I
+
+```{r context="server"}
+learnrhash::encoder_logic(strip_output=TRUE)
+```
+
+```{r encode, echo=FALSE}
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
+```
+
 
 ## Acknowledgements
 

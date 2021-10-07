@@ -15,11 +15,13 @@ description: >
 
 ```{r setup, include=FALSE}
 # load packages ----------------------------------------------------------------
-library(learnr)
-library(gradethis)
+
 library(tidyverse)
 library(tidymodels)
 library(dsbox)
+library(learnr)
+library(gradethis)
+library(learnrhash)
 
 # set options for exercises and checking ---------------------------------------
 gradethis_setup()
@@ -1179,6 +1181,17 @@ question("Based on the above results, which of these variables should you defini
 Congratulations!
 
 Hopefully, you have enjoyed this lesson on modelling and data wrangling.
+
+If this is a participation activity, generate the hash and submit. I
+
+```{r context="server"}
+learnrhash::encoder_logic(strip_output=TRUE)
+```
+
+```{r encode, echo=FALSE}
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
+```
+
 
 
 ## Acknowledgment
