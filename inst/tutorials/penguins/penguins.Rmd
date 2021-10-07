@@ -212,7 +212,7 @@ ggplot(data=mpg,
 
 A possible reason for this is they differ in some systematic way from the other cars. To investigate this, let's color-code the points by the `class` of the car. For example, we can color a point green if it belongs to the compact class, blue if it belongs to the midsize class, and so on.
 
-Give this a try. Delete the underline in the code below and write `class` in its place. Run the code after removing the comment (`#`) symbols. What happens?
+Give this a try. Delete the underline in the code below and write `class` in its place. Run the code. What happens?
 
 ```{r color-class, exercise = T}
 ggplot(data = mpg, mapping = aes(x = displ, y = hwy, color = ___ )) + 
@@ -393,7 +393,8 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") 
+       color = "Species") +
+  scale_color_viridis_d()
 ```
 
 ```{r scatter, exercise=TRUE}
@@ -426,7 +427,7 @@ ggplot(data = penguins,
        mapping = aes(x = bill_depth_mm,
                      y = bill_length_mm,
                      color = species)) +
-  geom_point() 
+  geom_point() +
 ```
 
 ```{r scatter-solution}
@@ -438,7 +439,8 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") 
+       color = "Species") +
+    scale_color_viridis_d()
 
 ```
 
@@ -502,7 +504,7 @@ learnrhash::encoder_logic(strip_output=TRUE)
 ```
 
 ```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_before=NULL, ui_after=default_ui(url="https://canvas.uw.edu/courses/1483091") )
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
 ```
 
 ## Acknowledgements
