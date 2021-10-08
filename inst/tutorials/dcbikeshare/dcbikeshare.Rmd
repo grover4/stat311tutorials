@@ -1182,7 +1182,7 @@ Congratulations!
 
 Hopefully, you have enjoyed this lesson on modelling and data wrangling.
 
-If this is a participation activity, generate the hash and submit. I
+If this is a participation activity, generate the hash and submit. 
 
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
