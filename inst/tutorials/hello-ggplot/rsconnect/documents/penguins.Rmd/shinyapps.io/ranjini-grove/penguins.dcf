@@ -1,0 +1,12 @@
+name: penguins
+title: penguins
+username: ranjini-grove
+account: ranjini-grove
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7277220
+bundleId: 7782529
+url: https://ranjini-grove.shinyapps.io/penguins/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

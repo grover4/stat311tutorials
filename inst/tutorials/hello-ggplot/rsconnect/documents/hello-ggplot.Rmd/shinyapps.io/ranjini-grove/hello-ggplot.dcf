@@ -1,0 +1,12 @@
+name: hello-ggplot
+title: hello-ggplot
+username: ranjini-grove
+account: ranjini-grove
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6615649
+bundleId: 7782970
+url: https://ranjini-grove.shinyapps.io/hello-ggplot/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,0 +1,12 @@
+name: hello-ggplot
+title: hello-ggplot
+username: grover4
+account: grover4
+server: rsc.stat.washington.edu
+hostUrl: https://rsc.stat.washington.edu/__api__
+appId: 54
+bundleId: 198
+url: https://rsc.stat.washington.edu/content/b747e6f7-94b7-420a-aabd-d548e1e5a00b/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
