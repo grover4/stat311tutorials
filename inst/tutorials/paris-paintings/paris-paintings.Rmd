@@ -92,8 +92,7 @@ pp %>% skim(price, Surface)
 
 From the output of `skim` we can see that the variable `Surface` is missing 176 values. In addition, the minimum value is listed as 0 which is likely a mistake or a missing value. 
 
-Let's prep the data by filtering out only the rows for which `Surface` is a positive number and then run a quick summary to check the variables again.
-
+Let's prep the data by filtering out only the rows for which `Surface` is a positive number. Save the resulting dataframe back to `pp`. Then run a quick summary to check the variables again. 
 
 
 ```{r clean-surface, exercise=TRUE}
@@ -102,6 +101,10 @@ Let's prep the data by filtering out only the rows for which `Surface` is a posi
 
 ```
 
+```{r clean-surface-hint-1}
+pp <- pp %>% filter(Surface > 0)
+
+```
 
 ## Patterns in visualisations
 
