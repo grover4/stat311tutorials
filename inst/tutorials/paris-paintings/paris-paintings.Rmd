@@ -106,6 +106,11 @@ pp <- pp %>% filter(Surface > 0)
 
 ```
 
+```{r clean-surface-hint-2}
+pp %>% skim(Surface)
+
+```
+
 ## Patterns in visualisations
 
 ### Distribution of price, surface area
