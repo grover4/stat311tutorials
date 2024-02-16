@@ -107,6 +107,9 @@ pp <- pp %>% filter(Surface > 0)
 ```
 
 ```{r clean-surface-hint-2}
+
+pp <- pp %>% filter(Surface > 0)
+
 pp %>% skim(Surface)
 
 ```
