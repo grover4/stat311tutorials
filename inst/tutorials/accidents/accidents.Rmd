@@ -4,7 +4,6 @@ output:
      learnr::tutorial:
      progressive: true
      allow_skip: true
-     css: "css/font-size.css"
 runtime: shiny_prerendered
 description: >
   Get more practice with data visualization and wrangling in the tidyverse: 
@@ -21,18 +20,24 @@ library(tidyverse)
 library(janitor)
 library(learnr)
 library(learnrhash)
+library(gradethis)
 
-tutorial_options(exercise.timelimit = 60)
+options(tutorial.max.forked.procs=5)
+tutorial_options(exercise.timelimit = 60,
+                 exercise.completion=FALSE)
 # hide non-exercise code chunks ------------------------------------------------
 knitr::opts_chunk$set(echo = FALSE)
+```
 
+```{r read-data, context="data", include=FALSE}
 # read in data ----------------------------------
 accidents<-read_csv("data/accidents_2020.csv",skip=1,
                     col_names=c("id", "addr_type","location","severity_code","severity_desc","collision_type","person_count","ped_count","pedcyl_count","veh_count","injuries","serious_injuries","fatalities","inc_date","under_infl","weather","road","light","speeding","hit_parked_car"))
 
  
 accidents <- accidents %>%  mutate(light=na_if(light,"Unknown"), 
-                                  light=na_if(light, "Other") )
+                                  light=na_if(light, "Other"),
+                                  light = na_if(light, "Dark - Unknown Lighting"))
 ```
 
 ---
@@ -62,10 +67,17 @@ These packages are already installed for you, so you load it as usual with the `
 
 ```
 
+
+```{r load-packages-check}
+grade_this_code("You've successfully loaded the packages.")
+```
+
 ```{r load-packages-solution}
 library(tidyverse)
 library(janitor)
 ```
+
+
 
 ## Data and codebook
 
@@ -246,7 +258,7 @@ accidents %>%
 
 ```{r addr-frequency-hint-3}
 accidents %>%
-  count(addr, sort = TRUE)
+  count(addr_type, sort = TRUE)
 ```
 
 
@@ -320,7 +332,7 @@ ggplot(data = accidents %>% filter( !is.na(addr_type) ),
 
 ## Light conditions
 
-Let's now examine the relationship between the light conditions and whether or not it is related to parked cars being hit. In this section, our focus will be creating a contingency table and visualizing the relationship via a mosaicplot. 
+Let's now examine the relationship between the light conditions and whether or not it is related to parked cars being hit. In this section, our focus will be creating a **contingency table** and visualizing the relationship via a **mosaicplot**. 
 
 But first, let's take a look at the `light` variable and its frequency distribution.
 
@@ -329,22 +341,36 @@ But first, let's take a look at the `light` variable and its frequency distribut
 accidents %>% count(light)
 ```
 
-As we can see, there are four categories of darkness. Perhaps we can combine them into fewer categories in some sensible manner? Additionally, the category labels are pretty long and which can result in messy labels in certain types of plots, so at the very least we want to shorten the labels. 
+As we can see, there are three categories of darkness. Perhaps we can combine them into fewer categories in some sensible manner? 
 
 ### Recoding light
 
-There are many ways to recode the levels of a categorical variable. In this tutorial, we will focus on using `mutate` and `case_when` to make the change. The `case_when` function from `dplyr` is essentially multiple `ifelse` statements combined together. Each argument within the `case_when` function is a two sided formula separated by a tilda symbol `~`. The left hand side of the formula determines which values match this case. The right hand side provides the replacement value. The last line of the `case_when` holds true for all the categories not mentioned in the previous statements and these are all set to the values in the original variable.
+There are many ways to recode the levels of a categorical variable. In this tutorial, we will focus on using `mutate` and `case_when` to make the change. The `case_when` function from `dplyr` is essentially multiple `ifelse` statements combined together.
+
+Each argument within the `case_when` function is a two sided formula separated by a tilda symbol `~`. The left hand side of the formula determines which values match this case. The right hand side provides the replacement value. The last line of the `case_when` holds true for all the categories not mentioned in the previous statements and these are all set to the values in the original variable.
+
+In the following exercise code chunk, we will mutate and add a new variable to our dataset called `light_short`. 
+  
 
 
-
-```{r, echo=TRUE}
-
+```{r recode-light, exercise=TRUE}
 
 accidents <- accidents %>% 
-  mutate( light_short = case_when( light %in% c("Dark - No Street Lights",  "Dark - Street Lights Off") ~ "Dark", 
-                                   light == "Dark - Street Lights On"                                    ~ "Dark, lit", 
-                                                                      TRUE                               ~ light),
-          light_short = na_if(light_short, "Dark - Unknown Lighting") )
+             mutate( light_short = 
+             case_when( light %in% c(___, ___ ) ~ "Dark", 
+                       light == ___             ~ "Dark Lit", 
+                       TRUE                     ~ light) )
+```
+
+
+
+```{r recode-light-solution}
+
+accidents <- accidents %>% 
+  mutate( light_short = 
+            case_when( light %in% c("Dark - No Street Lights",  "Dark - Street Lights Off") ~ "Dark", 
+                       light == "Dark - Street Lights On"                                    ~ "Dark, lit", 
+                       TRUE  ~ light) )
 
 
 ```
@@ -357,8 +383,7 @@ What does the above code do? The `case_when` function creates a new variable cal
 
 The remaining categories are not altered by the `case_when` function. 
 
-Within the same `mutate` function, we are then replacing the category
-"Dark - Unknown Lighting" as a missing value  using the `na_if` function. This makes sense since we are interested in the impact of lighting which is unknown. 
+
 
 
 Run the following to examine the frequency distribution of the new variable we have just created. Compare the distribution with that of the original variable at the head of this subsection. 
@@ -366,12 +391,10 @@ Run the following to examine the frequency distribution of the new variable we h
 ```{r change-light}
 
 accidents <- accidents %>% 
-  mutate( light_short = case_when( light %in% c("Dark - No Street Lights",  "Dark - Street Lights Off") ~ "Dark", 
-                                   light %in% c("Dark - Street Lights On", "Dark - Unknown Lighting") ~ "Dark, lit", 
-                                   TRUE                              
-                           ~ light)  , 
-         light_short = na_if(light_short, "Unknown"),
-         light_short = na_if(light_short, "Dark - Unknown Lighting"))
+  mutate( light_short = 
+            case_when( light %in% c("Dark - No Street Lights",  "Dark - Street Lights Off") ~ "Dark", 
+                     light == "Dark - Street Lights On" ~ "Dark, lit", 
+                    TRUE   ~ light))
 
 
 ```
@@ -391,7 +414,7 @@ Relationships between categorical variables are summarized via contingency table
 ```{r light-hit-table, exercise=TRUE, exercise.setup="change-light"}
 
 accidents %>%
-          tabyl(___, ___, show_na = ___) %>%
+          tabyl(___, ___, show_na = FALSE) %>%
              adorn_totals()%>%
              adorn_percentages(denominator="row") %>%
              adorn_pct_formatting(digits=2) %>%
@@ -407,7 +430,7 @@ accidents %>%
 
 ```{r table-interpretation}
 question("If the variables are independent, what fraction of parked cars should be hit regardless of the light condition?", 
-         answer(" 11.99% ",
+         answer(" 11.88% ",
                 correct = TRUE, message="Good job!"),
          answer("27.45%%",
                 message = "This is the fraction of parked cars that get hit in the dark"),
@@ -467,15 +490,6 @@ question("Which of the following is false? Check all that apply.",
 
 Congratulations! You made it through the tutorial on visualizing categorical data! Hopefully you found it interesting and are feeling more comfortable with the concepts we have been learning in class today!
 
-If this is a participation activity, generate the hash and submit. I
-
-```{r context="server"}
-learnrhash::encoder_logic(strip_output=TRUE)
-```
-
-```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
-```
 
 
 ## Acknowledgements
