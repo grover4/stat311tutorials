@@ -1,0 +1,13 @@
+name: paris
+title: paris
+username:
+account: ranjini-grove
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5536265
+bundleId: 5533315
+url: https://ranjini-grove.shinyapps.io/paris/
+when: 1643778634.01902
+lastSyncTime: 1643778634.01902
+asMultiple: FALSE
+asStatic: FALSE
