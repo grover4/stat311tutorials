@@ -258,13 +258,22 @@ pp <- pp %>%
 
 ```
 
-```{r create-vars-hint}
+```{r create-vars-hint-3}
 
 pp <- pp %>%
      mutate(log_price = log2(price),
             log_surface = log2(Surface) )
 ```
 
+
+```{r create-vars-hint-4}
+
+pp <- pp %>%
+     mutate(log_price = log2(price),
+            log_surface = log2(Surface) )
+
+pp %>% skim(log_price, log_surface)
+```
 
 
 Now recreate the scatter plot of `log_price` and `log_surface`. Add a `geom_smooth` layer to draw a line through the data cloud.
