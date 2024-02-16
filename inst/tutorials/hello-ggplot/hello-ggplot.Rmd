@@ -516,12 +516,15 @@ If you get stuck, start with Google. This strategy is particularly useful for er
 
 And of course, you may also ask your TAs or instructor for help.
 
+
+If you have completed this tutorial for participation credit and are happy with all of your solutions, please click the button below to generate your hash, select and then copy it using the clipboard feature on the top right of the box below, and submit it using the following link:
+
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
 ```
 
 ```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1664882/quizzes/1931113") )
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994361") )
 ```
 
 ## Acknowledgements
