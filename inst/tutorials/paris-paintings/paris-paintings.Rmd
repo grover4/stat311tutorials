@@ -50,7 +50,7 @@ As a reminder, the data were curated by Sandra van Ginhoven and Hilary Coe Cronh
 
 ### Packages
 
-We'll use the **tidyverse** and **broom** packages for this analysis.
+We'll use the **tidyverse** and **tidymodels** packages for this analysis.
 In addition, we will make use of the `skim` function from the **skimr** package to get a quick broad overview of the data frame. Run the following code to load these packages.
 
 ```{r load-packages, exercise=TRUE, warning=FALSE, message=FALSE}
@@ -60,7 +60,7 @@ In addition, we will make use of the `skim` function from the **skimr** package 
 
 ```{r load-packages-solution}
 library(tidyverse)
-library(broom)
+library(tidymodels)
 library(skimr)
 ```
 
