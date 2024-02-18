@@ -33,7 +33,7 @@ gss16 <- dsbox::gss16 %>%
 ```
 
 ```{r setup-seed-email-na}
-gss16 <- dsbox::gss16 %>%
+gss16 <- dsbox::gss16 %>% 
   mutate(email = emailmin + (emailhr * 60)) 
 set.seed(1234)
 ```
@@ -110,7 +110,7 @@ library(dsbox)
 
 ```{r load-packages-solution}
 library(tidyverse)
-library(infer)
+library(tidymodels)
 library(dsbox)
 ```
 
@@ -502,8 +502,15 @@ Calculate the mean number of minutes spent on `email` in this sample.
 
 ```{r email-mean-hint-1}
 
-#don't forget to specify na.rm!
+#don't forget to remove NAs 
 ```
+
+```{r email-mean-hint-2}
+
+gss16 %>% summarise( mean_email = ___  )
+```
+
+
 ```{r email-mean-solution"}
 gss16 %>% summarise(mean_email= mean(email, na.rm=TRUE))
 ```
