@@ -28,8 +28,8 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r setup-email-var}
-gss16 <- dsbox::gss16 %>%
-  mutate(email = emailmin + (emailhr * 60))
+gss16 <- dsbox::gss16 %>% 
+  mutate(email = emailmin + (emailhr * 60)) 
 ```
 
 ```{r setup-seed-email-na}
@@ -39,7 +39,7 @@ set.seed(1234)
 ```
 
 ```{r setup-boot-df-slope, message=FALSE,warning=FALSE}
-gss16 <- dsbox::gss16 %>%
+gss16 <- dsbox::gss16 %>% 
   mutate(email = emailmin + (emailhr * 60)) 
   
 set.seed(1234)
@@ -50,7 +50,7 @@ boot_df <- gss16 %>%
 ```
 
 ```{r setup-boot-df-mean, message=FALSE, warning=FALSE}
-gss16 <- dsbox::gss16 %>%
+gss16 <- dsbox::gss16 %>% 
   mutate(email = emailmin + (emailhr * 60)) 
   
 set.seed(1411)
@@ -166,10 +166,11 @@ gss16 <- gss16 %>%
   mutate(email = ___)
 ```
 
-```{r email-variable-hint-3}
+```{r email-variable-solution}
 gss16 <- gss16 %>%
   mutate(email = emailmin + emailhr * 60)
 ```
+
 
 
 ### `Email` versus `educ`
@@ -511,7 +512,7 @@ gss16 %>% summarise( mean_email = ___  )
 ```
 
 
-```{r email-mean-solution"}
+```{r email-mean-hint-3}
 gss16 %>% summarise(mean_email= mean(email, na.rm=TRUE))
 ```
 
@@ -530,6 +531,21 @@ bootmean_df <- gss16 %>%
   calculate(stat = "___")
 ```
 
+```{r create-bootmean-df-hint-1}
+bootmean_df <- gss16 %>%
+  specify(response = email) %>% 
+  generate(reps = 1000, type = "bootstrap") %>% 
+  calculate(stat = "___")
+
+```
+
+```{r create-bootmean-df-hint-2}
+bootmean_df <- gss16 %>%
+  specify(response = email) %>% 
+  generate(reps = 1000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+
+```
 
 Go ahead and visualize the bootstrapped distribution of the mean number of minutes spent on email. The variability of this distribution is what we are trying to describe. Calculate the 95% bootstrap interval for the mean number of minutes spent on email by American workers. 
 
@@ -541,7 +557,35 @@ Go ahead and visualize the bootstrapped distribution of the mean number of minut
 ```
 
 
+```{r mean-plot-hint-1}
+ggplot(data=bootmean_df, mapping=aes(x = stat))+
+  geom_histogram()+
+  labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
+```
+
+```{r mean-plot-hint-2}
+ggplot(data=bootmean_df, mapping=aes(x = stat))+
+  geom_histogram()+
+  labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
+
+bootmean_df %>%
+  summarize(lower = quantile(stat, 0.025),
+            upper = quantile(___, ___))
+
+```
+
+
+```{r mean-plot-hint-3}
+ggplot(data=bootmean_df, mapping=aes(x = stat))+
+  geom_histogram()+
+  labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
+
+bootmean_df %>%
+  summarize(lower = quantile(stat, 0.025),
+            upper = quantile(stat, 0.975))
+
+```
 
 
 ## Wrap Up
@@ -550,14 +594,16 @@ That's it!
 You've finished the tutorial on bootstrapping, congratulations!
 We hope you enjoyed this exploration. 
 
-If this is a participation activity, generate the hash and submit. 
+
+If you are happy with all of your solutions, please click the button below to generate your hash, select and then copy it using the clipboard feature on the top right of the box below, and submit it using the following link:
+
 
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
 ```
 
 ```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1519534/quizzes/1627248") )
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994360") )
 ```
 
 ## Acknowledgements
