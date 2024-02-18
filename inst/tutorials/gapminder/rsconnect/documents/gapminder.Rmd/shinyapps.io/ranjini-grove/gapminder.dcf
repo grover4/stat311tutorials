@@ -1,0 +1,13 @@
+name: gapminder
+title: gapminder
+username:
+account: ranjini-grove
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5500453
+bundleId: 5503342
+url: https://ranjini-grove.shinyapps.io/gapminder/
+when: 1643054297.81905
+lastSyncTime: 1643054297.81905
+asMultiple: FALSE
+asStatic: FALSE

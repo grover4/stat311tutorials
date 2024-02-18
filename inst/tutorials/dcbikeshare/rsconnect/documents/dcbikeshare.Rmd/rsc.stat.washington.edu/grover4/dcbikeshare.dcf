@@ -1,0 +1,13 @@
+name: dcbikeshare
+title: dcbikeshare
+username: grover4
+account: grover4
+server: rsc.stat.washington.edu
+hostUrl: https://rsc.stat.washington.edu/__api__
+appId: 48
+bundleId: 180
+url: https://rsc.stat.washington.edu/content/182aefa8-b3f0-457e-b7cf-81762a94648f/
+when: 1636085225.30185
+lastSyncTime: 1636085225.30185
+asMultiple: FALSE
+asStatic: FALSE

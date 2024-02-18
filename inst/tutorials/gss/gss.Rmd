@@ -184,7 +184,33 @@ Make a scatterplot to examine the association between `educ` as explanatory and 
 
 ```
 
-```{r email-educ-plot-solution}
+```{r email-educ-plot-hint-1}
+ggplot(data = gss16, 
+       mapping= = aes(x = ___,
+                      y = ___)) 
+
+```
+
+
+```{r email-educ-plot-hint-2}
+ggplot(data = gss16, 
+       mapping= = aes(x = educ,
+                      y = email)) + 
+  geom____() 
+
+```
+
+```{r email-educ-plot-hint-3}
+ggplot(data = gss16, 
+       mapping= = aes(x = educ,
+                      y = email)) + 
+  geom_point() +  
+  geom_smooth(method = "__")
+
+```
+
+
+```{r email-educ-plot-hint-4}
 
 ggplot(data = gss16, 
        mapping=aes( x = educ, 

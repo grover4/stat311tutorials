@@ -63,7 +63,8 @@ We will use the **tidyverse** package for the analysis and the **janitor** packa
 These packages are already installed for you, so you load it as usual with the `library` function:
 
 ```{r load-packages, exercise = TRUE}
-
+library(tidyverse)
+library(janitor)
 
 ```
 

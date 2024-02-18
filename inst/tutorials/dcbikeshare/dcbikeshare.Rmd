@@ -22,6 +22,7 @@ library(dsbox)
 library(learnr)
 library(gradethis)
 library(learnrhash)
+library(GGally)
 
 # set options for exercises and checking ---------------------------------------
 gradethis_setup()
@@ -169,9 +170,7 @@ In the `dcbikeshare` data frame, all the variables have been entered as numeric 
 
 As noted in the codebook, `season` is encoded as a numeric variable taking the values 1, 2, 3 or 4 to denote the seasons: 1: winter, 2: spring, 3: summer, 4: fall
 
-Let's recode the `season` variable as a character variable with the name of the season as its value, and also set spring as the baseline level. 
-
-After you have recoded `season`, you can check its distribution with  `count` in this code chunk.
+Let's recode the `season` variable as a character variable with the name of the season as its value. After you have recoded `season`, you can check its distribution with  `count` in this code chunk.
 
 ```{r recode-season, exercise = TRUE, exercise.setup="glimpse-data-setup", exercise.completion=FALSE}
 
@@ -179,8 +178,7 @@ dcbikeshare <- ___ %>%
   mutate(
     season = case_when(
     ___
-    ),
-    season = fct_relevel(___)
+    )
   )
 
 dcbikeshare %>% count(season) 
@@ -193,8 +191,7 @@ dcbikeshare <- dcbikeshare %>%
     season = case_when(
     season == 1 ~ "winter",
     ___
-    ),
-    season = fct_relevel(season, ___)
+    )
   )
 ```
 
@@ -206,30 +203,42 @@ dcbikeshare <- dcbikeshare %>%
       season == 2 ~ "spring",
       season == 3 ~ "summer",
       season == 4 ~ "fall"
-    ),
-    season = fct_relevel(season, ___)
+    )
   )
 
 ```
 
-```{r recode-season-hint-3}
-dcbikeshare <- dcbikeshare %>%
+
+
+You will notice that $R$ arranges the levels of `season` in alphabetical order. The first level, `fall` will be  automatically chosen as the baseline level in any model you fit with `season` in it. To change the baseline level, you can use `fct_relevel` inside `mutate` as follows:
+
+```{r relevel-season-setup}
+dcbikeshare <- dsbox::dcbikeshare %>%
   mutate(
     season = case_when(
       season == 1 ~ "winter",
       season == 2 ~ "spring",
       season == 3 ~ "summer",
       season == 4 ~ "fall"
-    ),
-    season = fct_relevel(season, "spring")
-  )
+    ) )
+
 ```
+
+```{r relevel-season, exercise=TRUE}
+
+dcbikeshare <- dcbikeshare %>% 
+              mutate( season = fct_relevel(season, "spring"))
+
+dcbikeshare %>% count(season)
+```
+
+If everything worked as intended, you should see that `spring` has sprung to first place. 
 
 ### Recode `holiday` and `workingday`
 
 As noted in the codebook, the variables `holiday` and `workingday` take the value of 0 and 1 to denote the labels "no" and "yes". 
 
-Recode the variables `holiday` and `workingday` as character variables and replace the numeric values with their corresponding labels. Set the level "no" as the baseline level in each case.
+Recode the variables `holiday` and `workingday` as character variables and replace the numeric values with their corresponding labels. 
 
 Again, use the `count` function to examine your work. 
 
@@ -254,14 +263,13 @@ dcbikeshare <- ___ %>%
 ```
 
 ```{r recode-holiday-workingday-hint-1}
-First mutate() the variables using ifelse(), then use fct_relevel()
+Use mutate() the variables using ifelse()
 ```
 
 ```{r recode-holiday-workingday-hint-2}
 dcbikeshare <- dcbikeshare %>%
   mutate(
     holiday = ifelse(___),      
-    holiday = fct_relevel(___),    
     ___
   )
 ```
@@ -270,9 +278,7 @@ dcbikeshare <- dcbikeshare %>%
 dcbikeshare <- dcbikeshare %>%
   mutate(
     holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no"),    
-    workingday = ifelse(___),
-    workingday = fct_relevel(___)
+    workingday = ifelse(___)
   )
 ```
 
@@ -280,9 +286,7 @@ dcbikeshare <- dcbikeshare %>%
 dcbikeshare <- dcbikeshare %>%
   mutate(
     holiday = ifelse(holiday == 0, "no", "yes"),      
-    holiday = fct_relevel(holiday, "no"),    
     workingday = ifelse(workingday == 0, "no", "yes"),
-    workingday = fct_relevel(workingday, "no")
   )
 
 dcbikeshare %>% count(holiday)
@@ -638,11 +642,11 @@ cnt_tmp <- lm(cnt ~ temperature_raw, data = dcbikeshare)
 ```
 
 ```{r rentals-vs-temp-r2, exercise = TRUE, exercise.setup="rentals-vs-temp-r2-setup"}
-glance(___)$___
+glance(___) %>% select(___)
 ```
 
 ```{r rentals-vs-temp-r2-solution}
-glance(cnt_tmp)$r.squared
+glance(cnt_tmp) %>% select(r.squared)
 ```
 
 ```{r rentals-vs-temp-r2-check}
@@ -666,7 +670,7 @@ question("What does the R-squared mean in this context?",
 
 ### Bike rentals vs feeling temperature
 
-Fit another linear model predicting total daily bike rentals from raw daily feeling temperature you just created in the previous section. 
+Fit another linear model predicting total daily bike rentals `cnt` from `feeling_temperature_raw` you just created in the previous section. Print the estimates.
 Then, proceed to answering the questions below.
 
 ```{r rentals-vs-atemp, exercise = TRUE, exercise.setup = "recreate-viz-setup"}
@@ -727,11 +731,11 @@ cnt_atmp <- lm(cnt ~ feeling_temperature_raw, data = dcbikeshare)
 ```
 
 ```{r rentals-vs-atemp-r2, exercise = TRUE, exercise.setup="rentals-vs-atemp-r2-setup"}
-glance(___)$___
+glance(___) %>% select(___)
 ```
 
 ```{r rentals-vs-atemp-r2-solution}
-glance(cnt_atmp)$r.squared
+glance(cnt_atmp) %>% select(r.squared)
 ```
 
 ```{r rentals-vs-atemp-r2-check}
@@ -886,16 +890,13 @@ Record adjusted $R^2$ of the model.
 ```
 
 ```{r adj-r-squared-hint-1}
-glance(___)$___
-```
-
-```{r adj-r-squared-hint-2}
-glance(___)$adj.r.squared
+glance(cnt_full) %>% select(adj.r.squared)
 ```
 
 ```{r adj-r-squared-solution}
-glance(cnt_full)$adj.r.squared
+glance(cnt_full) %>% select(adj.r.squared)
 ```
+
 
 ```{r adj-r-squared-check}
 grade_this_code("Your solution is correct!")
@@ -919,7 +920,7 @@ question("Select the correct answer",
 )
 ```
 
-<!--- 
+<!---
 ### Backward selection
 
 The full regression model from the previous section may have variables in it that do not necessarily add much once the other variables are included. This leads to needlessly complex models. 

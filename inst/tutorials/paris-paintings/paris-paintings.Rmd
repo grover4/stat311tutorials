@@ -54,7 +54,9 @@ We'll use the **tidyverse** and **tidymodels** packages for this analysis.
 In addition, we will make use of the `skim` function from the **skimr** package to get a quick broad overview of the data frame. Run the following code to load these packages.
 
 ```{r load-packages, exercise=TRUE, warning=FALSE, message=FALSE}
-
+library(tidyverse)
+library(tidymodels)
+library(skimr)
 
 ```
 
