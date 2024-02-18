@@ -33,23 +33,35 @@ gss16 <- dsbox::gss16 %>%
 ```
 
 ```{r setup-seed-email-na}
-gss16_email <- dsbox::gss16 %>%
-  mutate(email = emailmin + (emailhr * 60)) %>%
-  filter(!is.na(email))
+gss16 <- dsbox::gss16 %>%
+  mutate(email = emailmin + (emailhr * 60)) 
 set.seed(1234)
 ```
 
-```{r setup-boot-df-mean}
-gss16_email <- dsbox::gss16 %>%
-  mutate(email = emailmin + (emailhr * 60)) %>%
-  filter(!is.na(email))
+```{r setup-boot-df-slope, message=FALSE,warning=FALSE}
+gss16 <- dsbox::gss16 %>%
+  mutate(email = emailmin + (emailhr * 60)) 
   
 set.seed(1234)
-boot_df <- gss16_email %>%
+boot_df <- gss16 %>%
+  specify(email ~ educ) %>% 
+  generate(reps = 1000, type = "bootstrap") %>% 
+  calculate(stat = "slope")
+```
+
+```{r setup-boot-df-mean, message=FALSE, warning=FALSE}
+gss16 <- dsbox::gss16 %>%
+  mutate(email = emailmin + (emailhr * 60)) 
+  
+set.seed(1411)
+bootmean_df <- gss16 %>%
   specify(response = email) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
   calculate(stat = "mean")
+
 ```
+
+
 <!---
 ```{r setup-boot-df-median}
 gss16_email <- dsbox::gss16 %>%
@@ -92,7 +104,7 @@ You can load them with the following code block.
 
 ```{r load-packages, exercise = TRUE}
 library(tidyverse)
-library(infer)
+library(tidymodels)    
 library(dsbox)
 ```
 
@@ -154,13 +166,65 @@ gss16 <- gss16 %>%
   mutate(email = ___)
 ```
 
-```{r email-variable-hint-4}
+```{r email-variable-hint-3}
 gss16 <- gss16 %>%
   mutate(email = emailmin + emailhr * 60)
 ```
 
 
+### `Email` versus `educ`
 
+Are the number of years of education related to the amount of time people spend on email?
+
+Make a scatterplot to examine the association between `educ` as explanatory and `email` as the response.
+
+```{r email-educ-plot, exercise=TRUE, exercise.setup = "setup-email-var"}
+
+
+```
+
+```{r email-educ-plot-solution}
+
+ggplot(data = gss16, 
+       mapping=aes( x = educ, 
+                    y = email)) +
+  geom_point() + 
+  geom_smooth(method = "lm")
+
+```
+
+
+Fit a linear model relating `email` as the response variable to `educ` as the explanatory variable. Interpret the estimate of the slope. 
+
+```{r email-educ-fit, exercise=TRUE, exercise.setup = "setup-email-var"}
+
+
+```
+
+
+```{r email-educ-fit-solution }
+
+model1 <- lm(email ~ educ, data = gss16) 
+
+model1 %>% tidy()
+
+```
+
+```{r quiz-estimates}
+question("Which statement correctly interprets the estimate of the slope?",
+  answer("Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email, on average"),
+  answer("Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email, on average",
+    correct = TRUE),
+  answer(" Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email, on average"),
+  answer("Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education, on average"),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+
+
+<!--- 
 ### Filter the data
 
 Next, let's filter the data for only those who have non `NA` entries for `email` and save the resulting data frame as `gss16_email`. 
@@ -188,12 +252,16 @@ gss16_email <- gss16 %>%
 gss16_email <- gss16 %>%
   filter(!is.na(email))
 ```
+
+--->
+
 ### Bootstrap confidence intervals
 
-In the following exercise, we'll be using the `infer` package to bootstrap confidence intervals.
+As we saw in the previous section, there is a positive association between years of education and the time spent on email. For every additional year of education, we can expect the worker will spend an additional 45.3 minutes on email.  
 
-
-What we want to do now is calculate a 95% bootstrap confidence interval for the mean amount of time that Americans spend on email weekly.
+How might this estimate of the slope change if we took a different sample from the same population as `gss16`?
+ 
+In the following exercise, we'll be using the `infer` package to construct the bootstrapped distribution of the slope. 
 
 Since the bootstrapping involves some random sampling, we want some way of essentially defining how the random sampling is done.
 For example, this might be done so that if another person runs your R code, they'll produce the same confidence interval as you.
@@ -217,45 +285,45 @@ grade_this_code("You've set the seed ready for bootstrapping.")
 
 ### Creating the data frame
 
-When bootstrapping, we first need to create a data frame containing our bootstrapped data - in this case, sample means.
+When bootstrapping, we first need to create a data frame containing our bootstrapped data - in this case, sample slopes.
 
 There are a few functions we use from the `infer` package in doing this:
 
-- `specify()` is used to specify which columns in our data frame are  the relevant response (and if applicable, explanatory) variables. It is enough to specify just the response for a point estimate on one variable, as here.
+- `specify()` is used to specify which columns in our data frame are  the relevant response (and if applicable, explanatory) variables using the formula syntax: response $\sim$ explanatory. 
 
 - `generate()` generates the bootstrap samples.
 
-- And finally, `calculate()` calculates the sample statistic. In this case, we're using the mean, but we could just as easily calculate, say, medians.
+- And finally, `calculate()` calculates the sample statistic. In this case, we're using the slope, but we could just as easily calculate, say, mean or median etc.
 
 
-Fill in the blanks in the following code block to create a bootstrapped data frame which contains the mean amount of time that individuals in each of 1,000 bootstrap samples spend checking email at work:
+Fill in the blanks in the following code block to create a bootstrapped data frame which contains the slopes 1,000 new samples which are created by resampling the original sample:
 
-```{r create-boot-df, exercise = TRUE, exercise.setup = "setup-seed-email-na"}
-boot_df <- gss16_email %>%
-  specify(response = ___) %>% 
+```{r create-boot-df, exercise = TRUE, exercise.setup = "setup-email-var"}
+boot_df <- gss16 %>%
+  specify(___ ~ ___ ) %>% 
   generate(reps = 1000, type = "___") %>% 
   ___(stat = "___")
 ```
 
 ```{r create-boot-df-hint-1}
-boot_df <- gss16_email %>%
-  specify(response = ___) %>% 
+boot_df <- gss16 %>%
+  specify(email ~ educ ) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
   ___(stat = "___")
 ```
 
 ```{r create-boot-df-hint-2}
-boot_df <- gss16_email %>%
-  specify(response = email) %>% 
+boot_df <- gss16 %>%
+  specify(email ~ educ) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
-  ___(stat = "___")
+  calculate(stat = "___")
 ```
 
 ```{r create-boot-df-solution}
-boot_df <- gss16_email %>%
-  specify(response = email) %>% 
+boot_df <- gss16 %>%
+  specify(email ~ educ) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
-  calculate(stat = "mean")
+  calculate(stat = "slope")
 ```
 
 ```{r create-boot-df-check}
@@ -266,17 +334,17 @@ grade_this_code("That's great! You've created the bootstrap data frame.")
 
 Let's have a quick look at the bootstrapped data frame:
 
-```{r glimpse-boot-df, exercise = TRUE, exercise.setup = "setup-boot-df-mean"}
+```{r glimpse-boot-df, exercise = TRUE, exercise.setup = "setup-boot-df-slope"}
 boot_df
 ```
 
-Note that each value of the `stat` field is a particular bootstrapped sample mean.
+Note that each value of the `stat` field is a particular bootstrapped sample slope.
 
 ### Visualize the bootstrapped distribution
 
-We can easily plot the distribution of `stat` using `ggplot`. Go ahead and make a histogram of the bootstrapped means in the `boot_df` dataframe. Play around the binwidth to create a smooth picture.
+We can easily plot the distribution of `stat` using `ggplot`. Go ahead and make a histogram of the bootstrapped means in the `boot_df` dataframe. 
 
-```{r visualize_stat, exercise=TRUE, exercise.setup="setup-boot-df-mean"}
+```{r visualize_stat, exercise=TRUE, exercise.setup="setup-boot-df-slope"}
 
 
 ```
@@ -284,24 +352,24 @@ We can easily plot the distribution of `stat` using `ggplot`. Go ahead and make 
 
 ```{r visualize_stat-solution}
 
-ggplot(data=boot_df, mapping=aes(x=stat))+
+ggplot(data=boot_df, mapping=aes(x = stat))+
   geom_histogram()+
-  labs(title="Simulation Based Bootstrap Distribution")
+  labs(title="Bootstrapped distribution of slopes")
 
 ```
 
 
-### Find the confidence interval
+### Find the bootstrap interval
 
-Now we have the `boot_df` data frame, we can construct the confidence interval itself by picking out a certain percentage of the center of the distribution of the variable `stat`.
-Since we're after a 95% confidence interval, we take the center 95% of the bootstrap distribution, and find the range of these values.
+Now we have the `boot_df` data frame, we can construct the bootstrap percentile interval itself by picking out a certain percentage of the center of the distribution of the variable `stat`.
+Since we're after a 95% interval, we take the center 95% of the bootstrap distribution, and find the range of these values.
 This gives the desired interval.
 
 To find this range, we calculate percentiles so that the central 95% of the distribution is contained within them.
 
-Fill in the blanks in this code block to construct the 95% bootstrap confidence interval for the mean amount of time Americans spend on email weekly.
+Fill in the blanks in this code block to construct the 95% bootstrap confidence interval for the slope of `educ`
 
-```{r confidence-interval-email, exercise = TRUE, exercise.setup = "setup-boot-df-mean"}
+```{r confidence-interval-email, exercise = TRUE, exercise.setup = "setup-boot-df-slope"}
 ___ %>%
   summarize(lower = quantile(___, ___),
             upper = ___(___, ___))
@@ -334,17 +402,17 @@ boot_df %>%
 
 ```{r confidence-interval-email-check}
 grade_this({
-  if(identical(floor(as.numeric(.result$lower[1])), 385) & identical(floor(as.numeric(.result$upper[1])), 452)) {
-    pass("That is the 95% confidence interval for mean weekly time spent on email.")
+  if(identical(floor(as.numeric(.result$lower[1])), 34) & identical(floor(as.numeric(.result$upper[1])), 56)) {
+    pass("That is the 95% bootstrap percentile interval for the slope of educ.")
   }
-  if(identical(floor(as.numeric(.result$lower[1])), 389) & identical(floor(as.numeric(.result$upper[1])), 444)) {
+  if(identical(floor(as.numeric(.result$lower[1])), 36) & identical(floor(as.numeric(.result$upper[1])), 54)) {
     fail("It looks like you've calculated a 90% confidence interval. Remember that to pick out the central 95% of the distribution, we need to discard the most extreme 2.5% at each side.")
   }
   fail("Not quite. Take a look at the hints if you need some help.")
 })
 ```
 
-Would you expect a 99% confidence interval to be wider or narrower than the interval you calculated above?
+Would you expect a 99% bootstrap interval to be wider or narrower than the interval you calculated above?
 
 ```{r quiz-confidence}
 question("Which statement is correct?",
@@ -359,10 +427,9 @@ question("Which statement is correct?",
 ```
 
 Using the bootstrap distribution in `boot_df` from the previous exercise, calculate a 99%
-bootstrap confidence interval for the mean amount of time Americans spend on email 
-weekly. 
+bootstrap percentile interval for the slope of `educ`.
 
-```{r confidence-99-email, exercise = TRUE, exercise.setup = "setup-boot-df-mean"}
+```{r confidence-99-email, exercise = TRUE, exercise.setup = "setup-boot-df-slope"}
 boot_df %>% 
    summarise( lower = ___(___, ___), 
               upper = ___(___, ___ ))
@@ -387,10 +454,10 @@ boot_df %>%
 
 ```{r confidence-99-email-check}
 grade_this({
-  if(identical(floor(as.numeric(.result$lower[1])), 375) & identical(floor(as.numeric(.result$upper[1])), 465) ) {
+  if(identical(floor(as.numeric(.result$lower[1])), 31) & identical(floor(as.numeric(.result$upper[1])), 59) ) {
     pass("You have calculated the 99% confidence interval correctly!")
   }
-  if(identical(floor(as.numeric(.result$lower[1])), 378) & identical(floor(as.numeric(.result$upper[1])), 460)) {
+  if(identical(floor(as.numeric(.result$lower[1])), 32) & identical(floor(as.numeric(.result$upper[1])), 58)) {
     fail("It looks like you've calculated a 98% confidence interval. Remember that to pick out the central 99% of the distribution, we need to discard the most extreme 0.5% at each side.")
   }
   fail("Not quite. Take a look at the hints if you need some help.")
@@ -398,10 +465,9 @@ grade_this({
 ```
 
 
-Let's practice calculating one more confidence interval. Go ahead and calculate the 90% confidence interval for the mean amount of time Americans spend on email 
-weekly. 
+Let's practice calculating one more confidence interval. Go ahead and calculate the 90% confidence interval for the slope of `educ`. 
 
-```{r confidence-90-email, exercise = TRUE, exercise.setup = "setup-boot-df-mean"}
+```{r confidence-90-email, exercise = TRUE, exercise.setup = "setup-boot-df-slope"}
 boot_df %>% 
    summarise( lower = ___(___, ___), 
               upper = ___(___, ___ ))
@@ -415,7 +481,7 @@ boot_df %>%
 
 ```{r confidence-90-email-check}
 grade_this({
-  if(identical(floor(as.numeric(.result$lower[1])), 389) & identical(floor(as.numeric(.result$upper[1])), 444) ) {
+  if(identical(floor(as.numeric(.result$lower[1])), 36) & identical(floor(as.numeric(.result$upper[1])), 54) ) {
     pass("You have calculated the 99% confidence interval correctly!")
   }
   fail("Not quite. Take a look at the hints if you need some help.")
@@ -424,75 +490,52 @@ grade_this({
 
 
 
-<!--- ### Bootstrapping the median
+### Bootstrapping the mean
 
-And finally, we want to construct a 90% confidence interval for the *median* amount of time Americans spend on email weekly. 
-First, create a bootstrapped data frame just like you did in a previous exercise, only now, we want to calculate bootstrap medians. Your data frame should be called `boot_df_median`.
+Bootstrapping is a resampling method which can be used for quantifying the uncertainty of sample values generally.  For example, say instead of studying the relationship between `email` and `educ`, we simply want to know the average (mean) number of minutes American workers spend on email. 
 
-```{r create-boot-df-median, exercise = TRUE, exercise.setup = "setup-seed-email-na"}
-boot_df_median <- gss16_email %>%
-  specify(___ = ___) %>% 
-  generate(reps = 1000, type = "___") %>%
+Calculate the mean number of minutes spent on `email` in this sample.
+
+```{r email-mean, exercise=TRUE, exercise.setup="setup-email-var"}
+
+```
+
+```{r email-mean-hint-1}
+
+#don't forget to specify na.rm!
+```
+```{r email-mean-solution"}
+gss16 %>% summarise(mean_email= mean(email, na.rm=TRUE))
+```
+
+Now let's assess the variability in this estimate by bootstrapping 1,000 times. Remember, this means we will draw 1,000 samples each containing `r nrow(gss16)` people who are drawn randomly with replacement from `gss16`. Assuming our sample is representative of the population, we can get a pretty good idea of how estimates will vary from sample to sample by using this technique. 
+
+The function `infer` can be used as before. The only layers that require change are `specify` and `calculate`. 
+
+
+
+```{r create-bootmean-df, exercise = TRUE, exercise.setup = "setup-email-var"}
+set.seed(1411)
+
+bootmean_df <- gss16 %>%
+  specify(response = ___) %>% 
+  generate(reps = 1000, type = "bootstrap") %>% 
   calculate(stat = "___")
 ```
 
 
-```{r create-boot-df-median-solution}
-boot_df_median <- gss16_email %>%
-  specify(response = email) %>% 
-  generate(reps = 1000, type = "bootstrap") %>% 
-  calculate(stat = "median")
-```
+Go ahead and visualize the bootstrapped distribution of the mean number of minutes spent on email. The variability of this distribution is what we are trying to describe. Calculate the 95% bootstrap interval for the mean number of minutes spent on email by American workers. 
 
-```{r create-boot-df-median-check}
-grade_this_code("You have created a new bootstrapped data frame!")
-```
 
-Now, calculate the 90% confidence interval for the median amount of time spent on email.
 
-```{r confidence-90-median, exercise = TRUE, exercise.setup = "setup-boot-df-median"}
-boot_df_median %>% ___( lower = ___(___, ___), 
-                        upper = ___(___, ___) )
+```{r mean-plot, exercise = TRUE, exercise.setup = "setup-boot-df-mean"}
+
+
 ```
 
 
-```{r confidence-90-median-hint-1}
-boot_df_median %>%
-  summarize(lower = quantile(___, 0.05),
-            upper = quantile(___, ___))
-```
 
-```{r confidence-90-median-solution}
-boot_df_median %>%
-  summarize(lower = quantile(stat, 0.05),
-            upper = quantile(stat, 0.95))
-```
 
-```{r confidence-90-median-check}
-grade_this({
-  if(identical(as.numeric(.result$lower[1]), 120) & identical(as.numeric(.result$upper[1]), 120)) {
-  pass("You have calculated the 90% confidence interval correctly!")
-}
-  fail("Not quite. Take a look at the hints if you need some help.")
-})
-```
-
-Based on your findings, answer the following question:
-
-```{r confidence-median-quiz}
-question("Which statement is correct?",
-  answer("90% of Americans spend 2 hours per week on email."),
-  answer("In 90% of random samples of size 1649 taken from the population, the median amount of time the respondents spent on email weekly was 2 hours",
-    correct = TRUE
-  ),
-  answer("We can be 90% certain that the mean amount of time spent on email per week is 2 hours."),
-  answer("In any given sample of Americans, we can predict the median amount of time spent on email per week to be 2 hours with a margin of error of 12 minutes."),
-  allow_retry = TRUE,
-  random_answer_order = TRUE
-)
-```
-
---->
 
 ## Wrap Up
 
@@ -507,7 +550,7 @@ learnrhash::encoder_logic(strip_output=TRUE)
 ```
 
 ```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1483091") )
+learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1519534/quizzes/1627248") )
 ```
 
 ## Acknowledgements

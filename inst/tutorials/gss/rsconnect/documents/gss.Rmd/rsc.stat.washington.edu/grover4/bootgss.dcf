@@ -1,0 +1,13 @@
+name: bootgss
+title: bootgss
+username: grover4
+account: grover4
+server: rsc.stat.washington.edu
+hostUrl: https://rsc.stat.washington.edu/__api__
+appId: 53
+bundleId: 186
+url: https://rsc.stat.washington.edu/content/f553ba70-6735-486c-bf31-1a8288d1763c/
+when: 1645653876.32232
+lastSyncTime: 1645653876.32232
+asMultiple: FALSE
+asStatic: FALSE
