@@ -21,6 +21,7 @@ library(dsbox)
 library(learnr)
 library(learnrhash)
 library(gradethis)
+library(skimr)
 # set options for exercises and checking ---------------------------------------
 gradethis_setup()
 # hide non-exercise code chunks ------------------------------------------------
@@ -106,12 +107,14 @@ You can load them with the following code block.
 library(tidyverse)
 library(tidymodels)    
 library(dsbox)
+library(skimr)
 ```
 
 ```{r load-packages-solution}
 library(tidyverse)
 library(tidymodels)
 library(dsbox)
+library(skimr)
 ```
 
 ```{r load-packages-check}
@@ -166,16 +169,21 @@ gss16 <- gss16 %>%
   mutate(email = ___)
 ```
 
-```{r email-variable-solution}
+```{r email-variable-hint-3}
 gss16 <- gss16 %>%
   mutate(email = emailmin + emailhr * 60)
 ```
 
 
-
 ### `Email` versus `educ`
 
-Are the number of years of education related to the amount of time people spend on email?
+Are the number of years of education related to the amount of time people spend on email? Let's first get an overview of these variables  using `skim`. Go ahead and run the code below.
+
+```{r skim-data, exercise = TRUE, exercise.setup = "setup-email-var" }
+gss16 %>% skim(email, educ)
+
+```
+
 
 Make a scatterplot to examine the association between `educ` as explanatory and `email` as the response.
 
