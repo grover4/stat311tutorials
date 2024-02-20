@@ -517,8 +517,6 @@ If you get stuck, start with Google. This strategy is particularly useful for er
 And of course, you may also ask your TAs or instructor for help.
 
 
-If you are happy with all of your solutions, please click the button below to generate your hash, select and then copy it using the clipboard feature on the top right of the box below, and submit it using the following link:
-
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
 ```

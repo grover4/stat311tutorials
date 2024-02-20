@@ -1,0 +1,12 @@
+name: gapminder
+title: gapminder
+username: grover4
+account: grover4
+server: rsc.stat.washington.edu
+hostUrl: https://rsc.stat.washington.edu/__api__
+appId: 50
+bundleId: 199
+url: https://rsc.stat.washington.edu/content/c460168e-7a79-4bdd-bde9-5c731ff44001/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

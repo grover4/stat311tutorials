@@ -573,7 +573,6 @@ grade_this_code("Good job predicting the prices!")
 
 Congratulations! You made it through the tutorial on fitting linear models with a single predictor.
 
-If you are happy with all of your solutions, please click the button below to generate your hash, select and then copy it using the clipboard feature on the top right of the box below, and submit it using the following link: 
 
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
@@ -586,6 +585,7 @@ learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.u
 
 ## Acknowledgements
 
-The R code for creating this learnr tutorial was greatly informed by the course materials in [Data Science in a Box](https://datasciencebox.org/interactive-tutorials.html).
+The R code for creating this learnr tutorial was written by Ranjini Grove, Dept. of Statistics, University of Washington. The content was greatly informed by the learnr tutorials in [Data Science in a Box](https://datasciencebox.org/interactive-tutorials.html).
+
 
 

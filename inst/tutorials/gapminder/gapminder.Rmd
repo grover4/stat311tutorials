@@ -82,7 +82,26 @@ We are going to focus on the life expectancy in the state of Washington which ha
 
 ```
 
-```{r life-wa-solution}
+```{r life-wa-hint-1}
+
+life_wa <- life %>%
+  filter(state == "___") 
+
+
+```
+
+
+```{r life-wa-hint-2}
+
+life_wa <- life %>%
+  filter(state == "Washington") 
+
+life_wa %>% arrange(___) 
+
+```
+
+
+```{r life-wa-hint-3}
 
 life_wa <- life %>%
   filter(state == "Washington") 
@@ -90,6 +109,7 @@ life_wa <- life %>%
 life_wa %>% arrange(desc(expectancy)) 
 
 ```
+
 
 
 ```{r life-exp-mean}
@@ -111,7 +131,7 @@ For example, you may have heard statements like the typical life expectancy in t
 
 ### Mean
 
-Let's take a closer look at the life expectancies for counties in Washington. Make a histogram of the values for `expectancy` in the dataset `life_wa` you created earlier. If you had to guess a typical value for this distribution, what would you pick?
+Let's take a closer look at the life expectancies for counties in Washington. Make a histogram of the values for `expectancy` in the dataset `life_wa` you created earlier. 
 
 
 ```{r life-wa-view2, exercise=TRUE}
@@ -119,14 +139,32 @@ Let's take a closer look at the life expectancies for counties in Washington. Ma
 
 ```
 
-```{r life-wa-view2-solution}
+
+```{r life-wa-view2-hint-1}
 ggplot(data = life_wa,
-       mapping = aes( x = expectancy)) +
-  geom_histogram( binwidth = 0.75, alpha = 0.5)
+       mapping = aes( x = ___)) +
+  geom___()
 
 ```
 
 
+```{r life-wa-view2-hint-2}
+ggplot(data = life_wa,
+       mapping = aes( x = expectancy)) +
+  geom____()
+
+```
+
+
+```{r life-wa-view2-hint-3}
+ggplot(data = life_wa,
+       mapping = aes( x = expectancy)) +
+  geom_histogram( binwidth = 0.83, 
+                  alpha = 0.5)
+
+```
+
+If you had to guess a typical life expectancy for Washington state, what would you pick?
 One statistic we commonly use is the arithmetic mean, commonly referred to as the average. Calculate the mean life expectancy in WA state. 
 
 
@@ -136,13 +174,33 @@ One statistic we commonly use is the arithmetic mean, commonly referred to as th
 ```
 
 
+```{r mean-hint-1}
+life_wa %>% summarise( ___ )
+
+```
+
+```{r mean-hint-2}
+life_wa %>% summarise(mean_lifeExp = mean(___))
+
+```
+
+```{r mean-hint-3}
+life_wa %>% summarise(mean_lifeExp = mean(expectancy, na.rm=TRUE))
+
+```
+
+
 The average life expectancy for counties in Washington is `r life_wa_summary$mean` years.
 Let's add that value as a red, dashed line to our histogram.
 
 ```{r life-wa-plot-mean}
 ggplot(data = life_wa, aes(x = expectancy)) +
-  geom_histogram(binwidth = 0.75, alpha = 0.5) +
-  geom_vline(xintercept = life_wa_summary$mean, color = "red", linetype = "longdash", size = 1) +
+  geom_histogram(binwidth = 0.83, 
+                 alpha = 0.5) +
+  geom_vline(xintercept = life_wa_summary$mean, 
+             color = "red", 
+             linetype = "longdash", 
+             size = 1) +
   labs(title = "Life expectancy in WA state",
        subtitle = "Mean shown in red")
 ```
@@ -160,20 +218,25 @@ life_wa %>%
   pull(expectancy) 
 ```
 
-The value that cuts the data in half is `r life_wa_summary$med`. We can also calculate this using the `median()` function.
+The value that cuts the data in half is `r life_wa_summary$med`. We can also calculate this using the `median()` function. We could also find the median using the `quantile` function. 
 
 ```{r median, echo = TRUE}
 life_wa %>%
-  summarise(median = median(expectancy))
+  summarise(median = median(expectancy, na.rm=TRUE))
 ```
 
 Let's add that value as a blue, solid line to our histogram.
 
 ```{r life-wa-plot-mean-med}
 ggplot(data = life_wa, aes(x = expectancy)) +
-  geom_histogram(binwidth =0.75,alpha=0.5) +
-  geom_vline(xintercept = life_wa_summary$mean, color = "red", linetype = "longdash", size = 1) +
-  geom_vline(xintercept = life_wa_summary$med, color = "blue", size = 1) +
+  geom_histogram(binwidth =0.83,alpha=0.5) +
+  geom_vline(xintercept = life_wa_summary$mean, 
+             color = "red", 
+             linetype = "longdash", 
+             size = 1) +
+  geom_vline(xintercept = life_wa_summary$med, 
+             color = "blue", 
+             size = 1) +
   labs(title="Life expectancy in WA state",
        subtitle = "Mean shown in red, median in blue")
 ```
@@ -187,7 +250,10 @@ The **mode** is yet another measure of center. The mode is the number that occur
 
 ### Groupwise comparisons
 
-Suppose we are interested in comparing typical life expectancy in the states California, Oregon, Washington with the rest of the country. To make this comparison, we start by creating a new variable called `coast` that takes the value "west" if the state value is one of "California", "Oregon", or "Washington", and "not west" otherwise, and save it back to the original dataset. We then `group_by` this new variable and calculate the mean and median of life expectancy for each coast. 
+Suppose we are interested in comparing typical life expectancy in the states California, Oregon, Washington with the rest of the country. 
+
+
+Creating a new variable called `coast` that takes the value "west" if the state value is one of "California", "Oregon", or "Washington", and "not west" otherwise, and save it back to the original dataset. Then `group_by` this new variable and calculate the mean and median of life expectancy for each coast. 
 
 
 ```{r life-groupby, exercise=TRUE}
@@ -215,14 +281,14 @@ life <- life %>%
 
 life %>%
   group_by(coast) %>%
-  summarize( mean = mean(expectancy), 
-             median = median(expectancy) )
+  summarize( mean = mean(expectancy, na.rm=TRUE), 
+             median = median(expectancy, na.rm=TRUE) )
 ```
 
 
 We learn by looking at both mean and median, that the typical West Coast county has a slightly higher typical life expectancy than counties not on the West Coast.
 
-<!---
+
 
 
 ## Your Turn!
@@ -264,7 +330,8 @@ gap2007 <- gapminder %>% filter(year == 2007)
 ## 3. Find the mean and median life expectancy of each continent 
 gap2007 %>%
   group_by(continent) %>%
-  summarize(mean = mean(lifeExp), median = median(lifeExp))
+  summarize(mean = mean(lifeExp, na.rm=TRUE), 
+            median = median(lifeExp, na.rm=TRUE))
 ```
 
 ```{r ex1-hint-3} 
@@ -283,13 +350,15 @@ gap2007 <- gapminder %>% filter(year == 2007)
 
 gap2007 %>%
   group_by(continent) %>%
-  summarize(mean = mean(lifeExp), median = median(lifeExp))
+  summarize(mean = mean(lifeExp, na.rm=TRUE), 
+            median = median(lifeExp, na.rm = TRUE))
 
-ggplot(data = gap2007, mapping = aes(x = continent, y = lifeExp)) +
- geom_boxplot() 
+ggplot(data = gap2007, 
+       mapping = aes(x = continent, y = lifeExp)) +
+       geom_boxplot() 
 ```
 
---->
+
 
 ## Measures of variability
 
@@ -348,18 +417,20 @@ life_wa %>%
     deviation = expectancy - life_wa_summary$mean,
     deviation_sq = deviation^2
     ) %>%
-  summarise(mean_sq_deviation = sum(deviation_sq) / nrow(life_wa))
+  summarise(avg_sq_deviation = sum(deviation_sq) / nrow(life_wa))
 ```
 
-If you change the $n$ to an $n - 1$, you get what's called the *sample variance*, one of the most useful measures of the spread of a distribution. 
+If you change the $n$ to an $n - 1$, you get what's called the *sample variance*, one of the most useful measures of the spread of a distribution. Mathematically it is written as
+$$s^2 = \frac{1}{n-1}\sum\limits_{i=1}^{n-1} (x_i - \bar{x})^2.$$
+This is calculated below for the life expectancies in the 39 counties of WA state.
 
-```{r wa-deviation-sq-mean-samp, eval=F}
+```{r wa-deviation-sq-mean-samp}
 life_wa %>%
   mutate(
     deviation = expectancy - life_wa_summary$mean,
     deviation_sq = deviation^2
     ) %>%
-  summarise(mean_sq_deviation = sum(deviation_sq) / (nrow(life_wa) - 1))
+  summarise(s_square = sum(deviation_sq) / (nrow(life_wa) - 1))
 ```
 
  
@@ -368,14 +439,14 @@ In R, you can use the built-in `var()` function to calculate the sample variance
 
 ```{r var, echo=TRUE}
 life_wa %>%
-  summarise(var = var(expectancy))
+  summarise(var = var(expectancy, na.rm=TRUE))
 ```
 
 Another useful measure is the square root of the *sample variance*, which is called the *sample standard deviation* or just `sd()` in R. The convenient thing about the sample standard deviation is that, once computed, it is in the same units as the original data. 
 
 ```{r sd, echo = TRUE}
 life_wa %>%
-  summarise(sd = sd(expectancy))
+  summarise(sd = sd(expectancy, na.rm = TRUE))
 ```
 
 Since the standard deviation is a measure of spread of about the mean, it is the natural measure to use when using the mean as a typical value. 
@@ -385,7 +456,8 @@ How many values lie within 1 standard deviation of the mean life expectancy? Ide
 
 ```{r }
 ggplot(data = life_wa, aes(x = expectancy)) +
-  geom_histogram(binwidth = 0.75, alpha = 0.5) +
+  geom_histogram(binwidth = 0.83, 
+                 alpha = 0.5) +
   geom_vline(xintercept = life_wa_summary$mean, color = "red", linetype = "longdash", size = 1) +
   geom_vline(xintercept = life_wa_summary$mean-life_wa_summary$sd, linetype = "longdash", size = 1) +
   geom_vline(xintercept = life_wa_summary$mean+life_wa_summary$sd, linetype = "longdash", size = 1) +
@@ -403,7 +475,25 @@ Use `filter` to isolate counties in WA state with life expectancy in the range 7
 
 ```
 
-```{r one-sd-mean-solution}
+```{r one-sd-mean-hint-1}
+
+life_wa %>% 
+  filter(expectancy >= ___, 
+         expectancy <= ___) %>% nrow()
+  
+
+```
+
+```{r one-sd-mean-hint-2}
+
+life_wa %>% 
+  filter(expectancy >= 78.96 - 1.17, 
+         expectancy <= ___) %>% nrow()
+  
+
+```
+
+```{r one-sd-mean-hint-3}
 
 life_wa %>% 
   filter(expectancy >= 78.96 - 1.17, 
@@ -412,8 +502,9 @@ life_wa %>%
 
 ```
 
+For the life expectancy in WA state, you should see that $\frac{27}{39}$ or about `r 100*round(27/39,2)`% of the counties lie within 1 standard deviation of the average life expectancy.
 
-Now that you know how to calculate the standard deviation, let's see how good you are at eyeballing it. One of the lists below has a standard deviation of about 5. Which one?
+Now that you know how to calculate the standard deviation, let's see how good you are at eyeballing it. One of the lists below has a standard deviation of about 5. Which one? Remember: about 50% of the observations lie within $\pm$ 1 standard deviation around the mean value.
 
 
 ![](images/sd.png)
@@ -439,8 +530,8 @@ We can either calculate these numbers using the `quantile()` function and take t
 ```{r quartile, echo = TRUE}
 life_wa %>%
   summarise(
-    q1 = quantile(expectancy, 0.25),
-    q3 = quantile(expectancy, 0.75),
+    q1 = quantile(expectancy, 0.25, na.rm = TRUE),
+    q3 = quantile(expectancy, 0.75, na.rm = TRUE),
     iqr = q3 - q1
   )
 ```
@@ -449,7 +540,7 @@ life_wa %>%
 
 ```{r iqr, echo = TRUE}
 life_wa %>%
-  summarise(iqr = IQR(expectancy))
+  summarise(iqr = IQR(expectancy, na.rm = TRUE) )
 ```
 
 Just as the standard deviation and mean go hand in hand, the IQR and median are often reported together. More specifically, we might say something along the lines of the median life expectancy is `r life_wa_summary$median` years, and the range of the middle 50% of the values is 1.65 years.
@@ -461,8 +552,8 @@ The final measure is simply the **range** of the data: the distance between the 
 ```{r range, echo = TRUE}
 life_wa %>%
   summarise(
-    min = min(expectancy),
-    max = max(expectancy),
+    min = min(expectancy, na.rm = TRUE),
+    max = max(expectancy, na.rm = TRUE),
     range = max - min
   )
 ```
@@ -490,8 +581,8 @@ If you recompute the mean and the standard deviation, you see that they have bot
 ```{r sd-var-extreme, echo = TRUE}
 life_wa_extreme %>%
   summarise(
-    mean = mean(expectancy),
-    sd  = sd(expectancy)
+    mean = mean(expectancy, na.rm = TRUE),
+    sd  = sd(expectancy, na.rm = TRUE)
   )
 ```
 
@@ -500,8 +591,8 @@ If you recompute the range, it will certainly increase because it is completely 
 ```{r range-extreme, echo = TRUE}
 life_wa_extreme %>%
   summarise(
-    min = min(expectancy),
-    max = max(expectancy),
+    min = min(expectancy, na.rm = TRUE),
+    max = max(expectancy, na.rm = TRUE),
     range = max - min
   )
 ```
@@ -511,8 +602,8 @@ However, if you recompute the median and IQR, you would see that they haven't bu
 
 ```{r iqr-extreme, echo = TRUE}
 life_wa_extreme %>%
-  summarise(median=median(expectancy), 
-            iqr = IQR(expectancy))
+  summarise(median=median(expectancy, na.rm = TRUE), 
+            iqr = IQR(expectancy, na.rm = TRUE)  )
 ```
 
 
@@ -621,7 +712,7 @@ ggplot(data = life,
 ```
 
 
-<!---
+
 The choice of measure for center and spread can dramatically impact our understanding of the data, so it is important that you consider the shape of the distribution before deciding on the measure.
 
 
@@ -638,16 +729,13 @@ ggplot(d, aes(x = x, fill = distribution)) +
 ```{r mc2}
 question("Which measure of center and spread would be *worst* for describing the two distributions shown here?",
   answer("A: median + IQR, B: median + IQR", message = "Given the two distributions, this seems like it'd be okay."),
-  answer("A: mean + SD, B: median + IQR", message = "Given the two distributions, this seems like it would be best"),
-  answer("A: median + IQR, B: mean + SD", correct = TRUE, message = "Good job!" ), 
-  incorrect = "A has a high peak and its width is large. What does that tell you about its standard deviation?",
+  answer("A: median + IQR, B: mean + SD", message = "Given the two distributions, this seems like it would be best"),
+  answer("A: mean + SD, B: median + IQR", correct = TRUE, message = "Good job! The mean and SD would be affected by the extreme values on the right for graph A" ), 
   allow_retry = TRUE
 )
 ```
 
---->
 
-Based on the shape of the income distributions, what should we calculate as measures of center and spread? 
 
 ## Outliers
 
@@ -662,10 +750,18 @@ We saw some extreme values when we created the density plot of income for counti
 
 ```
 
+```{r box-income-hint-1}
 
-```{r box-income-solution}
+ggplot(life, 
+       mapping = aes(x = ___, 
+                     fill = ___)) +
+  geom___() 
+```
 
-ggplot(life, aes(x = income, fill = coast)) +
+```{r box-income-hint-2}
+
+ggplot(life, aes(x = income, 
+                 fill = coast)) +
   geom_boxplot(alpha = 0.5) 
 ```
 
@@ -705,10 +801,11 @@ ggplot(data = life,
 
 ## Your Turn
 
+<!---
 Please read my expectations for group work.
 
 **Please read my expectations for breakout rooms. Introduce yourselves to each other, preferably enabling your camera. Assign a facilitator role to one person who will lead the discussion. This person must encourage coding out loud, and not just tell everyone what to do. If no one is willing, take turns for each question. ** 
-
+--->
 
 Let's return to the `gapminder` data from the package of the same name.  Go ahead and load the package.
 
@@ -738,7 +835,7 @@ In this section, we will focus on how the life expectancy in 2007 differs from c
 
  - What features of the data are revealed in the density plot but masked in the box plot? How about vice versa? 
  
- - Can you identify the name of the outlying country in Asia? 
+ - Can you identify the name of the country with the lowest life expectancy in the Americas? 
 
  
 ```{r gap-2007, exercise=TRUE}
@@ -804,8 +901,8 @@ ggplot(data = gapminder,
 #name of outlier in Asia
 
 gap2007 %>% 
-  filter(continent == "Asia", lifeExp < 50) %>%  
-  select(country)
+  filter(continent == "Americas") %>%  
+  arrange(lifeExp)
    
 ```
 
@@ -833,8 +930,8 @@ gap2007 %>% filter(continent == "Asia") %>%
 
 ```{r ex3-solution}
 gap2007 %>% filter(continent == "Asia") %>% 
-       summarise(median_exp = median(lifeExp), 
-                 iqr = IQR(lifeExp) )
+       summarise(median_exp = median(lifeExp, na.rm = TRUE), 
+                 iqr = IQR(lifeExp, na.rm = TRUE) )
 
 ```
 
