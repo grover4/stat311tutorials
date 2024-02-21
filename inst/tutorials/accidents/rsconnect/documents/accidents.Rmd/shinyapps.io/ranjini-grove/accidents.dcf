@@ -5,9 +5,7 @@ account: ranjini-grove
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6741030
-bundleId: 6392366
+bundleId: 8274178
 url: https://ranjini-grove.shinyapps.io/accidents/
-when: 1665507754.05965
-lastSyncTime: 1665507754.05965
 asMultiple: FALSE
 asStatic: FALSE

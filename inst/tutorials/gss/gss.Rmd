@@ -237,7 +237,22 @@ Fit a linear model relating `email` as the response variable to `educ` as the ex
 ```
 
 
-```{r email-educ-fit-solution }
+```{r email-educ-fit-hint-1}
+
+model1 <- lm(___ ~ ___, data = ___) 
+
+```
+
+
+```{r email-educ-fit-hint-2 }
+
+model1 <- lm(email ~ educ, data = gss16) 
+
+
+```
+
+
+```{r email-educ-fit-hint-3 }
 
 model1 <- lm(email ~ educ, data = gss16) 
 
@@ -335,6 +350,7 @@ Fill in the blanks in the following code block to create a bootstrapped data fra
 
 ```{r create-boot-df, exercise = TRUE, exercise.setup = "setup-email-var"}
 boot_df <- gss16 %>%
+  filter(!is.na(email), !is.na(educ) ) %>%
   specify(___ ~ ___ ) %>% 
   generate(reps = 1000, type = "___") %>% 
   ___(stat = "___")
@@ -342,6 +358,7 @@ boot_df <- gss16 %>%
 
 ```{r create-boot-df-hint-1}
 boot_df <- gss16 %>%
+  filter(!is.na(email), !is.na(educ) ) %>%
   specify(email ~ educ ) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
   ___(stat = "___")
@@ -349,6 +366,7 @@ boot_df <- gss16 %>%
 
 ```{r create-boot-df-hint-2}
 boot_df <- gss16 %>%
+  filter(!is.na(email), !is.na(educ) ) %>%
   specify(email ~ educ) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
   calculate(stat = "___")
@@ -356,6 +374,7 @@ boot_df <- gss16 %>%
 
 ```{r create-boot-df-solution}
 boot_df <- gss16 %>%
+  filter(!is.na(email), !is.na(educ) ) %>%
   specify(email ~ educ) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
   calculate(stat = "slope")
@@ -592,15 +611,16 @@ Go ahead and visualize the bootstrapped distribution of the mean number of minut
 
 
 ```{r mean-plot-hint-1}
-ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram()+
+ggplot(data=bootmean_df, 
+       mapping=aes(x = ___))+
+  geom____()+
   labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
 ```
 
 ```{r mean-plot-hint-2}
 ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram()+
+  geom_histogram(binwidth = 4.4)+
   labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
 bootmean_df %>%
@@ -612,7 +632,7 @@ bootmean_df %>%
 
 ```{r mean-plot-hint-3}
 ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram()+
+  geom_histogram(binwidth = 4.4)+
   labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
 bootmean_df %>%

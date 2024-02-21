@@ -339,7 +339,19 @@ data-lines="0" data-pipe="|&gt;">
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
 <div class="tutorial-exercise-support"
-data-label="email-educ-fit-solution" data-completion="1"
+data-label="email-educ-fit-hint-1" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>model1 &lt;- lm(___ ~ ___, data = ___) </code></pre>
+</div>
+<div class="tutorial-exercise-support"
+data-label="email-educ-fit-hint-2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>model1 &lt;- lm(email ~ educ, data = gss16) </code></pre>
+</div>
+<div class="tutorial-exercise-support"
+data-label="email-educ-fit-hint-3" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>model1 &lt;- lm(email ~ educ, data = gss16) 
@@ -448,6 +460,7 @@ which are created by resampling the original sample:</p>
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>boot_df &lt;- gss16 %&gt;%
+  filter(!is.na(email), !is.na(educ) ) %&gt;%
   specify(___ ~ ___ ) %&gt;% 
   generate(reps = 1000, type = &quot;___&quot;) %&gt;% 
   ___(stat = &quot;___&quot;)</code></pre>
@@ -458,6 +471,7 @@ data-label="create-boot-df-hint-1" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>boot_df &lt;- gss16 %&gt;%
+  filter(!is.na(email), !is.na(educ) ) %&gt;%
   specify(email ~ educ ) %&gt;% 
   generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
   ___(stat = &quot;___&quot;)</code></pre>
@@ -467,6 +481,7 @@ data-label="create-boot-df-hint-2" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>boot_df &lt;- gss16 %&gt;%
+  filter(!is.na(email), !is.na(educ) ) %&gt;%
   specify(email ~ educ) %&gt;% 
   generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
   calculate(stat = &quot;___&quot;)</code></pre>
@@ -476,6 +491,7 @@ data-label="create-boot-df-solution" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>boot_df &lt;- gss16 %&gt;%
+  filter(!is.na(email), !is.na(educ) ) %&gt;%
   specify(email ~ educ) %&gt;% 
   generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
   calculate(stat = &quot;slope&quot;)</code></pre>
@@ -708,15 +724,16 @@ data-lines="0" data-pipe="|&gt;">
 <div class="tutorial-exercise-support" data-label="mean-plot-hint-1"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram()+
+<pre class="text"><code>ggplot(data=bootmean_df, 
+       mapping=aes(x = ___))+
+  geom____()+
   labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)</code></pre>
 </div>
 <div class="tutorial-exercise-support" data-label="mean-plot-hint-2"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram()+
+  geom_histogram(binwidth = 4.4)+
   labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)
 
 bootmean_df %&gt;%
@@ -727,7 +744,7 @@ bootmean_df %&gt;%
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram()+
+  geom_histogram(binwidth = 4.4)+
   labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)
 
 bootmean_df %&gt;%
@@ -1055,9 +1072,7 @@ learnr:::store_exercise_cache(structure(list(label = "email-educ-fit", global_se
         list(label = "email-educ-fit", code = "\n", opts = list(
             label = "\"email-educ-fit\"", exercise = "TRUE", 
             exercise.setup = "\"setup-email-var\""), engine = "r")), 
-    code_check = NULL, error_check = NULL, check = NULL, solution = structure(c("", 
-    "model1 <- lm(email ~ educ, data = gss16) ", "", "model1 %>% tidy()", 
-    ""), chunk_opts = list(label = "email-educ-fit-solution")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
@@ -1227,13 +1242,14 @@ learnr:::store_exercise_cache(structure(list(label = "create-boot-df", global_se
     include = FALSE)), setup = "gss16 <- dsbox::gss16 %>% \n  mutate(email = emailmin + (emailhr * 60)) ", 
     chunks = list(list(label = "setup-email-var", code = "gss16 <- dsbox::gss16 %>% \n  mutate(email = emailmin + (emailhr * 60)) ", 
         opts = list(label = "\"setup-email-var\""), engine = "r"), 
-        list(label = "create-boot-df", code = "boot_df <- gss16 %>%\n  specify(___ ~ ___ ) %>% \n  generate(reps = 1000, type = \"___\") %>% \n  ___(stat = \"___\")", 
+        list(label = "create-boot-df", code = "boot_df <- gss16 %>%\n  filter(!is.na(email), !is.na(educ) ) %>%\n  specify(___ ~ ___ ) %>% \n  generate(reps = 1000, type = \"___\") %>% \n  ___(stat = \"___\")", 
             opts = list(label = "\"create-boot-df\"", exercise = "TRUE", 
                 exercise.setup = "\"setup-email-var\""), engine = "r")), 
     code_check = NULL, error_check = NULL, check = structure("grade_this_code(\"That's great! You've created the bootstrap data frame.\")", chunk_opts = list(
         label = "create-boot-df-check")), solution = structure(c("boot_df <- gss16 %>%", 
-    "  specify(email ~ educ) %>% ", "  generate(reps = 1000, type = \"bootstrap\") %>% ", 
-    "  calculate(stat = \"slope\")"), chunk_opts = list(label = "create-boot-df-solution")), 
+    "  filter(!is.na(email), !is.na(educ) ) %>%", "  specify(email ~ educ) %>% ", 
+    "  generate(reps = 1000, type = \"bootstrap\") %>% ", "  calculate(stat = \"slope\")"
+    ), chunk_opts = list(label = "create-boot-df-solution")), 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
         comment = NA, highlight = FALSE, size = "normalsize", 
@@ -1253,9 +1269,10 @@ learnr:::store_exercise_cache(structure(list(label = "create-boot-df", global_se
         exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
         label = "create-boot-df", exercise = TRUE, exercise.setup = "setup-email-var", 
-        code = c("boot_df <- gss16 %>%", "  specify(___ ~ ___ ) %>% ", 
-        "  generate(reps = 1000, type = \"___\") %>% ", "  ___(stat = \"___\")"
-        ), out.width.px = 624, out.height.px = 384, params.src = "create-boot-df, exercise = TRUE, exercise.setup = \"setup-email-var\"", 
+        code = c("boot_df <- gss16 %>%", "  filter(!is.na(email), !is.na(educ) ) %>%", 
+        "  specify(___ ~ ___ ) %>% ", "  generate(reps = 1000, type = \"___\") %>% ", 
+        "  ___(stat = \"___\")"), out.width.px = 624, out.height.px = 384, 
+        params.src = "create-boot-df, exercise = TRUE, exercise.setup = \"setup-email-var\"", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r", 
     version = "4"), class = c("r", "tutorial_exercise")))
 </script>
