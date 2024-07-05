@@ -120,14 +120,16 @@ pp %>% skim(Surface)
 
 ### Distribution of price, surface area
 
-The price will be our response variable and surface area of a painting the explanatory variable. Examine the distributions of these variables individually.
+The price will be our response variable and surface area of a painting is the explanatory variable. 
+
+Examine the distributions of these variables individually using histograms. Use this opportunity to practice choosing the binwidths to create a smooth appearance for the shape of the histograms.
 
 
 ```{r prepare-pp-setup}
 
 pp <- pp %>% filter(Surface > 0) %>%  
-        mutate(log_price=log2(price),
-           log_surface=log2(Surface) )
+        mutate(log_price=log10(price),
+           log_surface=log10(Surface) )
 
 
 price_surface_fit <- lm(log_price ~ log_surface, data=pp)
@@ -177,7 +179,7 @@ ggplot(data= pp,
 ggplot(data= pp,
        mapping=aes( x = Surface))  +
   geom_histogram(binwidth = 600) +
-  labs(x = "Surface area (sq in.",
+  labs(x = "Surface area (sq in.)",
        title = "Paris Paintings",
        subtitle = "1764 - 1780")
 
@@ -214,6 +216,16 @@ ggplot(data=pp,
        title = "___")
 ```
 
+```{r plot-price-surface-hint-3, fig.width=7, fig.height=3}
+
+ggplot(data=pp, 
+       mapping = aes(x = Surface, y = price)) +
+  geom_point() +
+  labs(x = "___",
+       y = "___",
+       title = "___")
+```
+
 ```{r plot-price-surface-solution, fig.width=7, fig.height=3}
 
 ggplot(data=pp, 
@@ -235,7 +247,7 @@ At this point you may have noticed a few things:
 
 As we did in class with height and width, let's go ahead and transform both variables using the log transformation and hope that this fixes the first two issues noted above.
 
-Create new variables `log_price` and `log_surface` which are the logarithms (base 2) of `price` and `Surface` respectively.  Be sure to add these variables to the ``pp` data frame. 
+Create new variables `log_price` and `log_surface` which are the logarithms (base 10) of `price` and `Surface` respectively.  Be sure to add these variables to the ``pp` data frame. 
 
 Also print summaries of your new variables using `skim` as we did before.
 
@@ -263,16 +275,16 @@ pp <- pp %>%
 ```{r create-vars-hint-3}
 
 pp <- pp %>%
-     mutate(log_price = log2(price),
-            log_surface = log2(Surface) )
+     mutate(log_price = log10(price),
+            log_surface = log10(Surface) )
 ```
 
 
 ```{r create-vars-hint-4}
 
 pp <- pp %>%
-     mutate(log_price = log2(price),
-            log_surface = log2(Surface) )
+     mutate(log_price = log10(price),
+            log_surface = log10(Surface) )
 
 pp %>% skim(log_price, log_surface)
 ```
@@ -290,24 +302,24 @@ Now recreate the scatter plot of `log_price` and `log_surface`. Add a `geom_smoo
 
 ```{r plot-log-price-surface-hint-1}
 
-ggplot(data=___,
-       mapping=aes(y=___,
-                   x=___ ) ) +
+ggplot(data = ___,
+       mapping = aes(x = ___,
+                   y = ___ ) ) +
   geom_point()+
-  geom_smooth()+
+  geom_smooth(method = ___)+
   labs( )
 
 ```
 
 ```{r plot-log-price-surface-hint-2}
 
-ggplot(data=pp,
-       mapping=aes(y = log_price,
-                   x = log_surface ) ) +
+ggplot(data = pp,
+       mapping=aes(x = log_surface, 
+                   y = log_price) ) +
   geom_point()+
-  geom_smooth(method = ___, se= ____)+
-  labs(x="log(surface)", 
-       y="log(price)" )
+  geom_smooth(method = ___)+
+  labs(x = "log(surface)", 
+       y= "log(price)" )
 
 ```
 
@@ -315,12 +327,13 @@ ggplot(data=pp,
 ```{r plot-log-price-surface-hint-3}
 
 
-ggplot(data=pp,
-       mapping=aes(y=log_price,
-                   x=log_surface) )  +
+ggplot(data = pp,
+       mapping = aes(x=log_surface,
+                   y = log_price) )  +
   geom_point()+
-  geom_smooth(method="lm", se=FALSE)+
-  labs(x="log(surface)", y="log(price)" )
+  geom_smooth(method="lm")+
+  labs(x = "log(surface)", 
+       y = "log(price)" )
 
 ```
 
@@ -380,7 +393,7 @@ price_surface_fit %>% tidy()
 
 ```{r model-fit-hint-3}
 
-price_surface_fit <- lm( log_price ~ log_surface, data= pp )
+price_surface_fit <- lm( log_surface ~ log_price, data= pp )
 
 price_surface_fit %>% tidy()
 
@@ -389,11 +402,11 @@ price_surface_fit %>% tidy()
 
 ```{r model-fit-check}
 grade_this({
-  if(identical(round(.result$estimate[1], digits=1), 5.7)) {
+  if(identical(round(.result$estimate[1], digits=1), 1.7)) {
     pass("You have written the model correctly")
   }
-  if(identical(round(.result$estimate[1], digits=1), 1.7)) {
-    fail("Did you maybe use log to the base 10?")
+  if(identical(round(.result$estimate[1], digits=1), 5.7)) {
+    fail("Did you maybe use log to the base 2?")
   }
   if(identical(floor(.result$estimate[1]), 7)) {
     fail("Did you maybe try to predict log_surface from log_price?")
@@ -403,17 +416,17 @@ grade_this({
 ```
 
 
-Let's interpret the slope coefficient for `log_surface`: 0.2022. Recall that the slope is the change in the response associated with a unit change in the explanatory variable. When variables are transformed, as they are here, we need to carefully examine what this translates to on the original untransformed scale. 
+Let's interpret the slope coefficient for `log_surface`: 0.202. Recall that the slope is the change in the response associated with a unit change in the explanatory variable. When variables are transformed, as they are here, we need to carefully examine what this translates to on the original untransformed scale. 
 
 Let's denote slope coefficient for `log_surface` by $b$ 
 meaning when `log_surface` increases by 1 unit, there is found to be an increase of  $b$ units in `log_price`. 
 
-Since the base of the logarithm used here is 2, saying that `log_surface` increases by 1 is equivalent to saying that the surface area being doubled. Therefore, we now know from the model fit that
+Since the base of the logarithm used here is 10, saying that `log_surface` increases by 1 is equivalent to saying that the surface area is multiplied by 10. Therefore, we now know from the model fit that
 
-$$log(\mbox{price for surface 2x}) - log(\mbox{price for surface x}) = 0.2022$$
-$$log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) = 0.2022$$
-$$2^{log\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) } = 2^{0.2022}$$
-$$\left( \frac{\mbox{price for surface 2x}}{\mbox{price for surface x}} \right) \approx 1.15$$
+$$log(\mbox{price for surface 10x}) - log(\mbox{price for surface x}) = 0.202$$
+$$log\left( \frac{\mbox{price for surface 10x}}{\mbox{price for surface x}} \right) = 0.202$$
+$$10^{log\left( \frac{\mbox{price for surface 10x}}{\mbox{price for surface x}} \right) } = 10^{0.202}$$
+$$\left( \frac{\mbox{price for surface 10x}}{\mbox{price for surface x}} \right) \approx 1.6$$
 
 Now use the calculation from above to  answer the following questions:
 
@@ -421,11 +434,11 @@ Now use the calculation from above to  answer the following questions:
 question("Which interpretation of the slope coefficient is correct?",
   answer("When the surface area increases by 1 square inch, the price increases by 0.20 livres",
     message = "are you forgetting that the variables are log transformed?"  ),
-  answer("When the surface area doubles, the price increases, on average, by about 15%", correct=TRUE),
-  answer("When the surface area increases by a factor of 10, the price increases on average by a factor of 1.15 ",
-    message="are you forgetting that we used a base of 2 for the logarithm transformation?"
+  answer("When the surface area increases by a factor of 10, the price increases, on average, by about 60%", correct=TRUE),
+  answer("When the surface area doubles, the price increases on average by a factor of 1.6 ",
+    message="are you forgetting that we used a base of 10 for the logarithm transformation?"
   ),
-  answer(" When the surface area doubles, the price increases on average by 1.15 units", 
+  answer(" When the surface area increases tenfold, the price increases on average by 1.6 livres", 
          message="are you forgetting that we log transformed price"),
   correct = "Correct!",
   allow_retry = TRUE,
@@ -440,7 +453,7 @@ question("Which interpretation of the slope coefficient is correct?",
 
 The line of best fit for relating `log_price` to `log_surface` has
 the equation:
-$$\widehat{log\_price} = 5.657 + 0.202 \times \log\_surface.$$
+$$\widehat{log\_price} = 1.703 + 0.202 \times \log\_surface.$$
 
 
 Using this line of best fit, let's make some predictions.
@@ -449,9 +462,9 @@ Given a surface area of 100 square inches, what is the predicted price?  Compute
 
 **Hint:** Work through the following steps
 
- - First, convert a surface area of 100 to the corresponding value for `log_surface`
+ - First, convert a surface area of 100 to the corresponding value for $log\_surface$. 
  
- - Calculate the predicted price on the log scale $\widehat{log\_price}$ using a line with slope 0.202 and intercept 5.657.
+ - Then calculate the predicted price on the log scale $\widehat{log\_price}$ using a line with slope 0.202 and intercept 1.703.
  
  - Undo the log transformation
 
@@ -460,21 +473,19 @@ Given a surface area of 100 square inches, what is the predicted price?  Compute
 
 ```
 
-```{r predict-price-1-hint}
-2^( ___ + ___*log2(100)  )
-```
+
 
 
 ```{r predict-price-1-solution}
 
-2^( 5.657 + 0.202*log2(100) )
+10^( 1.703 + 0.202*log10(100) )
 
 
 ```
 
 ```{r predict-price-1-check}
 grade_this({
-  if(identical(round(.result, digits = 3), 127.917)) {
+  if(identical(round(.result, digits = 3), 127.938)) {
     pass("You got it!")
   }
   fail("Make sure you are undoing the log transformation to get the prediction for price.")
@@ -490,12 +501,12 @@ Using the same method you did as before, predict the price for a painting with s
 
 
 ```{r predict-price-2-solution}
-2^( 5.657 + 0.202*log2(5000) )
+10^( 1.703 + 0.202*log10(5000) )
 ```
 
 ```{r predict-price-2-check}
 grade_this({
-  if(identical(round(.result, digits = 3), 281.915)) {
+  if(identical(round(.result, digits = 3), 281.963)) {
     pass("You got it!")
   }
   fail("Make sure you are undoing the log transformation.")
@@ -573,13 +584,17 @@ grade_this_code("Good job predicting the prices!")
 
 Congratulations! You made it through the tutorial on fitting linear models with a single predictor.
 
+To receive participation credit for this activity, be sure to complete all exercises first. Then generate the hash by clicking the "Generate" button. Use the clipboard to copy the hash and then paste it in the text box of the CANVAS participation assignment.
+
+
 
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
 ```
 
 ```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994356") )
+#learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994356") )
+learnrhash::encoder_ui(ui_after=NULL, ui_before=NULL )
 ```
 
 

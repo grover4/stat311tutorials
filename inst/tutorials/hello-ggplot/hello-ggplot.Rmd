@@ -152,7 +152,7 @@ ggplot(data = ___,
         caption = ___ )
 ```
 
-```{r cty-displ-plot-hint}
+```{r cty-displ-plot-hint-1}
 code out loud:
  - start with the mpg data frame
  - map displ to the x-axis and  the y-axis
@@ -160,15 +160,39 @@ code out loud:
  - give the plot a title, subtitle, axis labels 
 ```
 
+```{r cty-displ-plot-hint-2}
+ggplot(data = mpg, 
+       mapping = aes( x = displ,y = cty)) + 
+      geom___() +
+      labs( x = ___, 
+        y = ___, 
+        title = ___, 
+        subtitle = ___,
+        caption = ___ )
+     
+```
+
+```{r cty-displ-plot-hint-3}
+ggplot(data = mpg, 
+       mapping = aes( x = displ,y = cty)) + 
+      geom_point() +
+      labs( x = ___, 
+        y = ___, 
+        title = ___, 
+        subtitle = ___,
+        caption = ___ )
+     
+```
+
 ```{r cty-displ-plot-solution}
 ggplot(data = mpg, 
        mapping = aes( x = displ,y = cty)) + 
       geom_point() + 
-      labs(x="Engine size (liters)",
-           y="Miles per gallon",
-           title="Fuel economy versus engine size",
-           subtitle="Data for city driving",
-           caption="Source: mpg data from ggplot2 package")
+      labs(x = "Engine size (liters)",
+           y = "Miles per gallon",
+           title = "Fuel economy versus engine size",
+           subtitle = "Data for city driving",
+           caption = "Source: mpg data from ggplot2 package")
 ```
 
 Next, we will consider adding some color to our plot which can greatly help with understanding patterns in the data.
@@ -479,12 +503,21 @@ ggplot(
   
 ```
 
-```{r facet-species-sex-hint}
+```{r facet-species-sex-hint-1}
 ggplot(
   data = penguins, 
   mapping = aes(x = bill_depth_mm, 
-      y = bill_length_mm)) + 
-  geom_point() 
+      y = bill_length_mm)) +
+  
+
+```
+
+```{r facet-species-sex-hint-2}
+ggplot(
+  data = penguins, 
+  mapping = aes(x = bill_depth_mm, 
+      y = bill_length_mm)) +
+  geom_point() +
   
 
 ```
@@ -516,13 +549,16 @@ If you get stuck, start with Google. This strategy is particularly useful for er
 
 And of course, you may also ask your TAs or instructor for help.
 
+To receive participation credit for this activity, be sure to complete all exercises first. Then generate the hash by clicking the "Generate" button. Use the clipboard to copy the hash and then paste it in the text box of the CANVAS participation assignment.
 
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
 ```
 
 ```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994361") )
+#learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994361") )
+learnrhash::encoder_ui(ui_after=NULL, ui_before=NULL )
+
 ```
 
 ## Acknowledgements
