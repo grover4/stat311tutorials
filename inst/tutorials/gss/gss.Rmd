@@ -151,7 +151,7 @@ The responses to these questions are recorded in the `emailhr` and `emailmin` va
 For example, if the response is 2.5 hrs, this would be recorded as `emailhr = 2` and `emailmin = 30`.
 
 
-For the first exercise, create a new variable called `email` that combines these two variables to reports the number of minutes the respondents spend on email weekly.
+For the first exercise, create a new variable called `email` that combines these two variables to reports the number of minutes the respondents spend on email weekly. Go ahead and glimpse the dataframe to make sure the new variable has been created.
 
 
 ```{r email-variable, exercise=TRUE}
@@ -229,7 +229,7 @@ ggplot(data = gss16,
 ```
 
 
-Fit a linear model relating `email` as the response variable to `educ` as the explanatory variable. Interpret the estimate of the slope. 
+Fit a linear model relating `email` as the response variable to `educ` as the explanatory variable. The print the results in a tidy format.  
 
 ```{r email-educ-fit, exercise=TRUE, exercise.setup = "setup-email-var"}
 
@@ -262,11 +262,11 @@ model1 %>% tidy()
 
 ```{r quiz-estimates}
 question("Which statement correctly interprets the estimate of the slope?",
-  answer("Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email, on average"),
-  answer("Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email, on average",
+  answer("Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email"),
+  answer("Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email",
     correct = TRUE),
-  answer(" Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email, on average"),
-  answer("Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education, on average"),
+  answer(" Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email"),
+  answer("Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education"),
   allow_retry = TRUE,
   random_answer_order = TRUE
 )
@@ -311,7 +311,7 @@ As we saw in the previous section, there is a positive association between years
 
 How might this estimate of the slope change if we took a different sample from the same population as `gss16`?
  
-In the following exercise, we'll be using the `infer` package to construct the bootstrapped distribution of the slope. 
+In the following exercise, we'll be using the `infer` package from the **tidymodels** suite to construct the bootstrapped distribution of the slope. 
 
 Since the bootstrapping involves some random sampling, we want some way of essentially defining how the random sampling is done.
 For example, this might be done so that if another person runs your R code, they'll produce the same confidence interval as you.
@@ -319,19 +319,12 @@ For example, this might be done so that if another person runs your R code, they
 Fortunately, this can be done quite easily by setting a `seed`.
 For this tutorial, we'll settle on the rather arbitrary `1234`, but you can use any seed you like in your own assignments.
 
-Use the following code block to set this seed:
+Run the following code block to set this seed:
 
 ```{r set-seed, exercise = TRUE}
 set.seed(1234)
 ```
 
-```{r set-seed-solution}
-set.seed(1234)
-```
-
-```{r set-seed-check}
-grade_this_code("You've set the seed ready for bootstrapping.")
-```
 
 ### Creating the data frame
 
@@ -404,10 +397,30 @@ We can easily plot the distribution of `stat` using `ggplot`. Go ahead and make 
 ```
 
 
-```{r visualize_stat-solution}
+```{r visualize_stat-hint-1}
 
-ggplot(data=boot_df, mapping=aes(x = stat))+
-  geom_histogram()+
+ggplot(data=___, 
+       mapping=aes(x = ___))+
+  geom_histogram(binwidth = ___)+
+  labs(title="Bootstrapped distribution of slopes")
+
+```
+
+```{r visualize_stat-hint-2}
+
+ggplot(data=boot_df, 
+       mapping=aes(x = ___))+
+  geom_histogram(binwidth = ___)+
+  labs(title="Bootstrapped distribution of slopes")
+
+```
+
+
+```{r visualize_stat-hint-3}
+
+ggplot(data=boot_df, 
+       mapping=aes(x = stat))+
+  geom_histogram(binwidth = 3)+  #try diff binwidths 
   labs(title="Bootstrapped distribution of slopes")
 
 ```
@@ -415,13 +428,13 @@ ggplot(data=boot_df, mapping=aes(x = stat))+
 
 ### Find the bootstrap interval
 
-Now we have the `boot_df` data frame, we can construct the bootstrap percentile interval itself by picking out a certain percentage of the center of the distribution of the variable `stat`.
+Now we have the `boot_df` data frame, we can describe how the slope might vary from one sample to another by selecting a certain percentage of the values from the center of the distribution of the variable `stat`.
 Since we're after a 95% interval, we take the center 95% of the bootstrap distribution, and find the range of these values.
-This gives the desired interval.
+This gives the desired interval. This is called a 95% bootstrap percentile interval.
 
-To find this range, we calculate percentiles so that the central 95% of the distribution is contained within them.
+<!---To find this range, we calculate percentiles so that the central 95% of the distribution is contained within them.--->
 
-Fill in the blanks in this code block to construct the 95% bootstrap confidence interval for the slope of `educ`
+Fill in the blanks in this code block to construct the 95% bootstrap percentile interval for the slope of `educ`
 
 ```{r confidence-interval-email, exercise = TRUE, exercise.setup = "setup-boot-df-slope"}
 ___ %>%
@@ -466,12 +479,14 @@ grade_this({
 })
 ```
 
-Would you expect a 99% bootstrap interval to be wider or narrower than the interval you calculated above?
+Our calculation shows that we can be 95% confident that for each additional year of education, we can expect anywhere from about 34 additional minutes spent on email to about 56 additional minutes.
+
+Would you expect a 99% confidence interval to be wider or narrower than the 95% interval you calculated above?
 
 ```{r quiz-confidence}
 question("Which statement is correct?",
-  answer("The 99% confidence interval will be narrower, because we have to allow for less variation in order to be 99% accurate"),
-  answer("The 99% confidence interval will be wider, because we need to allow for more variation in order to be more certain that any given mean will lie within the interval",
+  answer("The 99% confidence interval will be narrower because we have to allow for less variation in order to be 99% accurate"),
+  answer("The 99% confidence interval will be wider because we want a range that contains 99% of the values",
     correct = TRUE),
   answer("We really can't say as it will depend on the distribution"),
   answer("The 95% confidence interval will be wider, because we can allow for more variation in order to be 95% accurate"),
@@ -536,7 +551,7 @@ boot_df %>%
 ```{r confidence-90-email-check}
 grade_this({
   if(identical(floor(as.numeric(.result$lower[1])), 36) & identical(floor(as.numeric(.result$upper[1])), 54) ) {
-    pass("You have calculated the 99% confidence interval correctly!")
+    pass("You have calculated the 90% confidence interval correctly!")
   }
   fail("Not quite. Take a look at the hints if you need some help.")
 })
@@ -579,28 +594,50 @@ The function `infer` can be used as before. The only layers that require change 
 set.seed(1411)
 
 bootmean_df <- gss16 %>%
+  filter(!is.na(___) ) %>%
   specify(response = ___) %>% 
-  generate(reps = 1000, type = "bootstrap") %>% 
+  generate(reps = 1000, type = "___") %>% 
   calculate(stat = "___")
 ```
 
 ```{r create-bootmean-df-hint-1}
 bootmean_df <- gss16 %>%
-  specify(response = email) %>% 
-  generate(reps = 1000, type = "bootstrap") %>% 
+  filter(!is.na(email) ) %>%
+  specify(response = ___) %>% 
+  generate(reps = 1000, type = "___") %>% 
   calculate(stat = "___")
 
 ```
 
 ```{r create-bootmean-df-hint-2}
 bootmean_df <- gss16 %>%
+  filter(!is.na(email) ) %>%
+  specify(response = email) %>% 
+  generate(reps = 1000, type = "___") %>% 
+  calculate(stat = "___")
+
+```
+
+
+```{r create-bootmean-df-hint-3}
+bootmean_df <- gss16 %>%
+  filter(!is.na(email) ) %>%
+  specify(response = email) %>% 
+  generate(reps = 1000, type = "bootstrap") %>% 
+  calculate(stat = "___")
+
+```
+
+```{r create-bootmean-df-hint-4}
+bootmean_df <- gss16 %>%
+  filter(!is.na(email) ) %>%
   specify(response = email) %>% 
   generate(reps = 1000, type = "bootstrap") %>% 
   calculate(stat = "mean")
 
 ```
 
-Go ahead and visualize the bootstrapped distribution of the mean number of minutes spent on email. The variability of this distribution is what we are trying to describe. Calculate the 95% bootstrap interval for the mean number of minutes spent on email by American workers. 
+Go ahead and visualize the bootstrapped distribution of the mean number of minutes spent on email. Then calculate the 95% bootstrap interval for the mean number of minutes spent on email by American workers. 
 
 
 
@@ -611,28 +648,36 @@ Go ahead and visualize the bootstrapped distribution of the mean number of minut
 
 
 ```{r mean-plot-hint-1}
-ggplot(data=bootmean_df, 
-       mapping=aes(x = ___))+
-  geom____()+
+ggplot(data = bootmean_df, 
+       mapping = aes(x = ___))+
+  geom____(binwidth = ___)+
   labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
 ```
 
 ```{r mean-plot-hint-2}
-ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram(binwidth = 4.4)+
+ggplot(data = bootmean_df, 
+       mapping=aes(x = stat))+
+  geom_histogram(binwidth = ___)+
   labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
-bootmean_df %>%
-  summarize(lower = quantile(stat, 0.025),
-            upper = quantile(___, ___))
+```
+
+```{r mean-plot-hint-3}
+ggplot(data = bootmean_df, 
+       mapping=aes(x = stat))+
+  geom_histogram(binwidth = 6)+  #try different binwidths
+  labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
 ```
 
 
-```{r mean-plot-hint-3}
+
+
+```{r mean-plot-hint-4 }
+
 ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram(binwidth = 4.4)+
+  geom_histogram(binwidth = 6)+
   labs(title="Bootstrapped distribution of the mean number of minutes spent on email")
 
 bootmean_df %>%
@@ -648,13 +693,16 @@ That's it!
 You've finished the tutorial on bootstrapping, congratulations!
 We hope you enjoyed this exploration. 
 
+To receive participation credit for this activity, be sure to complete all exercises first. Then generate the hash by clicking the "Generate" button. Use the clipboard to copy the hash and then paste it in the text box of the CANVAS participation assignment.
+
 
 ```{r context="server"}
 learnrhash::encoder_logic(strip_output=TRUE)
 ```
 
 ```{r encode, echo=FALSE}
-learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994360") )
+#learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994360") )
+learnrhash::encoder_ui(ui_after=NULL, ui_before=NULL) 
 ```
 
 ## Acknowledgements

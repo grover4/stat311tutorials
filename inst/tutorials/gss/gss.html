@@ -244,7 +244,9 @@ if the response is 2.5 hrs, this would be recorded as
 <code>emailhr = 2</code> and <code>emailmin = 30</code>.</p>
 <p>For the first exercise, create a new variable called
 <code>email</code> that combines these two variables to reports the
-number of minutes the respondents spend on email weekly.</p>
+number of minutes the respondents spend on email weekly. Go ahead and
+glimpse the dataframe to make sure the new variable has been
+created.</p>
 <div class="tutorial-exercise" data-label="email-variable"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
@@ -331,8 +333,8 @@ data-pipe="|&gt;">
   geom_smooth(method = &quot;lm&quot;)</code></pre>
 </div>
 <p>Fit a linear model relating <code>email</code> as the response
-variable to <code>educ</code> as the explanatory variable. Interpret the
-estimate of the slope.</p>
+variable to <code>educ</code> as the explanatory variable. The print the
+results in a tidy format.</p>
 <div class="tutorial-exercise" data-label="email-educ-fit"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
@@ -415,7 +417,8 @@ additional 45.3 minutes on email.</p>
 <p>How might this estimate of the slope change if we took a different
 sample from the same population as <code>gss16</code>?</p>
 <p>In the following exercise, we’ll be using the <code>infer</code>
-package to construct the bootstrapped distribution of the slope.</p>
+package from the <strong>tidymodels</strong> suite to construct the
+bootstrapped distribution of the slope.</p>
 <p>Since the bootstrapping involves some random sampling, we want some
 way of essentially defining how the random sampling is done. For
 example, this might be done so that if another person runs your R code,
@@ -424,17 +427,12 @@ they’ll produce the same confidence interval as you.</p>
 <code>seed</code>. For this tutorial, we’ll settle on the rather
 arbitrary <code>1234</code>, but you can use any seed you like in your
 own assignments.</p>
-<p>Use the following code block to set this seed:</p>
+<p>Run the following code block to set this seed:</p>
 <div class="tutorial-exercise" data-label="set-seed" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>set.seed(1234)</code></pre>
-<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":true,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
-</div>
-<div class="tutorial-exercise-support" data-label="set-seed-solution"
-data-completion="1" data-diagnostics="1" data-startover="1"
-data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>set.seed(1234)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
 </div>
 <div id="section-creating-the-data-frame" class="section level3">
@@ -522,26 +520,45 @@ data-lines="0" data-pipe="|&gt;">
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
 <div class="tutorial-exercise-support"
-data-label="visualize_stat-solution" data-completion="1"
+data-label="visualize_stat-hint-1" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
-<pre class="text"><code>ggplot(data=boot_df, mapping=aes(x = stat))+
-  geom_histogram()+
+<pre class="text"><code>ggplot(data=___, 
+       mapping=aes(x = ___))+
+  geom_histogram(binwidth = ___)+
+  labs(title=&quot;Bootstrapped distribution of slopes&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support"
+data-label="visualize_stat-hint-2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data=boot_df, 
+       mapping=aes(x = ___))+
+  geom_histogram(binwidth = ___)+
+  labs(title=&quot;Bootstrapped distribution of slopes&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support"
+data-label="visualize_stat-hint-3" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data=boot_df, 
+       mapping=aes(x = stat))+
+  geom_histogram(binwidth = 3)+  #try diff binwidths 
   labs(title=&quot;Bootstrapped distribution of slopes&quot;)</code></pre>
 </div>
 </div>
 <div id="section-find-the-bootstrap-interval" class="section level3">
 <h3>Find the bootstrap interval</h3>
-<p>Now we have the <code>boot_df</code> data frame, we can construct the
-bootstrap percentile interval itself by picking out a certain percentage
-of the center of the distribution of the variable <code>stat</code>.
-Since we’re after a 95% interval, we take the center 95% of the
-bootstrap distribution, and find the range of these values. This gives
-the desired interval.</p>
-<p>To find this range, we calculate percentiles so that the central 95%
-of the distribution is contained within them.</p>
+<p>Now we have the <code>boot_df</code> data frame, we can describe how
+the slope might vary from one sample to another by selecting a certain
+percentage of the values from the center of the distribution of the
+variable <code>stat</code>. Since we’re after a 95% interval, we take
+the center 95% of the bootstrap distribution, and find the range of
+these values. This gives the desired interval. This is called a 95%
+bootstrap percentile interval.</p>
+<!---To find this range, we calculate percentiles so that the central 95% of the distribution is contained within them.--->
 <p>Fill in the blanks in this code block to construct the 95% bootstrap
-confidence interval for the slope of <code>educ</code></p>
+percentile interval for the slope of <code>educ</code></p>
 <div class="tutorial-exercise" data-label="confidence-interval-email"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
@@ -582,8 +599,11 @@ data-pipe="|&gt;">
   summarize(lower = quantile(stat, 0.025),
             upper = quantile(stat, 0.975))</code></pre>
 </div>
-<p>Would you expect a 99% bootstrap interval to be wider or narrower
-than the interval you calculated above?</p>
+<p>Our calculation shows that we can be 95% confident that for each
+additional year of education, we can expect anywhere from about 34
+additional minutes spent on email to about 56 additional minutes.</p>
+<p>Would you expect a 99% confidence interval to be wider or narrower
+than the 95% interval you calculated above?</p>
 <div class="panel panel-default tutorial-question-container">
 <div data-label="quiz-confidence" class="tutorial-question panel-body">
 <div id="quiz-confidence-answer_container" class="shiny-html-output"></div>
@@ -689,8 +709,9 @@ data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>set.seed(1411)
 
 bootmean_df &lt;- gss16 %&gt;%
+  filter(!is.na(___) ) %&gt;%
   specify(response = ___) %&gt;% 
-  generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
+  generate(reps = 1000, type = &quot;___&quot;) %&gt;% 
   calculate(stat = &quot;___&quot;)</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"<span data-i18n=\"text.enginecap\" data-i18n-opts=\"{&quot;engine&quot;:&quot;R&quot;}\">R Code<\/span>"}</script>
 </div>
@@ -699,8 +720,9 @@ data-label="create-bootmean-df-hint-1" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>bootmean_df &lt;- gss16 %&gt;%
-  specify(response = email) %&gt;% 
-  generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
+  filter(!is.na(email) ) %&gt;%
+  specify(response = ___) %&gt;% 
+  generate(reps = 1000, type = &quot;___&quot;) %&gt;% 
   calculate(stat = &quot;___&quot;)</code></pre>
 </div>
 <div class="tutorial-exercise-support"
@@ -708,14 +730,35 @@ data-label="create-bootmean-df-hint-2" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>bootmean_df &lt;- gss16 %&gt;%
+  filter(!is.na(email) ) %&gt;%
+  specify(response = email) %&gt;% 
+  generate(reps = 1000, type = &quot;___&quot;) %&gt;% 
+  calculate(stat = &quot;___&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support"
+data-label="create-bootmean-df-hint-3" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>bootmean_df &lt;- gss16 %&gt;%
+  filter(!is.na(email) ) %&gt;%
+  specify(response = email) %&gt;% 
+  generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
+  calculate(stat = &quot;___&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support"
+data-label="create-bootmean-df-hint-4" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0"
+data-pipe="|&gt;">
+<pre class="text"><code>bootmean_df &lt;- gss16 %&gt;%
+  filter(!is.na(email) ) %&gt;%
   specify(response = email) %&gt;% 
   generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;% 
   calculate(stat = &quot;mean&quot;)</code></pre>
 </div>
 <p>Go ahead and visualize the bootstrapped distribution of the mean
-number of minutes spent on email. The variability of this distribution
-is what we are trying to describe. Calculate the 95% bootstrap interval
-for the mean number of minutes spent on email by American workers.</p>
+number of minutes spent on email. Then calculate the 95% bootstrap
+interval for the mean number of minutes spent on email by American
+workers.</p>
 <div class="tutorial-exercise" data-label="mean-plot"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
@@ -724,27 +767,32 @@ data-lines="0" data-pipe="|&gt;">
 <div class="tutorial-exercise-support" data-label="mean-plot-hint-1"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>ggplot(data=bootmean_df, 
-       mapping=aes(x = ___))+
-  geom____()+
+<pre class="text"><code>ggplot(data = bootmean_df, 
+       mapping = aes(x = ___))+
+  geom____(binwidth = ___)+
   labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)</code></pre>
 </div>
 <div class="tutorial-exercise-support" data-label="mean-plot-hint-2"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram(binwidth = 4.4)+
-  labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)
-
-bootmean_df %&gt;%
-  summarize(lower = quantile(stat, 0.025),
-            upper = quantile(___, ___))</code></pre>
+<pre class="text"><code>ggplot(data = bootmean_df, 
+       mapping=aes(x = stat))+
+  geom_histogram(binwidth = ___)+
+  labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)</code></pre>
 </div>
 <div class="tutorial-exercise-support" data-label="mean-plot-hint-3"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
+<pre class="text"><code>ggplot(data = bootmean_df, 
+       mapping=aes(x = stat))+
+  geom_histogram(binwidth = 6)+  #try different binwidths
+  labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)</code></pre>
+</div>
+<div class="tutorial-exercise-support" data-label="mean-plot-hint-4"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>ggplot(data=bootmean_df, mapping=aes(x = stat))+
-  geom_histogram(binwidth = 4.4)+
+  geom_histogram(binwidth = 6)+
   labs(title=&quot;Bootstrapped distribution of the mean number of minutes spent on email&quot;)
 
 bootmean_df %&gt;%
@@ -757,17 +805,11 @@ bootmean_df %&gt;%
 <h2>Wrap Up</h2>
 <p>That’s it! You’ve finished the tutorial on bootstrapping,
 congratulations! We hope you enjoyed this exploration.</p>
+<p>To receive participation credit for this activity, be sure to
+complete all exercises first. Then generate the hash by clicking the
+“Generate” button. Use the clipboard to copy the hash and then paste it
+in the text box of the CANVAS participation assignment.</p>
 <div class="encoder_ui">
-<div>
-If you have completed this tutorial and are happy with all of your
-solutions, please click the button below to generate your hash and
-submit it using the following link:
-<br/>
-<h3>
-<a href="https://canvas.uw.edu/courses/1721011/quizzes/1994360" target="_blank">https://canvas.uw.edu/courses/1721011/quizzes/1994360</a>
-</h3>
-<br/>
-</div>
 <div class="row" style="padding-bottom: 0.5em;">
 <div class="col-sm-3">
 <button id="hash_generate" type="button" class="btn btn-default action-button" title="Generate hash">Generate</button>
@@ -1103,24 +1145,24 @@ learnr:::store_exercise_cache(structure(list(label = "email-educ-fit", global_se
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "quiz-estimates", 
     question = structure("Which statement correctly interprets the estimate of the slope?", html = TRUE, class = c("html", 
     "character")), answers = list(structure(list(id = "lnr_ans_51515ed", 
-        option = "Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email, on average", 
-        value = "Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email, on average", 
-        label = structure("Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email, on average", html = TRUE, class = c("html", 
+        option = "Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email", 
+        value = "Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email", 
+        label = structure("Associated with an increase of a year of education, we can expect a decrease of 220 minutes in time spent on email", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cf38b90", 
-        option = "Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email, on average", 
-        value = "Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email, on average", 
-        label = structure("Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email, on average", html = TRUE, class = c("html", 
+        option = "Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email", 
+        value = "Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email", 
+        label = structure("Associated with an increase of a year of education, we can expect an increase of 45.3 minutes in time spent on email", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer")), structure(list(id = "lnr_ans_cb79c43", 
-        option = " Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email, on average", 
-        value = " Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email, on average", 
-        label = structure("Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email, on average", html = TRUE, class = c("html", 
+        option = " Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email", 
+        value = " Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email", 
+        label = structure("Associated with an increase of a year of education, we can expect an increase of 45.3 hours in time spent on email", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer")), structure(list(id = "lnr_ans_11eab0e", 
-        option = "Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education, on average", 
-        value = "Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education, on average", 
-        label = structure("Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education, on average", html = TRUE, class = c("html", 
+        option = "Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education", 
+        value = "Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education", 
+        label = structure("Associated with an increase of one minute spent on email, we can expect an increase of 45.3 years in education", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
     "character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
@@ -1198,25 +1240,24 @@ learnr:::store_exercise_cache(structure(list(label = "set-seed", global_setup = 
     include = FALSE)), setup = NULL, chunks = list(list(label = "set-seed", 
     code = "set.seed(1234)", opts = list(label = "\"set-seed\"", 
         exercise = "TRUE"), engine = "r")), code_check = NULL, 
-    error_check = NULL, check = structure("grade_this_code(\"You've set the seed ready for bootstrapping.\")", chunk_opts = list(
-        label = "set-seed-check")), solution = structure("set.seed(1234)", chunk_opts = list(
-        label = "set-seed-solution")), tests = NULL, options = list(
-        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
-        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
-        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
-        strip.white = TRUE, cache = 0, cache.path = "gss_cache/html/", 
-        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
-        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
-        fig.show = "asis", fig.align = "default", fig.path = "gss_files/figure-html/", 
-        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
-        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
-        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
-        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
-        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
-        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
-        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
-        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
-        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+    error_check = NULL, check = NULL, solution = NULL, tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "gss_cache/html/", cache.vars = NULL, cache.lazy = TRUE, 
+        dependson = NULL, autodep = FALSE, cache.rebuild = FALSE, 
+        fig.keep = "high", fig.show = "asis", fig.align = "default", 
+        fig.path = "gss_files/figure-html/", dev = "png", dev.args = NULL, 
+        dpi = 192, fig.ext = "png", fig.width = 6.5, fig.height = 4, 
+        fig.env = "figure", fig.cap = NULL, fig.scap = NULL, 
+        fig.lp = "fig:", fig.subcap = NULL, fig.pos = "", out.width = 624, 
+        out.height = NULL, out.extra = NULL, fig.retina = 2, 
+        external = TRUE, sanitize = FALSE, interval = 1, aniopts = "controls,loop", 
+        warning = TRUE, error = FALSE, message = TRUE, render = NULL, 
+        ref.label = NULL, child = NULL, engine = "r", split = FALSE, 
+        include = TRUE, purl = TRUE, max.print = 1000, exercise.timelimit = 60, 
+        exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
         label = "set-seed", exercise = TRUE, code = "set.seed(1234)", 
         out.width.px = 624, out.height.px = 384, params.src = "set-seed, exercise = TRUE", 
@@ -1346,26 +1387,23 @@ learnr:::store_exercise_cache(structure(list(label = "visualize_stat", global_se
         code = "\n", opts = list(label = "\"visualize_stat\"", 
             exercise = "TRUE", exercise.setup = "\"setup-boot-df-slope\""), 
         engine = "r")), code_check = NULL, error_check = NULL, 
-    check = NULL, solution = structure(c("", "ggplot(data=boot_df, mapping=aes(x = stat))+", 
-    "  geom_histogram()+", "  labs(title=\"Bootstrapped distribution of slopes\")", 
-    ""), chunk_opts = list(label = "visualize_stat-solution")), 
-    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
-        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
-        comment = NA, highlight = FALSE, size = "normalsize", 
-        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
-        cache.path = "gss_cache/html/", cache.vars = NULL, cache.lazy = TRUE, 
-        dependson = NULL, autodep = FALSE, cache.rebuild = FALSE, 
-        fig.keep = "high", fig.show = "asis", fig.align = "default", 
-        fig.path = "gss_files/figure-html/", dev = "png", dev.args = NULL, 
-        dpi = 192, fig.ext = "png", fig.width = 6.5, fig.height = 4, 
-        fig.env = "figure", fig.cap = NULL, fig.scap = NULL, 
-        fig.lp = "fig:", fig.subcap = NULL, fig.pos = "", out.width = 624, 
-        out.height = NULL, out.extra = NULL, fig.retina = 2, 
-        external = TRUE, sanitize = FALSE, interval = 1, aniopts = "controls,loop", 
-        warning = TRUE, error = FALSE, message = TRUE, render = NULL, 
-        ref.label = NULL, child = NULL, engine = "r", split = FALSE, 
-        include = TRUE, purl = TRUE, max.print = 1000, exercise.timelimit = 60, 
-        exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
+    check = NULL, solution = NULL, tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "gss_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "gss_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.timelimit = 60, exercise.checker = "function (label = NULL, solution_code = NULL, user_code = NULL, \n    check_code = NULL, envir_result = NULL, evaluate_result = NULL, \n    envir_prep = NULL, last_value = NULL, stage = NULL, ..., \n    solution_eval_fn = NULL) \n{\n    (utils::getFromNamespace(\"check_exercise\", \"gradethis\"))(label = label, \n        solution_code = solution_code, user_code = user_code, \n        check_code = check_code, envir_result = envir_result, \n        evaluate_result = evaluate_result, envir_prep = envir_prep, \n        last_value = last_value, stage = stage, ...)\n}", 
         exercise.error.check.code = "gradethis_error_checker()", 
         label = "visualize_stat", exercise = TRUE, exercise.setup = "setup-boot-df-slope", 
         code = c("", ""), out.width.px = 624, out.height.px = 384, 
@@ -1436,14 +1474,14 @@ learnr:::store_exercise_cache(structure(list(label = "confidence-interval-email"
 learnr:::question_prerendered_chunk(structure(list(type = "learnr_radio", label = "quiz-confidence", 
     question = structure("Which statement is correct?", html = TRUE, class = c("html", 
     "character")), answers = list(structure(list(id = "lnr_ans_7e0054c", 
-        option = "The 99% confidence interval will be narrower, because we have to allow for less variation in order to be 99% accurate", 
-        value = "The 99% confidence interval will be narrower, because we have to allow for less variation in order to be 99% accurate", 
-        label = structure("The 99% confidence interval will be narrower, because we have to allow for less variation in order to be 99% accurate", html = TRUE, class = c("html", 
+        option = "The 99% confidence interval will be narrower because we have to allow for less variation in order to be 99% accurate", 
+        value = "The 99% confidence interval will be narrower because we have to allow for less variation in order to be 99% accurate", 
+        label = structure("The 99% confidence interval will be narrower because we have to allow for less variation in order to be 99% accurate", html = TRUE, class = c("html", 
         "character")), correct = FALSE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer")), structure(list(id = "lnr_ans_5ec259c", 
-        option = "The 99% confidence interval will be wider, because we need to allow for more variation in order to be more certain that any given mean will lie within the interval", 
-        value = "The 99% confidence interval will be wider, because we need to allow for more variation in order to be more certain that any given mean will lie within the interval", 
-        label = structure("The 99% confidence interval will be wider, because we need to allow for more variation in order to be more certain that any given mean will lie within the interval", html = TRUE, class = c("html", 
+        option = "The 99% confidence interval will be wider because we want a range that contains 99% of the values", 
+        value = "The 99% confidence interval will be wider because we want a range that contains 99% of the values", 
+        label = structure("The 99% confidence interval will be wider because we want a range that contains 99% of the values", html = TRUE, class = c("html", 
         "character")), correct = TRUE, message = NULL, type = "literal"), class = c("tutorial_question_answer", 
     "tutorial_quiz_answer")), structure(list(id = "lnr_ans_456fbaa", 
         option = "We really can't say as it will depend on the distribution", 
@@ -1549,7 +1587,7 @@ learnr:::store_exercise_cache(structure(list(label = "confidence-90-email", glob
             exercise.setup = "\"setup-boot-df-slope\""), engine = "r")), 
     code_check = NULL, error_check = NULL, check = structure(c("grade_this({", 
     "  if(identical(floor(as.numeric(.result$lower[1])), 36) & identical(floor(as.numeric(.result$upper[1])), 54) ) {", 
-    "    pass(\"You have calculated the 99% confidence interval correctly!\")", 
+    "    pass(\"You have calculated the 90% confidence interval correctly!\")", 
     "  }", "  fail(\"Not quite. Take a look at the hints if you need some help.\")", 
     "})"), chunk_opts = list(label = "confidence-90-email-check")), 
     solution = structure(c("boot_df %>%", "  summarize(lower = quantile(stat, 0.05),", 
@@ -1644,7 +1682,7 @@ learnr:::store_exercise_cache(structure(list(label = "create-bootmean-df", globa
     include = FALSE)), setup = "gss16 <- dsbox::gss16 %>% \n  mutate(email = emailmin + (emailhr * 60)) ", 
     chunks = list(list(label = "setup-email-var", code = "gss16 <- dsbox::gss16 %>% \n  mutate(email = emailmin + (emailhr * 60)) ", 
         opts = list(label = "\"setup-email-var\""), engine = "r"), 
-        list(label = "create-bootmean-df", code = "set.seed(1411)\n\nbootmean_df <- gss16 %>%\n  specify(response = ___) %>% \n  generate(reps = 1000, type = \"bootstrap\") %>% \n  calculate(stat = \"___\")", 
+        list(label = "create-bootmean-df", code = "set.seed(1411)\n\nbootmean_df <- gss16 %>%\n  filter(!is.na(___) ) %>%\n  specify(response = ___) %>% \n  generate(reps = 1000, type = \"___\") %>% \n  calculate(stat = \"___\")", 
             opts = list(label = "\"create-bootmean-df\"", exercise = "TRUE", 
                 exercise.setup = "\"setup-email-var\""), engine = "r")), 
     code_check = NULL, error_check = NULL, check = NULL, solution = NULL, 
@@ -1668,9 +1706,9 @@ learnr:::store_exercise_cache(structure(list(label = "create-bootmean-df", globa
         exercise.error.check.code = "gradethis_error_checker()", 
         label = "create-bootmean-df", exercise = TRUE, exercise.setup = "setup-email-var", 
         code = c("set.seed(1411)", "", "bootmean_df <- gss16 %>%", 
-        "  specify(response = ___) %>% ", "  generate(reps = 1000, type = \"bootstrap\") %>% ", 
-        "  calculate(stat = \"___\")"), out.width.px = 624, out.height.px = 384, 
-        params.src = "create-bootmean-df, exercise = TRUE, exercise.setup = \"setup-email-var\"", 
+        "  filter(!is.na(___) ) %>%", "  specify(response = ___) %>% ", 
+        "  generate(reps = 1000, type = \"___\") %>% ", "  calculate(stat = \"___\")"
+        ), out.width.px = 624, out.height.px = 384, params.src = "create-bootmean-df, exercise = TRUE, exercise.setup = \"setup-email-var\"", 
         fig.num = 0, exercise.df_print = "paged"), engine = "r", 
     version = "4"), class = c("r", "tutorial_exercise")))
 </script>
@@ -1734,7 +1772,7 @@ learnrhash::encoder_logic(strip_output=TRUE)
 <!--/html_preserve-->
 <!--html_preserve-->
 <script type="application/shiny-prerendered" data-context="execution_dependencies">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118]}},"value":[{"type":"character","attributes":{},"value":["backports","base","base64enc","broom","bslib","cachem","checkmate","class","cli","codetools","colorspace","commonmark","compiler","data.table","datasets","dials","DiceDesign","digest","dplyr","dsbox","ellipsis","evaluate","fansi","fastmap","fontawesome","forcats","foreach","furrr","future","future.apply","generics","ggplot2","globals","glue","gower","GPfit","gradethis","graphics","grDevices","grid","gtable","hardhat","hms","htmltools","htmlwidgets","httpuv","infer","ipred","iterators","jquerylib","jsonlite","knitr","later","lattice","lava","learnr","learnrhash","lhs","lifecycle","listenv","lubridate","magrittr","markdown","MASS","Matrix","methods","mime","modeldata","munsell","nnet","parallel","parallelly","parsnip","pillar","pkgconfig","prodlim","promises","purrr","R6","Rcpp","readr","recipes","repr","rlang","rmarkdown","rpart","rprojroot","rsample","rstudioapi","sass","scales","shiny","skimr","splines","stats","stringi","stringr","survival","tibble","tidymodels","tidyr","tidyselect","tidyverse","timechange","timeDate","tools","tune","tzdb","utf8","utils","vctrs","withr","workflows","workflowsets","xfun","xtable","yaml","yardstick"]},{"type":"character","attributes":{},"value":["1.4.1","4.3.1","0.1-3","1.0.5","0.6.1","1.0.8","2.2.0","7.3-22","3.6.2","0.2-19","2.1-0","1.9.1","4.3.1","1.14.8","4.3.1","1.2.0","1.10","0.6.34","1.1.4","0.1.1","0.3.2","0.23","1.0.6","1.1.1","0.5.2","1.0.0","1.5.2","0.3.1","1.33.1","1.11.1","0.1.3","3.4.4","0.16.2","1.7.0","1.0.1","1.0-8","0.2.14","4.3.1","4.3.1","4.3.1","0.3.4","1.3.1","1.1.3","0.5.7","1.6.2","1.6.14","1.0.4","0.9-14","1.0.14","0.1.4","1.8.8","1.45","1.3.2","0.21-8","1.7.3","0.11.5","0.2.0","1.1.6","1.0.4","0.9.1","1.9.3","2.0.3","1.7","7.3-60","1.6-5","4.3.1","0.12","1.3.0","0.5.0","7.3-19","4.3.1","1.36.0","1.1.1","1.9.0","2.0.3","2023.08.28","1.2.1","1.0.1","2.5.1","1.0.12","2.1.4","1.0.9","1.1.6","1.1.3","2.25","4.1.19","2.0.4","1.2.0","0.15.0","0.4.8","1.3.0","1.8.0","2.1.5","4.3.1","4.3.1","1.8.3","1.5.1","3.5-5","3.2.1","1.1.1","1.3.0","1.2.0","2.0.0","0.3.0","4032.109","4.3.1","1.1.2","0.4.0","1.2.4","4.3.1","0.6.5","3.0.0","1.1.3","1.0.1","0.39","1.8-4","2.3.7","1.3.0"]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118]}},"value":[{"type":"character","attributes":{},"value":["backports","base","base64enc","broom","bslib","cachem","checkmate","class","cli","codetools","colorspace","commonmark","compiler","data.table","datasets","dials","DiceDesign","digest","dplyr","dsbox","ellipsis","evaluate","fansi","fastmap","fontawesome","forcats","foreach","furrr","future","future.apply","generics","ggplot2","globals","glue","gower","GPfit","gradethis","graphics","grDevices","grid","gtable","hardhat","hms","htmltools","htmlwidgets","httpuv","infer","ipred","iterators","jquerylib","jsonlite","knitr","later","lattice","lava","learnr","learnrhash","lhs","lifecycle","listenv","lubridate","magrittr","markdown","MASS","Matrix","methods","mime","modeldata","munsell","nnet","parallel","parallelly","parsnip","pillar","pkgconfig","prodlim","promises","purrr","R6","Rcpp","readr","recipes","repr","rlang","rmarkdown","rpart","rprojroot","rsample","rstudioapi","sass","scales","shiny","skimr","splines","stats","stringi","stringr","survival","tibble","tidymodels","tidyr","tidyselect","tidyverse","timechange","timeDate","tools","tune","tzdb","utf8","utils","vctrs","withr","workflows","workflowsets","xfun","xtable","yaml","yardstick"]},{"type":"character","attributes":{},"value":["1.4.1","4.3.1","0.1-3","1.0.5","0.6.1","1.0.8","2.2.0","7.3-22","3.6.2","0.2-19","2.1-0","1.9.1","4.3.1","1.14.8","4.3.1","1.2.0","1.10","0.6.35","1.1.4","0.1.1","0.3.2","0.23","1.0.6","1.1.1","0.5.2","1.0.0","1.5.2","0.3.1","1.33.1","1.11.1","0.1.3","3.4.4","0.16.2","1.7.0","1.0.1","1.0-8","0.2.14","4.3.1","4.3.1","4.3.1","0.3.4","1.3.1","1.1.3","0.5.7","1.6.2","1.6.14","1.0.4","0.9-14","1.0.14","0.1.4","1.8.8","1.45","1.3.2","0.21-8","1.7.3","0.11.5","0.2.0","1.1.6","1.0.4","0.9.1","1.9.3","2.0.3","1.7","7.3-60","1.6-5","4.3.1","0.12","1.3.0","0.5.0","7.3-19","4.3.1","1.36.0","1.1.1","1.9.0","2.0.3","2023.08.28","1.2.1","1.0.1","2.5.1","1.0.12","2.1.4","1.0.9","1.1.6","1.1.3","2.25","4.1.19","2.0.4","1.2.0","0.15.0","0.4.8","1.3.0","1.8.0","2.1.5","4.3.1","4.3.1","1.8.3","1.5.1","3.5-5","3.2.1","1.1.1","1.3.0","1.2.0","2.0.0","0.3.0","4032.109","4.3.1","1.1.2","0.4.0","1.2.4","4.3.1","0.6.5","3.0.0","1.1.3","1.0.1","0.39","1.8-4","2.3.7","1.3.0"]}]}]}
 </script>
 <!--/html_preserve-->
 </div>
