@@ -645,6 +645,31 @@ gap2007 %>%
             iqr = ___)
 ```
 
+
+```{r variability-gapminder-hint-1} 
+gap2007 <- gapminder %>% 
+     filter(year == 2007)
+
+gap2007 %>%
+  group_by(continent) %>%
+  summarize(mean = mean(lifeExp, na.rm = TRUE), 
+            median = median(lifeExp, na.rm = TRUE),
+            sd = sd(lifeExp, na.rm = TRUE), 
+            iqr = ___)
+```
+
+```{r variability-gapminder-hint-2} 
+gap2007 <- gapminder %>% 
+     filter(year == 2007)
+
+gap2007 %>%
+  group_by(continent) %>%
+  summarize(mean = mean(lifeExp, na.rm = TRUE), 
+            median = median(lifeExp, na.rm = TRUE),
+            sd = sd(lifeExp, na.rm = TRUE), 
+            iqr = IQR(lifeExp, na.rm = TRUE))
+```
+
 ## Choosing a measure of center and spread 
 
 For any dataset, you can compute all of the summaries we have discussed so far, but which ones are the most meaningful? The most commonly used in practice are the mean and standard deviation, so that's often a good place to start. But what happens if the dataset has some extreme observations?
