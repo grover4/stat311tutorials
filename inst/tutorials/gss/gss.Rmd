@@ -601,6 +601,8 @@ bootmean_df <- gss16 %>%
 ```
 
 ```{r create-bootmean-df-hint-1}
+set.seed(1411)
+
 bootmean_df <- gss16 %>%
   filter(!is.na(email) ) %>%
   specify(response = ___) %>% 
@@ -610,6 +612,8 @@ bootmean_df <- gss16 %>%
 ```
 
 ```{r create-bootmean-df-hint-2}
+set.seed(1411)
+
 bootmean_df <- gss16 %>%
   filter(!is.na(email) ) %>%
   specify(response = email) %>% 
@@ -620,6 +624,8 @@ bootmean_df <- gss16 %>%
 
 
 ```{r create-bootmean-df-hint-3}
+set.seed(1411)
+
 bootmean_df <- gss16 %>%
   filter(!is.na(email) ) %>%
   specify(response = email) %>% 
@@ -629,6 +635,8 @@ bootmean_df <- gss16 %>%
 ```
 
 ```{r create-bootmean-df-hint-4}
+set.seed(1411)
+
 bootmean_df <- gss16 %>%
   filter(!is.na(email) ) %>%
   specify(response = email) %>% 
