@@ -435,7 +435,8 @@ ggplot(data = penguins,
   labs(title = "Bill depth and length",
        subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
        x = "Bill depth (mm)", y = "Bill length (mm)",
-       color = "Species") 
+       color = "Species") +
+  scale_color_viridis_d()
 ```
 
 ```{r scatter, exercise=TRUE}
