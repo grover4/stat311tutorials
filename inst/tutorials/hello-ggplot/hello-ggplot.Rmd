@@ -558,7 +558,7 @@ learnrhash::encoder_logic(strip_output=TRUE)
 
 ```{r encode, echo=FALSE}
 #learnrhash::encoder_ui(ui_after=NULL, ui_before=default_ui(url="https://canvas.uw.edu/courses/1721011/quizzes/1994361") )
-learnrhash::encoder_ui(ui_after=NULL, ui_before=NULL )
+learnrhash::encoder_ui(ui_after = NULL, ui_before = NULL )
 
 ```
 
