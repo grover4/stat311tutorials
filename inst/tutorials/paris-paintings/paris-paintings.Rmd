@@ -393,7 +393,7 @@ price_surface_fit %>% tidy()
 
 ```{r model-fit-hint-3}
 
-price_surface_fit <- lm( log_surface ~ log_price, data= pp )
+price_surface_fit <- lm( log_price ~ log_surface, data= pp )
 
 price_surface_fit %>% tidy()
 
